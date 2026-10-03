@@ -85,25 +85,26 @@ void check_sqrt() {
 /// SIMD kernels must agree with scalar Montgomery arithmetic lane by lane.
 template <class M>
 void check_simd() {
-  constexpr int L = simd::lane;
+  constexpr size_t L = static_cast<size_t>(simd::lane);
   std::vector<uint32_t> A(L), B(L), R(L);
   for (int t = 0; t < 20000; ++t) {
-    for (int i = 0; i < L; ++i) {
+    for (size_t i = 0; i < L; ++i) {
       A[i] = (t % 13 == 0 && i == 0) ? M::mod - 1 : static_cast<uint32_t>(rng() % M::mod);
       B[i] = (t % 13 == 0 && i == 1) ? 0 : static_cast<uint32_t>(rng() % M::mod);
     }
     auto va = simd::load(A.data()), vb = simd::load(B.data());
     simd::store(R.data(), simd::mulmod<M::mod, M::ninv>(va, vb));
-    for (int i = 0; i < L; ++i) CHECK_EQ(R[i], M::reduce(uint64_t(A[i]) * B[i]));
+    for (size_t i = 0; i < L; ++i) CHECK_EQ(R[i], M::reduce(uint64_t(A[i]) * B[i]));
     simd::store(R.data(), simd::add(va, vb, M::mod));
-    for (int i = 0; i < L; ++i) {
+    for (size_t i = 0; i < L; ++i) {
       uint32_t w = A[i] + B[i];
       CHECK_EQ(R[i], w >= M::mod ? w - M::mod : w);
     }
     simd::store(R.data(), simd::sub(va, vb, M::mod));
-    for (int i = 0; i < L; ++i) CHECK_EQ(R[i], A[i] >= B[i] ? A[i] - B[i] : A[i] - B[i] + M::mod);
+    for (size_t i = 0; i < L; ++i)
+      CHECK_EQ(R[i], A[i] >= B[i] ? A[i] - B[i] : A[i] - B[i] + M::mod);
   }
-  std::printf("  simd kernels (%s, %d lanes) ok\n", simd::name, L);
+  std::printf("  simd kernels (%s, %zu lanes) ok\n", simd::name, L);
 }
 
 }  // namespace
