@@ -36,6 +36,17 @@ using vec = std::vector<M>;
 /// Convolutions with fewer than this many operations are done directly.
 inline constexpr size_t naive_threshold = 40;
 
+/// dst[0, cnt) = src[0, cnt)
+template <class M>
+void copy_prefix(const vec<M>& src, size_t cnt, vec<M>& dst) {
+  for (size_t i = 0; i < cnt; ++i) dst[i] = src[i];
+}
+/// dst[0, cnt) = src[from, from + cnt)
+template <class M>
+void copy_range(const vec<M>& src, size_t from, size_t cnt, vec<M>& dst) {
+  for (size_t i = 0; i < cnt; ++i) dst[i] = src[from + i];
+}
+
 /// ---------------------------------------------------------------------------
 /// basic operations
 /// ---------------------------------------------------------------------------
@@ -121,8 +132,8 @@ vec<M> conv_limbs(const vec<M>& a, const vec<M>& b, size_t lim) {
   const uint32_t N = next_pow2(full);
   auto plan = NttPlan<M>::get(N);
   vec<M> fa(N, M()), fb(N, M());
-  std::copy(a.begin(), a.begin() + la, fa.begin());
-  std::copy(b.begin(), b.begin() + lb, fb.begin());
+  copy_prefix(a, la, fa);
+  copy_prefix(b, lb, fb);
   uint32_t* pa = reinterpret_cast<uint32_t*>(fa.data());
   uint32_t* pb = reinterpret_cast<uint32_t*>(fb.data());
   plan->forward(pa);
@@ -207,7 +218,7 @@ vec<M> inv(const vec<M>& a, size_t n) {
 
     vec<M> t(N, M());
     const size_t acnt = std::min(a.size(), 2 * m);
-    std::copy(a.begin(), a.begin() + acnt, t.begin());
+    copy_prefix(a, acnt, t);
     uint32_t* pt = reinterpret_cast<uint32_t*>(t.data());
     // u = b padded to N
     vec<M> u(N, M());
@@ -288,7 +299,7 @@ vec<M> sqrt(const vec<M>& a, size_t n) {
   // normalize: a = x^v * u, u(0) != 0; work on u up to n - half terms
   const size_t inner_n = n - half;
   vec<M> u(std::min(a.size() - v, inner_n));
-  std::copy(a.begin() + v, a.begin() + v + u.size(), u.begin());
+  copy_range(a, v, u.size(), u);
   vec<M> b{root0};  // b = sqrt(u) mod x^1
   for (size_t m = 1; m < inner_n; m <<= 1) {
     const size_t m2 = std::min(2 * m, inner_n);
@@ -328,7 +339,7 @@ vec<M> pow(const vec<M>& a, uint64_t k, size_t n) {
   const size_t sh = static_cast<size_t>(v * k);
   const size_t inner_n = n - sh;
   vec<M> u(std::min(a.size() - v, inner_n));
-  std::copy(a.begin() + v, a.begin() + v + u.size(), u.begin());
+  copy_range(a, v, u.size(), u);
 
   if (k <= 64) {  // binary exponentiation
     vec<M> r{M::from_int(1)}, base = u;

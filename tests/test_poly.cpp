@@ -42,20 +42,74 @@ vec naive_conv(const vec& a, const vec& b, size_t n) {
   return r;
 }
 
-bool same(const vec& a, const vec& b) {
+template <class V>
+bool same(const V& a, const V& b) {
   if (a.size() != b.size()) return false;
   for (size_t i = 0; i < a.size(); ++i)
     if (a[i] != b[i]) return false;
   return true;
 }
 
-vec padded(const vec& a, size_t n) {
-  vec r(n, M());
+template <class V>
+V padded(const V& a, size_t n) {
+  V r(n, typename V::value_type());
   for (size_t i = 0; i < std::min(a.size(), n); ++i) r[i] = a[i];
   return r;
 }
 
+/// The algebraic identities must hold for every NTT prime, not just the
+/// default one: v2(mod-1), primitive root and mod % 8 all differ between them.
+template <class M>
+void series_identities(const char* name) {
+  std::mt19937_64 r(0xfeed);
+  for (int t = 0; t < 10; ++t) {
+    const size_t n = 1 + r() % 150;
+    std::vector<M> a(n), b(n);
+    for (auto& x : a) x = M::from_int(r() % M::mod);
+    for (auto& x : b) x = M::from_int(r() % M::mod);
+    a[0] = M::from_int(1);
+    b[0] = M();
+
+    // a * inv(a) == 1
+    std::vector<M> prod = poly::conv(a, poly::inv(a, n), n);
+    prod.resize(n, M());
+    for (size_t i = 0; i < n; ++i) CHECK_EQ(prod[i], i == 0 ? M::from_int(1) : M());
+    // log/exp are inverse to each other
+    CHECK(same(padded(poly::exp(poly::log(a, n), n), n), a));
+    CHECK(same(padded(poly::log(poly::exp(b, n), n), n), b));
+    // sqrt(a^2) == +-a : check by squaring
+    std::vector<M> sq = poly::conv(a, a, n);
+    sq.resize(n, M());
+    try {
+      std::vector<M> s = poly::sqrt(sq, n);
+      CHECK(same(padded(poly::conv(s, s, n), n), sq));
+    } catch (const poly::domain_error&) {
+      CHECK(false);  // a perfect square must always have a root
+    }
+    // pow
+    std::vector<M> p3 = poly::pow(a, 7, n);
+    std::vector<M> acc(n, M());
+    acc[0] = M::from_int(1);
+    for (int i = 0; i < 7; ++i) {
+      acc = poly::conv(acc, a, n);
+      acc.resize(n, M());
+    }
+    CHECK(same(p3, acc));
+    // big exponent through the exp/log route
+    std::vector<M> big = poly::pow(a, 1000000007ull, n);
+    std::vector<M> alt = poly::exp(poly::mul_scalar(poly::log(a, n), M::from_int(1000000007ull)), n);
+    CHECK(same(big, alt));
+  }
+  std::printf("  series identities over %s ok\n", name);
+}
+
 }  // namespace
+
+FP_TEST(poly_identities_mod469762049) { series_identities<mod469762049>("469762049"); }
+FP_TEST(poly_identities_mod167772161) { series_identities<mod167772161>("167772161"); }
+FP_TEST(poly_identities_mod754974721) { series_identities<mod754974721>("754974721"); }
+FP_TEST(poly_identities_mod1224736769) { series_identities<mod1224736769>("1224736769"); }
+FP_TEST(poly_identities_mod1004535809) { series_identities<mod1004535809>("1004535809"); }
 
 FP_TEST(poly_basic_ops) {
   const vec a{1, 2, 3}, b{4, 5};
@@ -67,7 +121,7 @@ FP_TEST(poly_basic_ops) {
   CHECK_EQ(poly::shift(a, 2).size(), 5u);
   CHECK_EQ(poly::shift(a, 2)[3].val(), 2u);
   CHECK_EQ(poly::shift(a, 2, 3).size(), 3u);
-  CHECK_EQ(poly::eval(a, M::from_int(2)).val(), 1 + 2 * 2 + 3 * 4);
+  CHECK_EQ(poly::eval(a, M::from_int(2)).val(), 1u + 2u * 2u + 3u * 4u);
   // trim
   vec t{1, 0, 0};
   poly::trim(t);
