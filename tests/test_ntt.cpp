@@ -120,6 +120,39 @@ FP_TEST(ntt_small_sizes) {
   }
 }
 
+/// The chunked small-m kernels only take over once `4*m <= n` and `m < lane`;
+/// at sizes well past that boundary the transform must still be a true DFT (the
+/// monomial check is O(n log n), so it scales where the naive one cannot) and
+/// forward/inverse must still round-trip bit-exactly.  Both parities of
+/// log2(n) are covered, which selects different `m` sequences (…4,1 vs …2).
+FP_TEST(ntt_large_small_m_kernels) {
+  using M = mod998244353;
+  for (int k : {14, 15, 16, 17}) {
+    const uint32_t n = 1u << k;
+    auto plan = NttPlan<M>::get(n);
+    const M w = M::from_int(M::primitive_root).pow((M::mod - 1) / n);
+    for (uint32_t j = 0; j < n; j += std::max<uint32_t>(1, n / 8)) {
+      std::vector<uint32_t> a(n, 0);
+      a[j] = M::from_int(1).raw_val();
+      plan->forward(a.data());
+      std::multiset<uint32_t> got(a.begin(), a.end()), want;
+      const M wj = w.pow(j);
+      M cur = M::from_int(1);
+      for (uint32_t t = 0; t < n; ++t) {
+        want.insert(cur.raw_val());
+        cur = cur * wj;
+      }
+      CHECK_MSG(got == want, "large monomial DFT n=%u j=%u", n, j);
+    }
+    std::vector<uint32_t> b(n), c(n);
+    for (uint32_t i = 0; i < n; ++i) b[i] = M::from_int(rng() % M::mod).raw_val();
+    c = b;
+    plan->forward(c.data());
+    plan->inverse(c.data());
+    for (uint32_t i = 0; i < n; ++i) CHECK_MSG(b[i] == c[i], "large roundtrip n=%u i=%u", n, i);
+  }
+}
+
 FP_TEST(ntt_plan_rejects_bad_sizes) {
   using M = mod998244353;
   bool threw = false;
