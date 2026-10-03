@@ -1,4 +1,5 @@
 // fastpoly - tests for polynomial arithmetic mod x^n.
+#include <cstddef>
 #include <random>
 #include <vector>
 
@@ -411,6 +412,146 @@ FP_TEST(poly_large_series_crosscheck) {
     CHECK(same(chk, pk));
   }
   std::printf("  large series cross-check ok\n");
+}
+
+namespace {
+
+template <class Field>
+std::vector<Field> reference_product(const std::vector<Field>& a,
+                                     const std::vector<Field>& b, size_t n) {
+  if (a.empty() || b.empty() || n == 0) return {};
+  std::vector<Field> out(std::min(n, a.size() + b.size() - 1));
+  for (size_t i = 0; i < std::min(a.size(), out.size()); ++i)
+    for (size_t j = 0; j < b.size() && i + j < out.size(); ++j)
+      out[i + j] += a[i] * b[j];
+  return out;
+}
+
+// Coefficient recurrences provide independent references for the Newton paths.
+template <class Field>
+std::vector<Field> reference_inverse(const std::vector<Field>& a, size_t n) {
+  std::vector<Field> out(n);
+  out[0] = a[0].inv();
+  for (size_t i = 1; i < n; ++i) {
+    Field sum;
+    for (size_t j = 1; j <= i && j < a.size(); ++j) sum += a[j] * out[i - j];
+    out[i] = -sum * out[0];
+  }
+  return out;
+}
+
+template <class Field>
+std::vector<Field> reference_exp(const std::vector<Field>& a, size_t n) {
+  std::vector<Field> out(n);
+  out[0] = Field::from_int(1);
+  for (size_t i = 1; i < n; ++i) {
+    Field sum;
+    for (size_t j = 1; j <= i && j < a.size(); ++j)
+      sum += Field::from_int(j) * a[j] * out[i - j];
+    out[i] = sum / Field::from_int(i);
+  }
+  return out;
+}
+
+template <class Field>
+void optimized_poly_boundaries() {
+  std::mt19937_64 gen(0x8246);
+  auto random = [&](size_t n) {
+    std::vector<Field> a(n);
+    for (size_t i = 0; i < n; ++i) {
+      // Exercise canonical extrema in every vector, as well as random limbs.
+      a[i] = Field::from_int(i % 7 == 0 ? Field::mod - 1 : gen() % Field::mod);
+    }
+    return a;
+  };
+
+  // The streamed direct-convolution path must handle either argument order,
+  // output clipping, unaligned stores and vector tails at the 40 crossover.
+  const auto long_operand = random(4097);
+  for (const size_t short_n : {size_t(1), size_t(3), size_t(7), size_t(17),
+                               size_t(31), size_t(39), size_t(40), size_t(41)}) {
+    const auto short_operand = random(short_n);
+    for (const size_t n : {size_t(0), size_t(1), size_t(32), size_t(65), size_t(257), size_t(4137)}) {
+      const auto want = reference_product(long_operand, short_operand, n);
+      CHECK_MSG(poly::conv(long_operand, short_operand, n) == want,
+                "skinny conv mod=%u short=%zu n=%zu", Field::mod, short_n, n);
+      CHECK_MSG(poly::conv(short_operand, long_operand, n) == want,
+                "reversed skinny conv mod=%u short=%zu n=%zu", Field::mod, short_n, n);
+    }
+  }
+
+  // Passing the same vector takes the one-transform square path; a distinct
+  // equal copy takes the ordinary product path. Check both against the sum.
+  for (const size_t len : {size_t(39), size_t(40), size_t(41), size_t(63), size_t(64),
+                           size_t(65), size_t(127), size_t(128), size_t(129), size_t(257)}) {
+    const auto a = random(len), copy = a;
+    for (const size_t n : {size_t(1), len / 2, len, 2 * len - 1}) {
+      const auto want = reference_product(a, a, n);
+      CHECK_MSG(poly::conv(a, a, n) == want, "square mod=%u len=%zu n=%zu", Field::mod, len, n);
+      CHECK_MSG(poly::conv(a, copy, n) == want, "equal-copy product mod=%u len=%zu n=%zu", Field::mod, len, n);
+    }
+  }
+
+  // Seed-32 boundary and final partial Newton steps, with short, full and
+  // longer-than-output inputs. No NTT-dependent identity is used as reference.
+  for (const size_t n : {size_t(15), size_t(16), size_t(17), size_t(31), size_t(32),
+                         size_t(33), size_t(63), size_t(64), size_t(65), size_t(127),
+                         size_t(129), size_t(257), size_t(513)}) {
+    for (const size_t len : {size_t(2), size_t(17), n + 5}) {
+      auto a = random(len);
+      a[0] = Field::from_int(Field::mod - 1);
+      CHECK_MSG(poly::inv(a, n) == reference_inverse(a, n),
+                "inverse boundary mod=%u len=%zu n=%zu", Field::mod, len, n);
+    }
+    auto a = random(n + 5);
+    a[0] = Field();
+    CHECK_MSG(poly::exp(a, n) == reference_exp(a, n), "exp boundary mod=%u n=%zu", Field::mod, n);
+  }
+
+  // Valued roots must retain exactly n-shift coefficients after removing
+  // x^(2*shift), including seed boundaries and partial correction lengths.
+  for (const size_t inner_n : {size_t(31), size_t(32), size_t(33), size_t(63), size_t(64),
+                               size_t(65), size_t(127), size_t(128), size_t(129)}) {
+    for (const size_t shift : {size_t(1), size_t(16), size_t(33)}) {
+      const size_t n = inner_n + shift;
+      auto base = random(inner_n);
+      base[0] = Field::from_int(Field::mod - 1);
+      std::vector<Field> root(n);
+      std::copy(base.begin(), base.end(), root.begin() + static_cast<std::ptrdiff_t>(shift));
+      const auto square = reference_product(root, root, 2 * n);
+      const auto got = poly::sqrt(square, n);
+      CHECK_EQ(got.size(), n);
+      CHECK_MSG(reference_product(got, got, n + shift) == reference_product(root, root, n + shift),
+                "valued sqrt mod=%u shift=%zu inner=%zu", Field::mod, shift, inner_n);
+      for (size_t i = 0; i < shift; ++i) CHECK_EQ(got[i], Field());
+      const Field sign = got[shift] / base[0];
+      CHECK(sign == Field::from_int(1) || sign == -Field::from_int(1));
+      for (size_t i = 0; i < inner_n; ++i) CHECK_EQ(got[shift + i], base[i] * sign);
+    }
+  }
+
+  // SIMD differentiation/integration cover every possible remainder for the
+  // widest backend, using scalar coefficient definitions as the reference.
+  for (size_t len = 0; len <= 65; ++len) {
+    const auto a = random(len);
+    const auto d = poly::derivative(a), integral = poly::integral(a);
+    CHECK_EQ(d.size(), len <= 1 ? size_t(0) : len - 1);
+    CHECK_EQ(integral.size(), len == 0 ? size_t(0) : len + 1);
+    for (size_t i = 1; i < len; ++i) CHECK_EQ(d[i - 1], a[i] * Field::from_int(i));
+    if (!integral.empty()) CHECK_EQ(integral[0], Field());
+    for (size_t i = 0; i < len; ++i) CHECK_EQ(integral[i + 1], a[i] / Field::from_int(i + 1));
+  }
+}
+
+}  // namespace
+
+FP_TEST(poly_optimized_boundaries_all_moduli) {
+  optimized_poly_boundaries<mod998244353>();
+  optimized_poly_boundaries<mod1004535809>();
+  optimized_poly_boundaries<mod469762049>();
+  optimized_poly_boundaries<mod167772161>();
+  optimized_poly_boundaries<mod754974721>();
+  optimized_poly_boundaries<mod1224736769>();
 }
 
 FP_TEST_MAIN()

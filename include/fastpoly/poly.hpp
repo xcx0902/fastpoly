@@ -33,7 +33,7 @@ class domain_error : public std::runtime_error {
 template <class M>
 using vec = std::vector<M>;
 
-/// Convolutions with fewer than this many operations are done directly.
+/// Convolutions with a short operand are done directly.
 inline constexpr size_t naive_threshold = 40;
 
 /// dst[0, cnt) = src[0, cnt)
@@ -148,21 +148,41 @@ vec<M> conv_limbs(const vec<M>& a, const vec<M>& b, size_t lim) {
 
   if (std::min(la, lb) <= naive_threshold) {
     vec<M> r(out, M());
-    for (size_t i = 0; i < la; ++i)
-      for (size_t j = 0; j < lb && i + j < out; ++j) r[i + j] += a[i] * b[j];
+    // Broadcast the short operand and stream through the long operand/output.
+    // This also makes a scalar-times-polynomial product one contiguous pass.
+    const vec<M>& small = la <= lb ? a : b;
+    const vec<M>& large = la <= lb ? b : a;
+    const size_t short_n = std::min(la, lb), long_n = std::max(la, lb);
+    auto* dst = reinterpret_cast<uint32_t*>(r.data());
+    const auto* src = reinterpret_cast<const uint32_t*>(large.data());
+    for (size_t i = 0; i < short_n && i < out; ++i) {
+      const size_t cnt = std::min(long_n, out - i);
+      const auto c = simd::set1(small[i].raw_val());
+      size_t j = 0;
+      for (; j + simd::lane <= cnt; j += simd::lane) {
+        const auto v = simd::mulmod<M::mod, M::ninv>(simd::load(src + j), c);
+        simd::store(dst + i + j, simd::add(simd::load(dst + i + j), v, M::mod));
+      }
+      for (; j < cnt; ++j) r[i + j] += small[i] * large[j];
+    }
     return r;
   }
 
   const uint32_t N = next_pow2(full);
   auto plan = NttPlan<M>::get(N);
-  vec<M> fa(N, M()), fb(N, M());
+  vec<M> fa(N, M());
   copy_prefix(a, la, fa);
-  copy_prefix(b, lb, fb);
   uint32_t* pa = reinterpret_cast<uint32_t*>(fa.data());
-  uint32_t* pb = reinterpret_cast<uint32_t*>(fb.data());
-  plan->forward(pa);
-  plan->forward(pb);
-  pointwise_mul<M>(pa, pb, N);
+  plan->forward_lazy(pa);
+  if (a.data() == b.data() && la == lb) {
+    pointwise_mul<M>(pa, pa, N);
+  } else {
+    vec<M> fb(N, M());
+    copy_prefix(b, lb, fb);
+    auto* pb = reinterpret_cast<uint32_t*>(fb.data());
+    plan->forward_lazy(pb);
+    pointwise_mul<M>(pa, pb, N);
+  }
   plan->inverse(pa);
   fa.resize(out);
   return fa;
@@ -178,33 +198,54 @@ vec<M> conv(const vec<M>& a, const vec<M>& b, size_t n = SIZE_MAX) {
 /// derivative / integral
 /// ---------------------------------------------------------------------------
 
+namespace detail {
+
+/// Derivative of only the first cnt input coefficients.
 template <class M>
-vec<M> derivative(const vec<M>& a) {
-  if (a.size() <= 1) return {};
-  vec<M> r(a.size() - 1);
-  for (size_t i = 1; i < a.size(); ++i) r[i - 1] = a[i] * M::from_int(i);
+vec<M> derivative_prefix(const vec<M>& a, size_t cnt) {
+  cnt = std::min(a.size(), cnt);
+  if (cnt <= 1) return {};
+  vec<M> r(cnt - 1);
+  alignas(64) uint32_t factors[simd::lane];
+  for (int k = 0; k < simd::lane; ++k) factors[k] = M::from_int(uint32_t(k + 1)).raw_val();
+  auto factor = simd::load(factors);
+  const auto stride = simd::set1(M::from_int(simd::lane).raw_val());
+  const auto* src = reinterpret_cast<const uint32_t*>(a.data());
+  auto* dst = reinterpret_cast<uint32_t*>(r.data());
+  size_t i = 1;
+  for (; i + simd::lane <= cnt; i += simd::lane) {
+    simd::store(dst + i - 1, simd::mulmod<M::mod, M::ninv>(simd::load(src + i), factor));
+    factor = simd::add(factor, stride, M::mod);
+  }
+  for (; i < cnt; ++i) r[i - 1] = a[i] * M::from_int(i);
   return r;
 }
 
-/// Montgomery forms of 1/1, 1/2, ..., 1/n (linear recurrence, no divisions in
-/// the field beyond one inverse). Requires n < mod.
-///
-/// Measured against a prefix-product "batch inversion" (one inverse + 3n
-/// multiplications) this is ~5x faster: `mod` is a compile-time constant, so
-/// `mod / i`, `mod % i` and the `from_int` reductions all strength-reduce to
-/// multiply/shift, leaving ~6 cheap ALU ops per element against three full
-/// 64-bit Montgomery products.
+}  // namespace detail
+
+template <class M>
+vec<M> derivative(const vec<M>& a) {
+  return detail::derivative_prefix(a, a.size());
+}
+
+/// Montgomery forms of 1/1, 1/2, ..., 1/n using a linear recurrence.
+/// Requires n < mod. Quotient and remainder share a 32-bit integer division.
+/// Multiplication by the ordinary quotient preserves the raw inverse's
+/// Montgomery factor, needing just one constant-modulus reduction per element.
 template <class M>
 vec<M> inv_series(size_t n) {
   if (n >= M::mod) throw domain_error("poly::inv_series: length must be < mod");
   vec<M> r(n + 1, M());
   if (n == 0) return r;
   r[1] = M::from_int(1);
-  for (size_t i = 2; i <= n; ++i) {
+  const uint32_t count = static_cast<uint32_t>(n);
+  for (uint32_t i = 2; i <= count; ++i) {
     // 1/i = -(mod/i) * (1/(mod%i)) mod mod
-    uint64_t q = M::mod / i, rem = M::mod % i;
-    M inner = r[static_cast<size_t>(rem)];
-    r[i] = -(M::from_int(q) * inner);
+    const uint32_t q = M::mod / i, rem = M::mod % i;
+    const uint32_t product = static_cast<uint32_t>(
+        (uint64_t(q) * r[rem].raw_val()) % M::mod);
+    // With prime mod and 1 < i < mod, q and the inverse are both nonzero.
+    r[i] = M::raw(M::mod - product);
   }
   return r;
 }
@@ -214,13 +255,76 @@ vec<M> integral(const vec<M>& a) {
   if (a.empty()) return {};
   vec<M> inv = inv_series<M>(a.size());
   vec<M> r(a.size() + 1);
-  for (size_t i = 0; i < a.size(); ++i) r[i + 1] = a[i] * inv[i + 1];
+  const auto* src = reinterpret_cast<const uint32_t*>(a.data());
+  const auto* divisors = reinterpret_cast<const uint32_t*>(inv.data());
+  auto* dst = reinterpret_cast<uint32_t*>(r.data());
+  size_t i = 0;
+  for (; i + simd::lane <= a.size(); i += simd::lane) {
+    simd::store(dst + i + 1, simd::mulmod<M::mod, M::ninv>(
+                               simd::load(src + i), simd::load(divisors + i + 1)));
+  }
+  for (; i < a.size(); ++i) r[i + 1] = a[i] * inv[i + 1];
   return r;
 }
 
 /// ---------------------------------------------------------------------------
 /// inverse   (requires a(0) != 0)
 /// ---------------------------------------------------------------------------
+
+namespace detail {
+
+// Extend an inverse prefix c to wanted <= 2*c.size(), using only two
+// scratch buffers and preserving the c spectrum through the correction.
+template <class M>
+void extend_inverse(const vec<M>& a, vec<M>& c, size_t wanted,
+                  vec<M>& scratch, vec<M>& spectrum) {
+  const size_t k = c.size(), hlen = wanted - k;
+  // A handful of coefficients after a power-of-two boundary costs less than
+  // another full transform. The new coefficients are filled in order.
+  if (hlen <= 8) {
+    const M inv0 = c[0];
+    c.resize(wanted);
+    for (size_t i = k; i < wanted; ++i) {
+      M sum;
+      for (size_t j = 1; j <= i && j < a.size(); ++j) sum += a[j]*c[i-j];
+      c[i] = -sum*inv0;
+    }
+    return;
+  }
+  const uint32_t N = next_pow2(2*k);
+  auto plan = NttPlan<M>::get(N);
+  scratch.assign(N, M());
+  spectrum.assign(N, M());
+  std::copy_n(a.begin(), std::min(a.size(), wanted), scratch.begin());
+  std::copy(c.begin(), c.end(), spectrum.begin());
+  auto* pt = reinterpret_cast<uint32_t*>(scratch.data());
+  auto* pc = reinterpret_cast<uint32_t*>(spectrum.data());
+  plan->forward_lazy(pt);
+  plan->forward_lazy(pc);
+  pointwise_mul<M>(pt, pc, N);
+  plan->inverse(pt);
+  for (size_t i = 0; i < hlen; ++i) scratch[i] = -scratch[k+i];
+  std::fill(scratch.data() + hlen, scratch.data() + scratch.size(), M());
+  plan->forward_lazy(pt);
+  pointwise_mul<M>(pt, pc, N);
+  plan->inverse(pt);
+  c.resize(wanted);
+  std::copy_n(scratch.data(), hlen, c.data() + k);
+}
+
+template <class M>
+vec<M> inverse_seed(const vec<M>& a, size_t n) {
+  vec<M> c(n, M());
+  c[0] = a[0].inv();
+  for (size_t i = 1; i < n; ++i) {
+    M sum;
+    for (size_t j = 1; j <= i && j < a.size(); ++j) sum += a[j]*c[i-j];
+    c[i] = -sum*c[0];
+  }
+  return c;
+}
+
+}  // namespace detail
 
 /// b = a^-1 mod x^n.
 ///
@@ -240,38 +344,11 @@ vec<M> inv(const vec<M>& a, size_t n) {
   }
   static_assert(sizeof(M) == sizeof(uint32_t), "Mont must be a single 32-bit limb");
 
-  vec<M> b{a[0].inv()};  // correct mod x^1
-  for (size_t m = 1; m < n; m <<= 1) {
-    const size_t m2 = std::min(2 * m, n);
-    const uint32_t N = next_pow2(2 * m);
-    auto plan = NttPlan<M>::get(N);
-
-    vec<M> t(N, M());
-    const size_t acnt = std::min(a.size(), 2 * m);
-    copy_prefix(a, acnt, t);
-    uint32_t* pt = reinterpret_cast<uint32_t*>(t.data());
-    // u = b padded to N
-    vec<M> u(N, M());
-    std::copy(b.begin(), b.end(), u.begin());
-    uint32_t* pu = reinterpret_cast<uint32_t*>(u.data());
-    plan->forward(pu);
-    plan->forward(pt);
-    pointwise_mul<M>(pt, pu, N);
-    plan->inverse(pt);
-    // h = high half of a*b, i.e. coefficients [m, m2)
-    const size_t hlen = m2 - m;
-    vec<M> h(hlen, M());
-    for (size_t i = 0; i < hlen; ++i) h[i] = -t[m + i];
-    // c = b * h mod x^hlen  (transform of b is still in pu / recompute at N)
-    vec<M> hv(N, M());
-    std::copy(h.begin(), h.end(), hv.begin());
-    uint32_t* ph = reinterpret_cast<uint32_t*>(hv.data());
-    plan->forward(ph);
-    pointwise_mul<M>(ph, pu, N);
-    plan->inverse(ph);
-    b.resize(m2);
-    for (size_t i = 0; i < hlen; ++i) b[m + i] = hv[i];
-  }
+  const size_t seed = std::min(n, size_t(32));
+  vec<M> b = detail::inverse_seed(a, seed);
+  vec<M> work, spectrum;
+  for (size_t m = seed; m < n; m <<= 1)
+    detail::extend_inverse(a, b, std::min(2 * m, n), work, spectrum);
   b.resize(n);
   return b;
 }
@@ -282,8 +359,9 @@ vec<M> log(const vec<M>& a, size_t n) {
   if (n == 0) return {};
   if (a.empty() || a[0] != M::from_int(1))
     throw domain_error("poly::log: constant term must be 1");
-  vec<M> d = derivative(a);
-  vec<M> ia = inv(a, n);
+  if (n == 1) return vec<M>(1, M());
+  vec<M> d = detail::derivative_prefix(a, n);
+  vec<M> ia = inv(a, n - 1);
   vec<M> p = conv_limbs(d, ia, n - 1);  // (a'/a) mod x^(n-1)
   vec<M> r = integral(p);
   r.resize(n, M());
@@ -292,26 +370,88 @@ vec<M> log(const vec<M>& a, size_t n) {
 
 /// exp(a) mod x^n   (requires a(0) == 0)
 ///
-/// b_{2m} = b_m * (1 + a - log b_m) mod x^{2m}: each step costs one truncated
-/// log plus two convolutions, all of size O(m), giving O(n log n) overall.
+/// Solve b' = a' b using the high differential residual at each doubling.
+/// Dividing it by b and integrating gives (a-log b)[m,m2); multiplying only
+/// this new half by b updates the result at transform size 2m. Keep the inverse
+/// prefix between steps instead of restarting an inverse/logarithm each time.
 template <class M>
 vec<M> exp(const vec<M>& a, size_t n) {
   if (n == 0) return {};
   if (!a.empty() && !a[0].is_zero())
     throw domain_error("poly::exp: constant term must be 0");
-  vec<M> b{M::from_int(1)};
-  for (size_t m = 1; m < n; m <<= 1) {
-    const size_t m2 = std::min(2 * m, n);
-    vec<M> lb = log(b, m2);
-    vec<M> t(m2, M());
-    t[0] = M::from_int(1);
-    for (size_t i = 0; i < m2; ++i) t[i] -= lb[i];
-    for (size_t i = 0; i < std::min(a.size(), m2); ++i) t[i] += a[i];
-    b = conv_limbs(b, t, m2);
+  if (n-1 >= M::mod)
+    throw domain_error("poly::inv_series: length must be < mod");
+  vec<M> aprime = detail::derivative_prefix(a, n);
+  trim(aprime);
+  if (aprime.empty()) {
+    vec<M> b(n, M());
+    b[0] = M::from_int(1);
+    return b;
+  }
+  // Short input series admit an O(n*degree(a)) recurrence; in particular exp
+  // of a linear polynomial is a single contiguous pass.
+  const size_t seed = aprime.size() <= naive_threshold ? n : std::min<size_t>(n, 32);
+  vec<M> denominators = inv_series<M>(n-1);
+  vec<M> b(seed, M());
+  b[0] = M::from_int(1);
+  for (size_t i = 1; i < seed; ++i) {
+    M sum;
+    for (size_t j = 1; j <= i && j <= aprime.size(); ++j)
+      sum += aprime[j-1]*b[i-j];
+    b[i] = sum*denominators[i];
+  }
+  if (n == seed) return b;
+  vec<M> c = detail::inverse_seed(b, seed/2);
+  vec<M> spectrum, inverse_spectrum, work;
+  for (size_t m = seed; m < n; m *= 2) {
+    const size_t m2 = std::min(2*m, n), hlen = m2-m;
+    if (hlen <= 8) {
+      b.resize(m2);
+      for (size_t i = m; i < m2; ++i) {
+        M sum;
+        for (size_t j = 1; j <= i && j <= aprime.size(); ++j)
+          sum += aprime[j-1]*b[i-j];
+        b[i] = sum*denominators[i];
+      }
+      continue;
+    }
+    if (c.size() < hlen)
+      detail::extend_inverse(b, c, hlen, work, inverse_spectrum);
+    const uint32_t N = next_pow2(2*m);
+    auto plan = NttPlan<M>::get(N);
+    spectrum.assign(N, M());
+    inverse_spectrum.assign(N, M());
+    work.assign(N, M());
+    std::copy(b.begin(), b.end(), spectrum.begin());
+    std::copy(c.begin(), c.end(), inverse_spectrum.begin());
+    std::copy_n(aprime.begin(), std::min(aprime.size(), m2-1), work.begin());
+    auto* pb = reinterpret_cast<uint32_t*>(spectrum.data());
+    auto* pc = reinterpret_cast<uint32_t*>(inverse_spectrum.data());
+    auto* pt = reinterpret_cast<uint32_t*>(work.data());
+    plan->forward_lazy(pb);
+    plan->forward_lazy(pt);
+    pointwise_mul<M>(pt, pb, N);
+    plan->inverse(pt);
+    // a' b - b' is zero below degree m-1.  The wanted high range is
+    // untouched by cyclic wraparound: deg(a'b) <= 3m-3.
+    for (size_t i = 0; i < hlen; ++i) work[i] = work[m-1+i];
+    std::fill(work.data() + hlen, work.data() + work.size(), M());
+    plan->forward_lazy(pt);
+    plan->forward_lazy(pc);
+    pointwise_mul<M>(pt, pc, N);
+    plan->inverse(pt);
+    // Integrate the shifted high differential residual.
+    pointwise_mul<M>(pt, reinterpret_cast<const uint32_t*>(denominators.data()) + m, hlen);
+    std::fill(work.data() + hlen, work.data() + work.size(), M());
+    plan->forward_lazy(pt);
+    pointwise_mul<M>(pt, pb, N);
+    plan->inverse(pt);
     b.resize(m2);
+    std::copy_n(work.data(), hlen, b.data() + m);
   }
   return b;
 }
+
 
 /// Square root mod x^n.  Throws `domain_error` if a(0) is a non-residue or the
 /// x-adic valuation of a is odd (then no square root exists in GF(Mod)[[x]]).
@@ -320,30 +460,72 @@ vec<M> sqrt(const vec<M>& a, size_t n) {
   if (n == 0) return {};
   size_t v = 0;
   while (v < a.size() && a[v].is_zero()) ++v;
-  if (v == a.size()) return vec<M>(n, M());  // zero polynomial
+  if (v == a.size()) return vec<M>(n, M());
   if (v & 1) throw domain_error("poly::sqrt: odd valuation, no square root");
   M root0;
-  if (!a[v].sqrt(root0)) throw domain_error("poly::sqrt: non-residue constant term");
-  const size_t half = v / 2;
+  if (!a[v].sqrt(root0))
+    throw domain_error("poly::sqrt: non-residue constant term");
+  const size_t half = v/2;
   if (half >= n) return vec<M>(n, M());
-  // normalize: a = x^v * u, u(0) != 0; work on u up to n - half terms
-  const size_t inner_n = n - half;
-  vec<M> u(std::min(a.size() - v, inner_n));
-  copy_range(a, v, u.size(), u);
-  vec<M> b{root0};  // b = sqrt(u) mod x^1
-  for (size_t m = 1; m < inner_n; m <<= 1) {
-    const size_t m2 = std::min(2 * m, inner_n);
-    vec<M> ib = inv(b, m2);
-    vec<M> t = conv_limbs(u, ib, m2);
-    t.resize(m2, M());
-    for (size_t i = 0; i < m2; ++i) t[i] += (i < b.size() ? b[i] : M());
-    M half_inv = M::from_int(M::inv2);
-    b = mul_scalar(t, half_inv);
-    b.resize(m2);
+  const size_t inner_n = n-half;
+  const size_t ucnt = std::min(a.size()-v, inner_n);
+  if (std::all_of(a.data()+v+1, a.data()+v+ucnt,
+                  [](const M& x) { return x.is_zero(); })) {
+    vec<M> r(n, M());
+    r[half] = root0;
+    return r;
   }
-  // result = x^(v/2) * b
+  const size_t seed = std::min<size_t>(inner_n, 32);
+  const M half_inv = M::from_int(M::inv2);
+  const M twice_root_inv = root0.inv()*half_inv;
+  vec<M> b(seed, M());
+  b[0] = root0;
+  for (size_t i = 1; i < seed; ++i) {
+    M residual = i < a.size()-v ? a[v+i] : M();
+    for (size_t j = 1; j < i; ++j) residual -= b[j]*b[i-j];
+    b[i] = residual*twice_root_inv;
+  }
+  if (inner_n > seed) {
+    vec<M> c = detail::inverse_seed(b, seed/2);
+    vec<M> work, inverse_spectrum;
+    for (size_t m = seed; m < inner_n; m *= 2) {
+      const size_t m2 = std::min(2*m, inner_n), hlen = m2-m;
+      if (hlen <= 8) {
+        b.resize(m2);
+        for (size_t i = m; i < m2; ++i) {
+          M residual = i < a.size()-v ? a[v+i] : M();
+          for (size_t j = 1; j < i; ++j) residual -= b[j]*b[i-j];
+          b[i] = residual*twice_root_inv;
+        }
+        continue;
+      }
+      if (c.size() < hlen)
+        detail::extend_inverse(b, c, hlen, work, inverse_spectrum);
+      const uint32_t N = next_pow2(2*m);
+      auto plan = NttPlan<M>::get(N);
+      work.assign(N, M());
+      inverse_spectrum.assign(N, M());
+      std::copy(b.begin(), b.end(), work.begin());
+      std::copy(c.begin(), c.end(), inverse_spectrum.begin());
+      auto* pt = reinterpret_cast<uint32_t*>(work.data());
+      auto* pc = reinterpret_cast<uint32_t*>(inverse_spectrum.data());
+      plan->forward_lazy(pt);
+      pointwise_mul<M>(pt, pt, N);
+      plan->inverse(pt);
+      for (size_t i = 0; i < hlen; ++i)
+        work[i] = ((m+i < a.size()-v) ? a[v+m+i] : M()) - work[m+i];
+      std::fill(work.data() + hlen, work.data() + work.size(), M());
+      plan->forward_lazy(pt);
+      plan->forward_lazy(pc);
+      pointwise_mul<M>(pt, pc, N);
+      plan->inverse(pt);
+      b.resize(m2);
+      for (size_t i = 0; i < hlen; ++i) b[m+i] = work[i]*half_inv;
+    }
+  }
+  if (half == 0) return b;
   vec<M> r(n, M());
-  for (size_t i = 0; i < b.size() && i + half < n; ++i) r[i + half] = b[i];
+  std::copy(b.begin(), b.end(), r.data() + half);
   return r;
 }
 
@@ -359,6 +541,11 @@ vec<M> pow(const vec<M>& a, uint64_t k, size_t n) {
   if (k == 0) {
     vec<M> r(n, M());
     r[0] = M::from_int(1);
+    return r;
+  }
+  if (k == 1) {
+    vec<M> r(n, M());
+    std::copy_n(a.begin(), std::min(a.size(), n), r.begin());
     return r;
   }
   size_t v = 0;
@@ -377,6 +564,7 @@ vec<M> pow(const vec<M>& a, uint64_t k, size_t n) {
       if (e & 1) { r = conv_limbs(r, base, inner_n); r.resize(inner_n); }
       if (e > 1) { base = conv_limbs(base, base, inner_n); base.resize(inner_n); }
     }
+    if (sh == 0) return r;
     vec<M> out(n, M());
     for (size_t i = 0; i < r.size() && i + sh < n; ++i) out[i + sh] = r[i];
     return out;
@@ -385,9 +573,10 @@ vec<M> pow(const vec<M>& a, uint64_t k, size_t n) {
   const M c = u[0];
   const vec<M> nrm = mul_scalar(u, c.inv());  // nrm(0) == 1
   vec<M> l = log(nrm, inner_n);
-  for (auto& x : l) x *= M::from_int(k);      // k mod Mod is the correct exponent
+  l = mul_scalar(l, M::from_int(k));         // k mod Mod is the correct exponent
   vec<M> r = exp(l, inner_n);
   r = mul_scalar(r, c.pow(k));
+  if (sh == 0) return r;
   vec<M> out(n, M());
   for (size_t i = 0; i < r.size() && i + sh < n; ++i) out[i + sh] = r[i];
   return out;

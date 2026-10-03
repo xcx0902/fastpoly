@@ -15,7 +15,8 @@ include/fastpoly/simd.hpp     AVX2 / AVX-512 / NEON / 标量 的向量原语
 include/fastpoly/ntt.hpp      NTT plan（预计算 twiddle、按 n 缓存共享）
 include/fastpoly/poly.hpp     多项式模板与全部算术
 include/fastpoly/fastpoly.hpp 总入口
-tests/  bench/  scripts/run-tests.sh
+fastpoly.hpp                自动生成的单文件发行版
+tests/  bench/  scripts/run-tests.sh  scripts/amalgamate.py
 ```
 
 ## 快速开始
@@ -72,7 +73,7 @@ Newton 迭代求 `-p^{-1} mod 2^32` 得到。
 | --- | --- | --- |
 | AVX2 | 8×u32 | `_mm256_mul_epu32` 取偶/奇双通道 64 位积，`_mm256_srli_epi64` 取 Montgomery 商，再 `or + slli` 拼回 8 通道 |
 | AVX-512F/VL | 16×u32 | 同上，加宽到 512 位 |
-| NEON | 4×u32 | `vmull_u32` 半宽扩展乘 + `vshrn_n_u64`；Montgomery 数位只用低 32 位，故用 `vmul_u32`（比扩展乘 + 截断省一条指令） |
+| NEON | 4×u32 | 用四通道 `vmulq_u32` 独立计算 Montgomery 数位，两条 widening multiply-add 链合并积与约简，`vuzp2q_u32` 提取高半；减少窄化重排和依赖 |
 | 标量 | 1 | 参照实现，也是小规模的兜底路径 |
 
 三处与"少做一次归约"有关的细节：
@@ -93,8 +94,8 @@ Newton 迭代求 `-p^{-1} mod 2^32` 得到。
 * `4·mod² < mod·2^32` 成立，于是**两个 `< 2·mod` 的值做 Montgomery 乘，结果自动落在
   `[0, 2·mod)`，末尾的条件减可以整条删掉**——蝴蝶的 4 次乘法每次都省 2 条指令。
 
-`forward` 的最后一个 stage 与 `inverse` 的 `1/n` 缩放负责把数据还原成 `[0, mod)` 的标准
-代表，所以公共 API 的语义（含测试里逐位相等的要求）完全不变。
+`forward` 的最后一个 stage 与 `inverse` 的最后一级蝶形负责把数据还原成 `[0, mod)` 的标准
+代表。内部卷积用 `forward_lazy` 保留 `[0, 2·mod)`，直接交给点值乘法和逆变换，省去中途规范化。
 
 "lazy lazy reduction"（再放宽一级）在本库不划算：若要把不变式放到 `[0, 4·mod)`，乘法需要
 `16·mod² < mod·2^32`，即 `mod < 2^28`；`998244353 ≈ 2^29.9`、`469762049 ≈ 2^28.8` 都不满足，
@@ -112,9 +113,16 @@ radix-4 把两级 radix-2 合并进一个蝴蝶：乘法次数与 radix-2 相同
 无关，全阶段共用同一个 4 次单位根常量（逆向用它的逆，即取负）。
 
 twiddle 按阶段预计算成**连续数组** `(w^k, w^2k, w^3k)` 及其逆，所以 SIMD 内核是纯向量加载；
+较大阶段的六组 twiddle 同时用独立 SIMD 乘法链生成，以 `w^lane` 为步长连续写入，隐藏乘法依赖；
+每次更新仍归约到 `[0, mod)`。小阶段、剩余元素和标量后端沿用标量生成。
 `log2(n)` 为奇数时最后补一级 len=2 的 radix-2（该蝴蝶是自转置的，正逆共用同一份代码，且用
 `swap_pairs + pick_odd` 向量化成"成对互换 + 选择"三件套，不再是标量循环）。
-plan 按 `n` 缓存并共享，尺寸上限由 `v2(mod-1)` 决定，越界直接抛 `ntt_size_error`。
+plan 按 `log2(n)` 缓存并共享：每个尺寸用独立的 `call_once` 构建，不同尺寸可并发预计算；
+线程缓存使热查找不经过互斥锁。尺寸上限由 `v2(mod-1)` 决定，越界直接抛 `ntt_size_error`。
+
+小阶段按最多 **4096 个连续元素** 分块，在一个缓存块内完成所有剩余层，再处理下一块。
+末层 `len=4` 的三个 twiddle 都是 1，直接删除相应乘法。逆变换把 `1/n` 预乘进最后一级的
+三个 twiddle，只额外缩放该蝶形的第一个输入；归一化乘法从 `n` 次降到 `n/4` 次，并省去单独遍历。
 
 **小 `m` 阶段的 chunked 内核（访存连续性的关键）。** 通用蝴蝶要求子块宽度 `m = len/4` 至少
 等于一个向量的通道数，否则整级都会掉进标量兜底。而 DIF 的**最后几级恰好是 `m = 4, 2, 1`**：
@@ -130,22 +138,28 @@ plan 按 `n` 缓存并共享，尺寸上限由 `v2(mod-1)` 决定，越界直接
 | --- | --- | --- | --- |
 | NEON | `ld4/st4` 一条指令 | 4 次 `vcombine`（64 位半重组） | — |
 | AVX2 | 4×4 转置网络（8 条 unpack + 4 条 permute2x128） | 4 permute2x128 + 4 unpack64 | 4 条 permute2x128 |
-| AVX-512 | 上面 AVX2 版本各做两个 256 位半宽再 `inserti64x4` 拼起来 | 同左 | 同左 |
+| AVX-512 | 上面 AVX2 版本各做两个 256 位半宽再 `inserti64x4` 拼起来 | 同左 | 同左；M=8 用连续加载与 256 位半块交换 |
 
 AVX-512 复用 AVX2 的 256 位网络（在 Rosetta 下可测），只是把两个半宽结果拼成 512 位。
 `n < 4·lane` 时退回逐 block 标量，保证小尺寸正确。
 
 **Newton 迭代 + middle product。** `inv` 在 `m → m2` 步只用到 `a·b` 的**高半部分**，而高半
 在变换长度 `2m` 下不受循环卷积混叠影响（混叠只污染下标 `< m` 的低半）——于是变换长度可以
-留在 `2m` 而不是 `4m`，每次迭代的变换规模减半，整体约 2 倍加速。`log`/`exp`/`sqrt` 都建立在
-这一 `inv` 上，`exp`/`sqrt` 的每一步分别是 `b(1 + a - log b)` 与 `(b + a/b)/2`。
+留在 `2m` 而不是 `4m`。求逆先用 32 项递推启动，后续复用两个变换缓冲区，把高半误差搬回
+原缓冲区，不再分配中间的 `h` 和 `hv`。
+
+`exp` 和 `sqrt` 保存已有逆元前缀，随精度增长继续扩展。`exp` 从 `b'=a'b` 的高半残差出发，
+除以 `b`、积分，再乘以缓存的 `b` 频谱，只补新增系数；`sqrt` 用 `(a-b²)/(2b)` 的高半修正。
+两者的主变换长度均为 `2m`，消除了每轮从头求逆及完整 `log`/卷积。最终只剩至多 8 项时，
+直接递推追加，避免刚越过二次幂就再跑一整组变换。短输入的 `exp` 用系数递推；常数开方直接返回。
+
 `pow` 对小指数走截断快速幂，对大指数走 `exp(k·log a)`：对 `j < n ≤ 2^23 ≪ mod`，二项式系数
 `binom(k, j)` 只依赖 `k mod mod`，所以 `k` 可以任意大。小规模卷积自动退回 O(nm) 朴素实现
-（阈值 40）。
+（短边阈值 40），广播短边系数并连续 SIMD 扫描长边和结果。同一对象的平方只做一次正向变换。
 
 **点值乘法与数乘向量化。** `conv`/`inv` 里的逐点 Montgomery 乘法是一整趟 O(n) 遍历，
 标量实现下 `conv` 有约 15% 的时间花在这一趟上（`1.96 → 1.70 ns/(elem*log n)`）；换成
-`simd::mulmod` 后只剩一趟向量遍历，`mul_scalar` 同理向量化。
+`simd::mulmod` 后只剩一趟向量遍历，`mul_scalar`、微分、积分和指数修正同理向量化。
 
 ## 验证
 
@@ -164,44 +178,69 @@ ASan+UBSan，以及在 Apple Silicon 上通过 **Rosetta 交叉运行 x86-64 的
   `sqrt(a)² == a`；`pow` 与朴素连乘/`a^k·a == a^{k+1}` 一致；`divmod` 还原 `a = q·b + r`
   且 `deg r < deg b`。另有一个 O(n²) 级数 `exp` 递推作为独立参照。
 
-当前状态：6 个 NTT 模数 × {NEON, AVX2, 标量} 全绿，ASan/UBSan 无告警。
+另有惰性表示范围、未对齐缓冲区、并发冷 plan 构建、窄卷积、平方别名、非整幂截断及带赋值开方
+的边界回归。单文件发行版由维护头文件生成，用同一套测试验证：
+
+```bash
+python3 scripts/amalgamate.py
+python3 scripts/amalgamate.py --check
+FASTPOLY_TEST_SINGLE_HEADER=1 ./scripts/run-tests.sh
+```
 
 ## 性能
 
-Apple M2 Pro（arm64 / NEON，4 通道），`mod = 998244353`，单线程，每行取多次运行的
-最好成绩（同一台机器上跑与跑之间的波动约 ±15%）：
+2026-10-03，本机 Apple Silicon（arm64 / NEON，4 通道），`mod = 998244353`，单线程。
+Clang 21，`-std=c++20 -O2`；同一基准源码、同一确定性输入，每项预热 2 次、测量 7 次，
+下表取**中位数**，plan 已预热。优化前为 `6e25c22`，优化后为当前实现。
 
+| 操作（n = 2^20） | 优化前 ms | 优化后 ms | 加速 |
+| --- | ---: | ---: | ---: |
+| NTT 正向 | 3.911 | 2.892 | 1.35× |
+| NTT 逆向 | 4.181 | 3.231 | 1.29× |
+| 卷积 | 27.479 | 20.319 | 1.35× |
+| 求逆 | 39.475 | 31.009 | 1.27× |
+| 对数 | 71.513 | 53.716 | 1.33× |
+| 指数 | 185.451 | 66.031 | 2.81× |
+| 开方 | 157.631 | 47.999 | 3.28× |
+| 幂 | 256.031 | 130.155 | 1.97× |
+
+`1024..1048576` 的每个二次幂均有覆盖，含奇数 `log2(n)`：88 组配对结果的输出校验和全部一致，
+各组中位耗时均有改善。完整结果含每次测量组的最小值、中位数及输出校验和，保存在
+[bench/performance-20261003.csv](bench/performance-20261003.csv)。不同运行之间仍可能有约 ±15% 波动。
+
+专用路径（同一测量方式）：
+
+| 场景 | 优化前 ms | 优化后 ms | 加速 |
+| --- | ---: | ---: | ---: |
+| 平方，n = 2^20 | 28.075 | 14.181 | 1.98× |
+| 窄卷积，40 × 2^20 | 27.527 | 11.969 | 2.30× |
+| exp(x)，n = 2^20 | 182.684 | 11.931 | 15.31× |
+| 指数，n = 2^18 + 1 | 71.289 | 14.703 | 4.85× |
+| 开方，n = 2^18 + 1 | 59.420 | 10.233 | 5.81× |
+
+首次 `get(2^20)` 单独计时，在 9 组交替启动的新进程中取中位数：
+**2.295 → 1.218 ms（1.89×）**。
+此项包含 twiddle 分配与预计算，后续正向变换仅用于校验生成结果，计时范围只有 `get()`。
+复现冷启动须每次启动新进程，禁止预热和在同一尺寸上重复测量：
+
+```bash
+/tmp/fastpoly_bench --size 1048576 --op plan --reps 1 --warmup 0 --csv
 ```
-  NTT n=1024      forward    0.002 ms   inverse    0.002 ms   0.17 ns/(elem*log n)
-  NTT n=16384     forward    0.038 ms   inverse    0.042 ms   0.17 ns/(elem*log n)
-  NTT n=262144    forward    0.785 ms   inverse    0.849 ms   0.17 ns/(elem*log n)
 
-  conv  n=16384        0.26 ms       conv  n=262144     5.20 ms
+复现优化后的测量：
 
-  series n=262144   inv   8.2  log  14.5  exp  38.3  sqrt  26.7  pow  53.1 ms
+```bash
+./build/fastpoly_bench 1048576 --op all --reps 7 --warmup 2 --csv
+./build/fastpoly_bench --size 1048576 --op square --reps 7 --warmup 2 --csv
+./build/fastpoly_bench --size 1048576 --op skinny --reps 7 --warmup 2 --csv
+./build/fastpoly_bench --size 1048576 --op exp-linear --reps 7 --warmup 2 --csv
+./build/fastpoly_bench --size 262145 --op series --reps 7 --warmup 2 --csv
 ```
 
-同一台机器、同一套基准下，优化前后（`ns/(elem*log n)` 从 `0.29` 降到 `0.17`）：
-
-```
-                     优化前      优化后      加速
-  NTT    n=262144    1.35 ms    0.79 ms     1.71x
-  conv   n=262144    9.18 ms    5.20 ms     1.76x
-  inv    n=262144   14.08 ms    8.21 ms     1.72x
-  log    n=262144   24.41 ms   14.55 ms     1.68x
-  exp    n=262144   64.72 ms   38.30 ms     1.69x
-  sqrt   n=262144   45.33 ms   26.70 ms     1.70x
-  pow    n=262144   89.79 ms   53.12 ms     1.69x
-```
-
-加速主要来自三处：单指令更少的蝴蝶原语（`add`/`sub`/`mulmod` 都退化成一次无符号 `min`）、
-`mod < 2^30` 下的 lazy reduction（每次 Montgomery 乘省掉末尾条件减）、以及把最后一个
-radix-4 级（`len = 4`，实测占正向变换 36%）和奇 `log2(n)` 下的 `len = 8` 级（占 31%）从标量
-兜底改为 chunked 向量内核。
-
-x86-64 的 AVX2 路径已验证**正确性**（经 Rosetta，含 AVX-512 的编译检查），未测真实性能；
-在原生 x86-64 上 8 通道的 AVX2 预期比 NEON 快约 1.5–2 倍，有 AVX-512 的机器再翻倍。
-
+测量表使用 `-O2`；要逐项对照上述数值，可直接构建：
+`clang++ -std=c++20 -O2 -Iinclude bench/bench.cpp -o /tmp/fastpoly_bench`。
+基准的输入复原、输出校验和计算及输出销毁不计入耗时。运算基准排除冷 plan 构建和线程启动；冷 plan 数据单独记录。
+AVX2 的正确性通过 Rosetta 验证；AVX-512 通过编译检查，本机未做原生 x86 性能测量。
 
 ## 边界与已知限制
 
@@ -209,8 +248,8 @@ x86-64 的 AVX2 路径已验证**正确性**（经 Rosetta，含 AVX-512 的编�
   已在 `1224736769` 这类接近 `2^30` 的模数上验证。
 * lazy reduction（中间量放宽到 `[0, 2·mod)`）要求 `mod < 2^30`；`1224736769` 不满足，
   自动退回全程 `[0, mod)` 的路径，结果一致、只是每次乘法多一条条件减。
-* `inv_series` 用 `mod/i` 的线性递推实现（`mod` 是编译期常量，除法的强度削减比"批量求逆"
-  的 3n 次 Montgomery 乘更快，实测约 5 倍）。
+* `inv_series` 用线性递推实现。`mod/i` 与 `mod%i` 共用一次 **32 位变除数整数除法**；普通
+  整数商直接乘已有 Montgomery 原始值，再按常量模数归约，省去转入 Montgomery 表示及一次 REDC。
 * NTT 长度上限 `2^{v2(mod-1)}`：`998244353` 为 `2^23`，`469762049` 为 `2^26`。
 * `integral`/`log` 需要 `n < mod`（`1/i` 的线性递推前提），在 NTT 长度范围内自动满足。
 * `log` 要求常数项为 1、`exp` 要求常数项为 0，否则抛 `domain_error`；`sqrt` 会在常数项为

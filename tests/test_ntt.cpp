@@ -1,7 +1,12 @@
 // fastpoly - tests for the NTT plan (correctness across sizes, moduli, arches).
 #include <algorithm>
+#include <array>
+#include <barrier>
+#include <cstddef>
+#include <limits>
 #include <random>
 #include <set>
+#include <thread>
 #include <vector>
 
 #include "fastpoly/modint.hpp"
@@ -198,6 +203,109 @@ FP_TEST(ntt_constant_and_impulse) {
   CHECK_EQ(nonzero, 1);
   // the k = 0 slot is always output index 0 and equals n * a(0)
   CHECK_EQ(a[0], M::from_int(5ull * n).raw_val());
+}
+
+namespace {
+
+template <class Field>
+void lazy_forward_contract() {
+  std::mt19937_64 gen(0x785a);
+  constexpr uint32_t sentinel = 0xdecafbad;
+  for (int log_n = 1; log_n <= 17; ++log_n) {
+    const uint32_t n = 1u << log_n;
+    const auto plan = NttPlan<Field>::get(n);
+    std::vector<uint32_t> input(n + 2, sentinel);
+    for (uint32_t i = 1; i <= n; ++i)
+      input[i] = i % 7 == 0 ? Field::mod - 1 : i % 7 == 1 ? 0 : static_cast<uint32_t>(gen() % Field::mod);
+    auto canonical = input, lazy = input;
+    // Offset one limb also checks the public unaligned-buffer contract.
+    plan->forward(canonical.data() + 1);
+    plan->forward_lazy(lazy.data() + 1);
+    CHECK_EQ(canonical.front(), sentinel);
+    CHECK_EQ(canonical.back(), sentinel);
+    CHECK_EQ(lazy.front(), sentinel);
+    CHECK_EQ(lazy.back(), sentinel);
+    for (uint32_t i = 1; i <= n; ++i) {
+      CHECK_MSG(canonical[i] < Field::mod, "canonical bounds mod=%u n=%u i=%u", Field::mod, n, i);
+      CHECK_MSG(lazy[i] < simd::rmod<Field::mod>, "lazy bounds mod=%u n=%u i=%u", Field::mod, n, i);
+      CHECK_MSG(lazy[i] % Field::mod == canonical[i], "lazy residue mod=%u n=%u i=%u", Field::mod, n, i);
+    }
+    plan->inverse(lazy.data() + 1);
+    CHECK_MSG(lazy == input, "lazy roundtrip mod=%u n=%u", Field::mod, n);
+    if constexpr (simd::lazy_ok<Field::mod>) {
+      // Exercise the entire allowed inverse input interval, independently of
+      // which representatives the forward implementation happened to choose.
+      for (uint32_t i = 1; i <= n; ++i) canonical[i] += Field::mod;
+      plan->inverse(canonical.data() + 1);
+      CHECK_MSG(canonical == input, "lifted inverse mod=%u n=%u", Field::mod, n);
+    }
+  }
+}
+
+}  // namespace
+
+FP_TEST(ntt_lazy_contract_all_moduli) {
+  lazy_forward_contract<mod998244353>();
+  lazy_forward_contract<mod1004535809>();
+  lazy_forward_contract<mod469762049>();
+  lazy_forward_contract<mod167772161>();
+  lazy_forward_contract<mod754974721>();
+  lazy_forward_contract<mod1224736769>();
+}
+
+FP_TEST(ntt_concurrent_cold_plans) {
+  // 3^5 is another primitive root because gcd(5, 998244352) == 1. This
+  // distinct template instantiation gives the test a genuinely cold cache.
+  using Field = Mont<998244353, 243>;
+  using Plan = NttPlan<Field>;
+  constexpr size_t threads = 8;
+  constexpr std::array<uint32_t, threads> sizes{256, 512, 2048, 256, 512, 2048, 256, 512};
+  std::array<std::shared_ptr<const Plan>, threads> plans;
+  std::array<bool, threads> correct{};
+  std::barrier start(static_cast<std::ptrdiff_t>(threads));
+  std::array<std::thread, threads> workers;
+  for (size_t t = 0; t < threads; ++t) {
+    workers[t] = std::thread([&, t] {
+      start.arrive_and_wait();
+      try {
+        const uint32_t n = sizes[t];
+        plans[t] = Plan::get(n);
+        std::vector<uint32_t> a(n);
+        for (uint32_t i = 0; i < n; ++i)
+          a[i] = Field::from_int(uint64_t(i + 1) * (t + 1)).raw_val();
+        const auto original = a;
+        plans[t]->forward_lazy(a.data());
+        plans[t]->inverse(a.data());
+        correct[t] = a == original && plans[t] == Plan::get(n);
+      } catch (...) {
+        correct[t] = false;
+      }
+    });
+  }
+  for (auto& worker : workers) worker.join();
+  for (size_t t = 0; t < threads; ++t) {
+    CHECK_MSG(correct[t], "concurrent transform thread=%zu n=%u", t, sizes[t]);
+    CHECK(plans[t] == Plan::get(sizes[t]));
+    for (size_t u = 0; u < t; ++u)
+      CHECK((plans[t] == plans[u]) == (sizes[t] == sizes[u]));
+  }
+}
+
+FP_TEST(ntt_next_pow2_boundaries) {
+  CHECK_EQ(next_pow2(0), 1u);
+  for (uint32_t log_n = 1; log_n <= 31; ++log_n) {
+    const uint32_t n = 1u << log_n;
+    CHECK_EQ(next_pow2(n), n);
+    if (n > 2) CHECK_EQ(next_pow2(n - 1), n);
+    CHECK_EQ(next_pow2(uint64_t(n / 2) + 1), n);
+  }
+  for (const uint64_t invalid : {(uint64_t(1) << 31) + 1, uint64_t(1) << 32,
+                                 std::numeric_limits<uint64_t>::max()}) {
+    bool threw = false;
+    try { (void)next_pow2(invalid); }
+    catch (const ntt_size_error&) { threw = true; }
+    CHECK_MSG(threw, "next_pow2 must reject %llu", static_cast<unsigned long long>(invalid));
+  }
 }
 
 FP_TEST_MAIN()

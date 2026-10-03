@@ -223,6 +223,13 @@ inline void load4m(const uint32_t* p, native_t& x0, native_t& x1, native_t& x2, 
     x3 = load(p + 3 * M);
   } else if constexpr (M == 1) {
     load4(p, x0, x1, x2, x3);
+  } else if constexpr (M == 8) {
+    const native_t a = load(p), b = load(p + 16);
+    const native_t c = load(p + 32), d = load(p + 48);
+    x0 = _mm512_shuffle_i64x2(a, c, 0x44);
+    x1 = _mm512_shuffle_i64x2(a, c, 0xEE);
+    x2 = _mm512_shuffle_i64x2(b, d, 0x44);
+    x3 = _mm512_shuffle_i64x2(b, d, 0xEE);
   } else {
     static_assert(M == 2 || M == 4, "unsupported small chunk width");
     __m256i l0, l1, l2, l3, h0, h1, h2, h3;
@@ -248,6 +255,11 @@ inline void store4m(uint32_t* p, native_t y0, native_t y1, native_t y2, native_t
     store(p + 3 * M, y3);
   } else if constexpr (M == 1) {
     store4(p, y0, y1, y2, y3);
+  } else if constexpr (M == 8) {
+    store(p, _mm512_shuffle_i64x2(y0, y1, 0x44));
+    store(p + 16, _mm512_shuffle_i64x2(y2, y3, 0x44));
+    store(p + 32, _mm512_shuffle_i64x2(y0, y1, 0xEE));
+    store(p + 48, _mm512_shuffle_i64x2(y2, y3, 0xEE));
   } else {
     static_assert(M == 2 || M == 4, "unsupported small chunk width");
     if constexpr (M == 2) {
@@ -264,7 +276,7 @@ inline void store4m(uint32_t* p, native_t y0, native_t y1, native_t y2, native_t
   }
 }
 /// Widest chunk width with a hand-written kernel (must be < lane).
-inline constexpr int small_m_max = 4;
+inline constexpr int small_m_max = 8;
 
 /// Swap the two 32-bit halves of every 64-bit group (pairs (2i, 2i+1)).
 inline native_t swap_pairs(native_t v) { return _mm512_shuffle_epi32(v, (_MM_PERM_ENUM)0xB1); }
@@ -405,32 +417,32 @@ inline native_t sub(native_t a, native_t b, uint32_t R) {
 /// full reduction: result in [0, MOD).
 template <uint32_t MOD, uint32_t NINV>
 inline native_t mulmod(native_t a, native_t b) {
-  const uint32x2_t vn = vdup_n_u32(NINV);
-  const uint32x2_t vm = vdup_n_u32(MOD);
-  uint64x2_t t0 = vmull_u32(vget_low_u32(a), vget_low_u32(b));
-  uint64x2_t t1 = vmull_u32(vget_high_u32(a), vget_high_u32(b));
-  // Only the low 32 bits of the product feed the Montgomery digit, so a plain
-  // 32-bit multiply is enough (one op less than widen + truncate).
-  uint32x2_t m0 = vmul_u32(vmovn_u64(t0), vn);
-  uint32x2_t m1 = vmul_u32(vmovn_u64(t1), vn);
-  uint32x2_t u0 = vshrn_n_u64(vaddq_u64(t0, vmull_u32(m0, vm)), 32);
-  uint32x2_t u1 = vshrn_n_u64(vaddq_u64(t1, vmull_u32(m1, vm)), 32);
-  native_t r = vcombine_u32(u0, u1);
+  const uint32x4_t vn = vdupq_n_u32(NINV);
+  const uint32x4_t vm = vdupq_n_u32(MOD);
+  const uint64x2_t t0 = vmull_u32(vget_low_u32(a), vget_low_u32(b));
+  const uint64x2_t t1 = vmull_u32(vget_high_u32(a), vget_high_u32(b));
+  // Compute all four Montgomery digits independently of the widening
+  // products. This removes narrowing shuffles and exposes the two multiply
+  // chains to the instruction scheduler. Widening multiply-add folds t+m*Mod
+  // into one instruction; unzip selects the high halves in their lane order.
+  const native_t m = vmulq_u32(vmulq_u32(a, b), vn);
+  const uint64x2_t u0 = vmlal_u32(t0, vget_low_u32(m), vget_low_u32(vm));
+  const uint64x2_t u1 = vmlal_u32(t1, vget_high_u32(m), vget_high_u32(vm));
+  native_t r = vuzpq_u32(vreinterpretq_u32_u64(u0), vreinterpretq_u32_u64(u1)).val[1];
   return vminq_u32(r, vsubq_u32(r, vdupq_n_u32(MOD)));
 }
 /// Lazy Montgomery multiplication (MOD < 2^30, inputs < 2*MOD):
 /// result in [0, 2*MOD), computed without the final conditional subtraction.
 template <uint32_t MOD, uint32_t NINV>
 inline native_t mulmod_lazy(native_t a, native_t b) {
-  const uint32x2_t vn = vdup_n_u32(NINV);
-  const uint32x2_t vm = vdup_n_u32(MOD);
-  uint64x2_t t0 = vmull_u32(vget_low_u32(a), vget_low_u32(b));
-  uint64x2_t t1 = vmull_u32(vget_high_u32(a), vget_high_u32(b));
-  uint32x2_t m0 = vmul_u32(vmovn_u64(t0), vn);
-  uint32x2_t m1 = vmul_u32(vmovn_u64(t1), vn);
-  uint32x2_t u0 = vshrn_n_u64(vaddq_u64(t0, vmull_u32(m0, vm)), 32);
-  uint32x2_t u1 = vshrn_n_u64(vaddq_u64(t1, vmull_u32(m1, vm)), 32);
-  return vcombine_u32(u0, u1);
+  const uint32x4_t vn = vdupq_n_u32(NINV);
+  const uint32x4_t vm = vdupq_n_u32(MOD);
+  const uint64x2_t t0 = vmull_u32(vget_low_u32(a), vget_low_u32(b));
+  const uint64x2_t t1 = vmull_u32(vget_high_u32(a), vget_high_u32(b));
+  const native_t m = vmulq_u32(vmulq_u32(a, b), vn);
+  const uint64x2_t u0 = vmlal_u32(t0, vget_low_u32(m), vget_low_u32(vm));
+  const uint64x2_t u1 = vmlal_u32(t1, vget_high_u32(m), vget_high_u32(vm));
+  return vuzpq_u32(vreinterpretq_u32_u64(u0), vreinterpretq_u32_u64(u1)).val[1];
 }
 /// 4-way de-interleave of 4*lane = 16 consecutive values (`ld4` one-shot).
 inline void load4(const uint32_t* p, native_t& x0, native_t& x1, native_t& x2, native_t& x3) {
@@ -530,7 +542,7 @@ inline native_t mulmod_lazy(native_t a, native_t b) {
   uint32_t m = (uint32_t)t * NINV;
   return (uint32_t)((t + (uint64_t)m * MOD) >> 32);
 }
-/// Trivial scalar variants; the len==4 kernel is only used for lane > 1.
+/// Scalar variants also serve the terminal radix-4 unity-twiddle kernel.
 inline void load4(const uint32_t* p, native_t& x0, native_t& x1, native_t& x2, native_t& x3) {
   x0 = p[0];
   x1 = p[1];
