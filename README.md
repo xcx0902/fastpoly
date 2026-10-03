@@ -118,16 +118,17 @@ ASan+UBSan，以及在 Apple Silicon 上通过 **Rosetta 交叉运行 x86-64 的
 
 ## 性能
 
-Apple M2 Pro（arm64 / NEON，4 通道），`mod = 998244353`，单线程：
+Apple M2 Pro（arm64 / NEON，4 通道），`mod = 998244353`，单线程，每行取多次运行的
+最好成绩（同一台机器上跑与跑之间的波动约 ±15%）：
 
 ```
   NTT n=1024      forward    0.004 ms   inverse    0.004 ms   0.38 ns/(elem*log n)
   NTT n=16384     forward    0.073 ms   inverse    0.077 ms   0.32 ns/(elem*log n)
   NTT n=262144    forward    1.425 ms   inverse    1.506 ms   0.30 ns/(elem*log n)
 
-  conv  n=16384        0.502 ms      conv  n=262144     11.818 ms
+  conv  n=16384        0.50 ms       conv  n=262144     10.0 ms
 
-  series n=262144   inv  14.9  log  25.7  exp  67.6  sqrt  47.9  pow  93.7 ms
+  series n=262144   inv  14.6  log  24.9  exp  65.7  sqrt  46.1  pow  97.8 ms
 ```
 
 x86-64 的 AVX2 路径只验证了**正确性**（经 Rosetta），未测真实性能；在原生 x86-64 上
