@@ -379,4 +379,38 @@ FP_TEST(poly_large_sizes) {
   }
 }
 
+/// Cross-validation at production sizes: the series operations are checked
+/// through `conv`, which is itself validated against the O(n^2) definition.
+FP_TEST(poly_large_series_crosscheck) {
+  for (const size_t n : {size_t(65536), size_t(100000)}) {
+    const vec a = rnd_unit0(n);  // a(0) = 1, n coefficients
+    // a * inv(a) == 1 mod x^n
+    vec prod = poly::conv(a, poly::inv(a, n), n);
+    prod.resize(n, M());
+    for (size_t i = 0; i < n; i += 9973)
+      CHECK_MSG(prod[i] == (i == 0 ? M::from_int(1) : M()), "large inv n=%zu i=%zu", n, i);
+    // exp(log(a)) == a
+    CHECK(same(poly::exp(poly::log(a, n), n), a));
+    // exp(b)' == exp(b) * b'
+    vec b = rnd_zero0(n);
+    vec eb = poly::exp(b, n);
+    CHECK(same(padded(poly::conv(eb, poly::derivative(b), n - 1), n - 1),
+               padded(poly::derivative(eb), n - 1)));
+    // sqrt(a^2) squared back
+    vec sq = poly::conv(a, a, n);
+    sq.resize(n, M());
+    vec s = poly::sqrt(sq, n);
+    vec back = poly::conv(s, s, n);
+    back.resize(n, M());
+    CHECK(same(back, sq));
+    // pow (exp/log route) is consistent with one extra multiplication
+    const uint64_t k = 1000003;
+    vec pk = poly::pow(a, k, n), pk1 = poly::pow(a, k - 1, n);
+    vec chk = poly::conv(pk1, a, n);
+    chk.resize(n, M());
+    CHECK(same(chk, pk));
+  }
+  std::printf("  large series cross-check ok\n");
+}
+
 FP_TEST_MAIN()
