@@ -7,9 +7,10 @@
 #define FASTPOLY_MODINT_HPP
 
 #include <cstdint>
-#include <ostream>
 #include <istream>
+#include <ostream>
 #include <string>
+#include <type_traits>
 
 namespace fpx {
 
@@ -42,12 +43,15 @@ class Mont {
 
   constexpr Mont() : v_(0) {}
 
+  /// Implicit conversion from a plain integer (enters Montgomery form).
+  /// A template so that it never competes with the copy constructor.
+  template <class I, class = std::enable_if_t<std::is_integral_v<I> && !std::is_same_v<I, bool>>>
+  constexpr Mont(I x) : v_(from_int_impl(static_cast<uint64_t>(x))) {}
+
   /// Enter Montgomery form from a plain integer.
-  static constexpr Mont from_int(uint64_t x) {
-    return Mont(static_cast<uint32_t>(x % Mod) * static_cast<uint64_t>(one) % Mod);
-  }
+  static constexpr Mont from_int(uint64_t x) { return wrap(from_int_impl(x)); }
   /// Wrap an already-Montgomery residue (no conversion).
-  static constexpr Mont raw(uint32_t x) { return Mont(x); }
+  static constexpr Mont raw(uint32_t x) { return wrap(x); }
 
   /// Montgomery reduction of a full 64-bit product.
   static constexpr uint32_t reduce(uint64_t t) {
@@ -63,14 +67,14 @@ class Mont {
 
   friend constexpr Mont operator+(Mont a, Mont b) {
     uint32_t s = a.v_ + b.v_;
-    return Mont(s >= Mod ? s - Mod : s);
+    return wrap(s >= Mod ? s - Mod : s);
   }
   friend constexpr Mont operator-(Mont a, Mont b) {
-    return Mont(a.v_ >= b.v_ ? a.v_ - b.v_ : a.v_ - b.v_ + Mod);
+    return wrap(a.v_ >= b.v_ ? a.v_ - b.v_ : a.v_ - b.v_ + Mod);
   }
-  friend constexpr Mont operator-(Mont a) { return Mont(a.v_ == 0 ? 0 : Mod - a.v_); }
+  friend constexpr Mont operator-(Mont a) { return wrap(a.v_ == 0 ? 0 : Mod - a.v_); }
   friend constexpr Mont operator*(Mont a, Mont b) {
-    return Mont(reduce(static_cast<uint64_t>(a.v_) * b.v_));
+    return wrap(reduce(static_cast<uint64_t>(a.v_) * b.v_));
   }
   friend constexpr Mont operator/(Mont a, Mont b) { return a * b.inv(); }
 
@@ -128,7 +132,14 @@ class Mont {
   std::string str() const { return std::to_string(val()); }
 
  private:
-  constexpr explicit Mont(uint32_t x) : v_(x) {}
+  static constexpr uint32_t from_int_impl(uint64_t x) {
+    return static_cast<uint32_t>(x % Mod) * static_cast<uint64_t>(one) % Mod;
+  }
+  static constexpr Mont wrap(uint32_t v) {
+    Mont m;
+    m.v_ = v;
+    return m;
+  }
   uint32_t v_;
 };
 

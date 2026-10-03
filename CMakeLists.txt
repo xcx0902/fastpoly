@@ -1,0 +1,54 @@
+cmake_minimum_required(VERSION 3.16)
+project(fastpoly LANGUAGES CXX)
+
+option(FASTPOLY_BUILD_TESTS "Build the test suite" ON)
+option(FASTPOLY_BUILD_BENCH "Build the benchmarks" ON)
+option(FASTPOLY_NATIVE "Compile with -march=native (enables AVX2/AVX-512 on x86-64)" OFF)
+
+# Header-only interface library.
+add_library(fastpoly INTERFACE)
+target_include_directories(fastpoly INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_compile_features(fastpoly INTERFACE cxx_std_20)
+if(MSVC)
+  target_compile_options(fastpoly INTERFACE /W4)
+else()
+  target_compile_options(fastpoly INTERFACE -Wall -Wextra -Wconversion -Wshadow)
+endif()
+
+# SIMD selection:
+#   x86-64  : AVX2 is not enabled by default with -O2, so ask for it explicitly.
+#             AVX-512F+VL is used automatically when the compiler enables it.
+#   arm64   : NEON is part of the AArch64 baseline, nothing to do.
+function(fastpoly_set_simd target)
+  if(FASTPOLY_NATIVE)
+    include(CheckCXXCompilerFlag)
+    check_cxx_compiler_flag("-march=native" FPX_HAS_NATIVE)
+    if(FPX_HAS_NATIVE)
+      target_compile_options(${target} PRIVATE -march=native)
+    endif()
+  elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64|amd64)$")
+    include(CheckCXXCompilerFlag)
+    check_cxx_compiler_flag("-mavx2" FPX_HAS_AVX2)
+    if(FPX_HAS_AVX2)
+      target_compile_options(${target} PRIVATE -mavx2)
+    endif()
+  endif()
+endfunction()
+
+if(FASTPOLY_BUILD_TESTS)
+  enable_testing()
+  foreach(t test_modint test_ntt test_poly)
+    add_executable(${t} tests/${t}.cpp)
+    target_link_libraries(${t} PRIVATE fastpoly)
+    fastpoly_set_simd(${t})
+    target_compile_options(${t} PRIVATE -O2)
+    add_test(NAME ${t} COMMAND ${t})
+  endforeach()
+endif()
+
+if(FASTPOLY_BUILD_BENCH)
+  add_executable(fastpoly_bench bench/bench.cpp)
+  target_link_libraries(fastpoly_bench PRIVATE fastpoly)
+  fastpoly_set_simd(fastpoly_bench)
+  target_compile_options(fastpoly_bench PRIVATE -O2)
+endif()

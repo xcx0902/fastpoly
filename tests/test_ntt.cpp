@@ -1,0 +1,170 @@
+// fastpoly - tests for the NTT plan (correctness across sizes, moduli, arches).
+#include <algorithm>
+#include <random>
+#include <set>
+#include <vector>
+
+#include "fastpoly/modint.hpp"
+#include "fastpoly/ntt.hpp"
+#include "fp_test.hpp"
+
+using namespace fpx;
+
+namespace {
+
+std::mt19937_64 rng(0xabcdef);
+
+template <class M>
+std::vector<uint32_t> naive_conv(const std::vector<uint32_t>& a,
+                                 const std::vector<uint32_t>& b) {
+  std::vector<uint32_t> r(a.size() + b.size() - 1, 0);
+  for (size_t i = 0; i < a.size(); ++i)
+    for (size_t j = 0; j < b.size(); ++j)
+      r[i + j] = detail::s_add(r[i + j], M::reduce(uint64_t(a[i]) * b[j]), M::mod);
+  return r;
+}
+
+/// forward followed by inverse must be the identity, for every supported size
+/// (odd log2(n) exercises the trailing radix-2 stage).
+template <class M>
+void roundtrip(int max_log) {
+  for (int k = 1; k <= max_log; ++k) {
+    const uint32_t n = 1u << k;
+    auto plan = NttPlan<M>::get(n);
+    std::vector<uint32_t> a(n), b(n);
+    for (uint32_t i = 0; i < n; ++i) a[i] = static_cast<uint32_t>(rng() % M::mod);
+    b = a;
+    plan->forward(b.data());
+    plan->inverse(b.data());
+    for (uint32_t i = 0; i < n; ++i) CHECK_MSG(a[i] == b[i], "roundtrip n=%u i=%u", n, i);
+  }
+}
+
+/// A monomial x^j must transform to a permutation of {w^(j*k)}. This pins down
+/// the transform as the true DFT, not merely a self-consistent pair.
+template <class M>
+void monomial_is_dft(int max_log) {
+  for (int k = 1; k <= max_log; ++k) {
+    const uint32_t n = 1u << k;
+    auto plan = NttPlan<M>::get(n);
+    const M w = M::from_int(M::primitive_root).pow((M::mod - 1) / n);
+    for (uint32_t j = 0; j < n; j += std::max<uint32_t>(1, n / 4)) {
+      std::vector<uint32_t> a(n, 0);
+      a[j] = M::from_int(1).raw_val();
+      plan->forward(a.data());
+      std::multiset<uint32_t> got(a.begin(), a.end()), want;
+      const M wj = w.pow(j);
+      M cur = M::from_int(1);
+      for (uint32_t t = 0; t < n; ++t) {
+        want.insert(cur.raw_val());
+        cur = cur * wj;
+      }
+      CHECK_MSG(got == want, "monomial DFT n=%u j=%u", n, j);
+    }
+  }
+}
+
+template <class M>
+void convolution_vs_naive(int trials, size_t max_len) {
+  for (int t = 0; t < trials; ++t) {
+    const size_t la = 2 + rng() % max_len, lb = 2 + rng() % max_len;
+    std::vector<uint32_t> a(la), b(lb);
+    for (auto& x : a) x = static_cast<uint32_t>(rng() % M::mod);
+    for (auto& x : b) x = static_cast<uint32_t>(rng() % M::mod);
+    if (t % 9 == 0) { a[0] = M::mod - 1; b[0] = 0; }
+    const uint32_t N = next_pow2(la + lb - 1);
+    auto plan = NttPlan<M>::get(N);
+    std::vector<uint32_t> fa(N, 0), fb(N, 0);
+    std::copy(a.begin(), a.end(), fa.begin());
+    std::copy(b.begin(), b.end(), fb.begin());
+    plan->forward(fa.data());
+    plan->forward(fb.data());
+    for (uint32_t i = 0; i < N; ++i) fa[i] = M::reduce(uint64_t(fa[i]) * fb[i]);
+    plan->inverse(fa.data());
+    const auto want = naive_conv<M>(a, b);
+    CHECK_EQ(want.size(), la + lb - 1);
+    for (size_t i = 0; i < want.size(); ++i)
+      CHECK_MSG(fa[i] == want[i], "conv t=%d i=%zu (la=%zu lb=%zu N=%u)", t, i, la, lb, N);
+  }
+}
+
+template <class M>
+void check_modulus(const char* name, int max_log = 12) {
+  roundtrip<M>(max_log);
+  monomial_is_dft<M>(std::min(max_log, 10));
+  convolution_vs_naive<M>(60, 60);
+  CHECK_EQ(ntt_max_size<M>(), 1u << ntt_max_log<M>());
+  std::printf("  modulus %s ok\n", name);
+}
+
+}  // namespace
+
+FP_TEST(ntt_mod998244353) { check_modulus<mod998244353>("998244353", 13); }
+FP_TEST(ntt_mod1004535809) { check_modulus<mod1004535809>("1004535809"); }
+FP_TEST(ntt_mod469762049) { check_modulus<mod469762049>("469762049"); }
+FP_TEST(ntt_mod167772161) { check_modulus<mod167772161>("167772161"); }
+FP_TEST(ntt_mod754974721) { check_modulus<mod754974721>("754974721"); }
+FP_TEST(ntt_mod1224736769) { check_modulus<mod1224736769>("1224736769"); }
+
+FP_TEST(ntt_small_sizes) {
+  // smallest sizes, where every butterfly falls back to the scalar tail
+  using M = mod998244353;
+  for (uint32_t n : {2u, 4u, 8u, 16u, 32u}) {
+    auto plan = NttPlan<M>::get(n);
+    std::vector<uint32_t> a(n), b(n);
+    for (uint32_t i = 0; i < n; ++i) a[i] = M::from_int(i + 1).raw_val();
+    b = a;
+    plan->forward(b.data());
+    plan->inverse(b.data());
+    for (uint32_t i = 0; i < n; ++i) CHECK_EQ(a[i], b[i]);
+  }
+}
+
+FP_TEST(ntt_plan_rejects_bad_sizes) {
+  using M = mod998244353;
+  bool threw = false;
+  try {
+    NttPlan<M>::get(3);
+  } catch (const ntt_size_error&) {
+    threw = true;
+  }
+  CHECK(threw);
+  threw = false;
+  try {
+    NttPlan<M>::get(1);
+  } catch (const ntt_size_error&) {
+    threw = true;
+  }
+  CHECK(threw);
+  threw = false;
+  try {  // 998244353 - 1 is divisible by 2^23 only
+    NttPlan<M>::get(1u << 24);
+  } catch (const ntt_size_error&) {
+    threw = true;
+  }
+  CHECK(threw);
+  CHECK_EQ(ntt_max_log<mod998244353>(), 23);
+  CHECK_EQ(next_pow2(1), 1u);
+  CHECK_EQ(next_pow2(1025), 2048u);
+}
+
+FP_TEST(ntt_plan_is_cached) {
+  using M = mod998244353;
+  CHECK(NttPlan<M>::get(1024) == NttPlan<M>::get(1024));
+}
+
+FP_TEST(ntt_constant_and_impulse) {
+  using M = mod998244353;
+  const uint32_t n = 64;
+  auto plan = NttPlan<M>::get(n);
+  // constant polynomial -> only the k = 0 slot set (up to the output order)
+  std::vector<uint32_t> a(n, M::from_int(5).raw_val());
+  plan->forward(a.data());
+  int nonzero = 0;
+  for (uint32_t i = 0; i < n; ++i) nonzero += (a[i] != 0);
+  CHECK_EQ(nonzero, 1);
+  // the k = 0 slot is always output index 0 and equals n * a(0)
+  CHECK_EQ(a[0], M::from_int(5ull * n).raw_val());
+}
+
+FP_TEST_MAIN()
