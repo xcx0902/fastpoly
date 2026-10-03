@@ -27,7 +27,7 @@ using ctx = fpx::mod998244353;     // 其他模数见 modint.hpp 末尾的类型
 using Poly = fpx::Poly<ctx>;
 
 int main() {
-  Poly a = ctx::from_ints({1, 2, 3});      // 1 + 2x + 3x^2
+  Poly a = Poly::from_ints({1, 2, 3});     // 1 + 2x + 3x^2
   Poly b{1, 1};                            // 1 + x
 
   Poly c = a * b;                          // 卷积
