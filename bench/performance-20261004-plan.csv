@@ -1,0 +1,4 @@
+backend,operation,size,before_ms,after_ms,speedup,checksum,pairs
+neon,plan,1024,0.005000,0.003167,1.579,,13
+neon,plan,65536,0.068458,0.064875,1.055,,13
+neon,plan,1048576,1.698750,1.178959,1.441,,13

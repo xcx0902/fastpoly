@@ -35,8 +35,9 @@
 #include <memory>
 #include <mutex>
 #include <stdexcept>
-#include <vector>
+#include <utility>
 
+#include "fastpoly/memory.hpp"
 #include "fastpoly/modint.hpp"
 #include "fastpoly/simd.hpp"
 
@@ -91,31 +92,35 @@ class NttPlan {
   static constexpr uint32_t R = simd::rmod<MOD>;
   static constexpr bool LAZY = simd::lazy_ok<MOD>;
 
-  /// Get (possibly cached) plan for size `n`, a power of two <= ntt_max_size<M>().
-  static std::shared_ptr<const NttPlan> get(uint32_t n) {
-    if (n < 2 || (n & (n - 1)) != 0)
-      throw ntt_size_error("NTT size must be a power of two");
-    if (n > ntt_max_size<M>())
-      throw ntt_size_error("NTT size exceeds 2^v2(mod-1) for this modulus");
-    constexpr size_t count = size_t(ntt_max_log<M>()) + 1;
-    struct Entry {
-      std::once_flag ready;
-      std::shared_ptr<const NttPlan> plan;
-    };
-    static std::array<Entry, count> cache;
-    // Warm lookups touch only this thread's slots; different cold sizes build
-    // independently, and call_once publishes exactly one plan for each size.
-    thread_local std::array<std::shared_ptr<const NttPlan>, count> local;
-    const size_t slot = static_cast<size_t>(std::countr_zero(n));
-    if (!local[slot]) {
-      Entry& entry = cache[slot];
-      std::call_once(entry.ready, [&entry, n] {
-        entry.plan = std::shared_ptr<const NttPlan>(new NttPlan(n));
-      });
-      local[slot] = entry.plan;
+  // Preserve the plan's value semantics while keeping its large tables in
+  // aligned storage. Cached plans are const and never take this copy path.
+  NttPlan(const NttPlan& other)
+      : n_(other.n_), logn_(other.logn_), w4_(other.w4_),
+        w4_inv_(other.w4_inv_), inv_n_(other.inv_n_),
+        stage_count_(other.stage_count_), lens_(other.lens_),
+        fwd_(other.fwd_.size()), inv_(other.inv_.size()), off_(other.off_) {
+    if (fwd_.size() != 0) {
+      std::memcpy(fwd_.data(), other.fwd_.data(), fwd_.size() * sizeof(uint32_t));
+      std::memcpy(inv_.data(), other.inv_.data(), inv_.size() * sizeof(uint32_t));
     }
-    return local[slot];
   }
+  NttPlan& operator=(const NttPlan& other) {
+    if (this != &other) {
+      NttPlan copy(other);
+      *this = std::move(copy);
+    }
+    return *this;
+  }
+  NttPlan(NttPlan&&) noexcept = default;
+  NttPlan& operator=(NttPlan&&) noexcept = default;
+
+  /// Shared ownership is retained for compatibility with existing callers.
+  static std::shared_ptr<const NttPlan> get(uint32_t n) { return cached_plan(n); }
+
+  /// Borrow the immutable cached plan without touching its reference count.
+  /// The cache owns the plan for its entire lifetime; transform hot paths should
+  /// use this accessor when they do not need a separate owning handle.
+  static const NttPlan& get_ref(uint32_t n) { return *cached_plan(n); }
 
   uint32_t size() const { return n_; }
   int log_size() const { return logn_; }
@@ -138,12 +143,12 @@ class NttPlan {
       return;
     }
     size_t split = 0;
-    while (split < lens_.size() && lens_[split] > CACHE_BLOCK) ++split;
-    const uint32_t block = split < lens_.size() ? lens_[split] : n_;
+    while (split < stage_count_ && lens_[split] > CACHE_BLOCK) ++split;
+    const uint32_t block = split < stage_count_ ? lens_[split] : n_;
     for (uint32_t base = 0; base < n_; base += block) {
       uint32_t* p = a + base;
       if (logn_ & 1) radix2_fwd<false>(p, block);
-      for (size_t s = lens_.size(); s-- > split;) {
+      for (size_t s = stage_count_; s-- > split;) {
         if (s == 0) radix4_stage_inv<true>(p, lens_[s], s, block);
         else radix4_stage_inv<false>(p, lens_[s], s, block);
       }
@@ -155,6 +160,34 @@ class NttPlan {
   }
 
  private:
+  static const std::shared_ptr<const NttPlan>& cached_plan(uint32_t n) {
+    if (n < 2 || (n & (n - 1)) != 0)
+      throw ntt_size_error("NTT size must be a power of two");
+    if (n > ntt_max_size<M>())
+      throw ntt_size_error("NTT size exceeds 2^v2(mod-1) for this modulus");
+    constexpr size_t count = size_t(ntt_max_log<M>()) + 1;
+    struct Entry {
+      std::once_flag ready;
+      std::shared_ptr<const NttPlan> plan;
+    };
+    static std::array<Entry, count> cache;
+    // Thread-local pointers remove ownership bookkeeping and TLS destructors.
+    // call_once still publishes exactly one immutable plan per size.
+    thread_local std::array<const Entry*, count> local{};
+    const size_t slot = static_cast<size_t>(std::countr_zero(n));
+    if (!local[slot]) {
+      Entry& entry = cache[slot];
+      std::call_once(entry.ready, [&entry, n] {
+        struct Builder final : NttPlan {
+          explicit Builder(uint32_t size) : NttPlan(size) {}
+        };
+        entry.plan = std::make_shared<Builder>(n);
+      });
+      local[slot] = &entry;
+    }
+    return local[slot]->plan;
+  }
+
   // Data plus the active direction's twiddles consume about 2*block words.
   static constexpr uint32_t CACHE_BLOCK = 4096;
 
@@ -163,16 +196,16 @@ class NttPlan {
     // Upper stages span the whole input. Once subtransforms fit in L1, finish
     // every remaining stage while each consecutive block is still resident.
     size_t split = 0;
-    while (split < lens_.size() && lens_[split] > CACHE_BLOCK) {
+    while (split < stage_count_ && lens_[split] > CACHE_BLOCK) {
       radix4_stage<false>(a, lens_[split], split, n_);
       ++split;
     }
-    const uint32_t block = split < lens_.size() ? lens_[split] : n_;
+    const uint32_t block = split < stage_count_ ? lens_[split] : n_;
     const bool radix4_last = (logn_ & 1) == 0;
     for (uint32_t base = 0; base < n_; base += block) {
       uint32_t* p = a + base;
-      for (size_t s = split; s < lens_.size(); ++s) {
-        if (CANON && radix4_last && s + 1 == lens_.size())
+      for (size_t s = split; s < stage_count_; ++s) {
+        if (CANON && radix4_last && s + 1 == stage_count_)
           radix4_stage<true>(p, lens_[s], s, block);
         else
           radix4_stage<false>(p, lens_[s], s, block);
@@ -186,8 +219,7 @@ class NttPlan {
       throw ntt_size_error("NTT size must be a power of two");
     if (n > ntt_max_size<M>())
       throw ntt_size_error("NTT size exceeds 2^v2(mod-1) for this modulus");
-    logn_ = 0;
-    while ((uint32_t(1) << logn_) < n_) ++logn_;
+    logn_ = static_cast<int>(std::countr_zero(n_));
     build();
   }
 
@@ -206,28 +238,26 @@ class NttPlan {
   }
 
   void build() {
-    inv_n_ = M::from_int(n_).inv().raw_val();
+    inv_n_ = M::from_int(M::inv2).pow(static_cast<uint32_t>(logn_)).raw_val();
     const M w_n_m = M::from_int(M::primitive_root).pow((MOD - 1) / n_);
     w4_ = w_n_m.pow(n_ / 4).raw_val();            // primitive 4th root of unity
-    w4_inv_ = w_n_m.pow(n_ / 4).inv().raw_val();  // == -w4_
+    w4_inv_ = n_ >= 4 ? MOD - w4_ : w4_;        // == -w4_ for n >= 4
 
     // Radix-4 stages: len = n, n/4, n/16, ... (while len >= 4)
-    for (uint32_t len = n_; len >= 4; len >>= 2) lens_.push_back(len);
+    for (uint32_t len = n_; len >= 4; len >>= 2) lens_[stage_count_++] = len;
     // Each stage stores w^k, w^2k, w^3k (and inverses) for k < len/4.
     size_t total = 0;
-    for (uint32_t len : lens_) total += 3 * (len >> 2);
-    fwd_.resize(total);
-    inv_.resize(total);
-    off_.resize(lens_.size() + 1, 0);
+    for (size_t s = 0; s < stage_count_; ++s) total += 3 * (lens_[s] >> 2);
+    fwd_.resize_uninitialized(total);
+    inv_.resize_uninitialized(total);
     size_t pos = 0;
-    for (size_t s = 0; s < lens_.size(); ++s) {
+    M w = w_n_m, wi = w_n_m.inv();
+    for (size_t s = 0; s < stage_count_; ++s) {
       off_[s] = pos;
       const uint32_t m = lens_[s] >> 2;
       // w = root of order len = w_n^(n/len) = w_n^(4^s)
-      M w = w_n_m;
-      for (size_t t = 0; t < s; ++t) { w = w * w; w = w * w; }
       const M w2 = w * w, w3 = w2 * w;
-      const M wi = w.inv(), wi2 = wi * wi, wi3 = wi2 * wi;
+      const M wi2 = wi * wi, wi3 = wi2 * wi;
       uint32_t cur = M::from_int(1).raw_val();
       uint32_t cur2 = cur, cur3 = cur;
       // The final DIT stage absorbs normalization into its three twiddles.
@@ -292,8 +322,9 @@ class NttPlan {
         icur3 = M::reduce(uint64_t(icur3) * wi3v);
       }
       pos += 3 * m;
+      w = w2 * w2;
+      wi = wi2 * wi2;
     }
-    off_[lens_.size()] = pos;
   }
 
   /// Route one forward stage: the last stages have chunk width m = len/4 below
@@ -652,9 +683,11 @@ class NttPlan {
   uint32_t n_ = 0;
   int logn_ = 0;
   uint32_t w4_ = 0, w4_inv_ = 0, inv_n_ = 0;
-  std::vector<uint32_t> lens_;         // forward radix-4 block lengths
-  std::vector<uint32_t> fwd_, inv_;    // per-stage twiddle tables
-  std::vector<size_t> off_;            // stage -> offset into fwd_/inv_
+  static constexpr size_t MAX_STAGES = size_t(ntt_max_log<M>()) / 2;
+  size_t stage_count_ = 0;
+  std::array<uint32_t, MAX_STAGES> lens_{};  // bounded by the modulus, no heap
+  detail::AlignedBuffer fwd_, inv_;        // uninitialized, 64-byte aligned
+  std::array<size_t, MAX_STAGES> off_{};    // stage -> twiddle offset
 };
 
 }  // namespace fpx

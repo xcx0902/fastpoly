@@ -1,0 +1,9 @@
+operation,size,mode,timed_reps,system_allocations,cache_hits,retained_bytes,retained_blocks
+conv,1048576,warm,3,0,3,8388672,1
+conv,1048576,cold-scratch,3,3,0,8388672,1
+inv,1048576,warm,3,0,6,8388736,2
+inv,1048576,cold-scratch,3,6,0,8388736,2
+exp,1048576,warm,3,0,9,12583104,3
+exp,1048576,cold-scratch,3,9,0,12583104,3
+sqrt,1048576,warm,3,0,6,8388736,2
+sqrt,1048576,cold-scratch,3,6,0,8388736,2

@@ -8,7 +8,7 @@ import sys
 
 
 ROOT = Path(__file__).resolve().parent.parent
-HEADERS = ("modint", "simd", "ntt", "poly", "fastpoly")
+HEADERS = ("modint", "simd", "memory", "ntt", "poly", "fastpoly")
 LITERAL_MARKER = "@FASTPOLY_LITERAL_"
 
 

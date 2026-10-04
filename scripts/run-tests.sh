@@ -16,7 +16,7 @@ cd "$(dirname "$0")/.."
 CXX="${CXX:-clang++}"
 INC=(-Iinclude)
 STD="-std=c++20 -pthread"
-TESTS="test_modint test_ntt test_poly"
+TESTS="test_modint test_ntt test_poly test_memory"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 status=0
@@ -25,7 +25,7 @@ if [ "${FASTPOLY_TEST_SINGLE_HEADER:-0}" = 1 ]; then
   # Preserve every test's normal includes while redirecting them to the bundle.
   # This catches missing bundle dependencies as well as implementation drift.
   mkdir -p "$TMP/include/fastpoly"
-  for header in modint simd ntt poly fastpoly; do
+  for header in modint simd memory ntt poly fastpoly; do
     printf '#include "%s/fastpoly.hpp"\n' "$PWD" > "$TMP/include/fastpoly/$header.hpp"
   done
   INC=("-I$TMP/include")

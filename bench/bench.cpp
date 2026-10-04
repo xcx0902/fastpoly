@@ -2,6 +2,7 @@
 // Build: cmake --build build --target fastpoly_bench
 // Run:   ./build/fastpoly_bench [max-size] [--size N] [--op OP] [--reps R]
 #include <algorithm>
+#include <bit>
 #include <charconv>
 #include <chrono>
 #include <cmath>
@@ -12,9 +13,13 @@
 #include <stdexcept>
 #include <string>
 #include <string_view>
+#include <utility>
 #include <vector>
 
 #include "fastpoly/fastpoly.hpp"
+#if __has_include("fastpoly/memory.hpp")
+#define FASTPOLY_BENCH_HAS_SCRATCH_POOL 1
+#endif
 
 using M = fpx::mod998244353;
 using vec = fpx::poly::vec<M>;
@@ -31,6 +36,8 @@ struct Options {
   int warmup = 1;
   std::string_view op = "all";
   bool csv = false;
+  bool cold_scratch = false;
+  bool memory = false;
 };
 
 void usage() {
@@ -41,11 +48,15 @@ void usage() {
       "  --min-size N   First size in a powers-of-two sweep (default 1024)\n"
       "  --op OP        all, ntt, ntt-forward, ntt-inverse, conv, series,\n"
       "                 inv, log, exp, sqrt, pow (default all); opt-in:\n"
-      "                 square, skinny (40 x N), exp-linear (exp(x)), plan\n"
+      "                 square, skinny (40 x N), exp-linear (exp(x)),\n"
+      "                 inv-short (1/(1-x)), pow-short ((1+x)^64),\n"
+      "                 pow-linear ((1+x)^1000003), div-small (degree-40 divisor), plan\n"
       "                 plan requires --warmup 0, measures one cold build\n"
       "  --reps R       Timed repetitions (default 5 for NTT, 3 otherwise)\n"
       "  --warmup W     Untimed repetitions (default 1)\n"
       "  --csv          Print machine-readable results, including checksums\n"
+      "  --cold-scratch Release idle scratch before each repetition\n"
+      "  --memory       Report scratch pool statistics on stderr\n"
       "  --help         Show this help\n");
 }
 
@@ -60,7 +71,9 @@ size_t number(std::string_view s) {
 bool power_of_two(size_t n) { return n >= 2 && (n & (n - 1)) == 0; }
 
 bool selected(const Options& opt, std::string_view op) {
-  const bool extra = op == "square" || op == "skinny" || op == "exp-linear" || op == "plan";
+  const bool extra = op == "square" || op == "skinny" || op == "exp-linear" ||
+                     op == "inv-short" || op == "pow-short" || op == "pow-linear" ||
+                     op == "div-small" || op == "plan";
   return (opt.op == "all" && !extra) || opt.op == op ||
          (opt.op == "ntt" && op.starts_with("ntt-")) ||
          (opt.op == "series" && !extra && op != "conv" && !op.starts_with("ntt-"));
@@ -72,6 +85,8 @@ Options parse(int argc, char** argv) {
   for (int i = 1; i < argc; ++i) {
     const std::string_view arg = argv[i];
     if (arg == "--csv") { opt.csv = true; continue; }
+    if (arg == "--cold-scratch") { opt.cold_scratch = true; continue; }
+    if (arg == "--memory") { opt.memory = true; continue; }
     if (arg.starts_with("--")) {
       if (i + 1 == argc) throw std::invalid_argument("missing value for " + std::string(arg));
       const std::string_view value = argv[++i];
@@ -96,7 +111,8 @@ Options parse(int argc, char** argv) {
   }
   const std::string_view ops[] = {"all", "ntt", "ntt-forward", "ntt-inverse", "conv",
                                   "series", "inv", "log", "exp", "sqrt", "pow",
-                                  "square", "skinny", "exp-linear", "plan"};
+                                  "square", "skinny", "exp-linear", "inv-short", "pow-short",
+                                  "pow-linear", "div-small", "plan"};
   if (std::find(std::begin(ops), std::end(ops), opt.op) == std::end(ops))
     throw std::invalid_argument("unknown operation: " + std::string(opt.op));
   if (!power_of_two(opt.min_n)) throw std::invalid_argument("min-size must be a power of two >= 2");
@@ -137,12 +153,21 @@ struct Result { double best_ms, median_ms; uint64_t hash; int reps; };
 template <class Setup, class Run, class Observe>
 Result measure(const Options& opt, int default_reps, Setup&& setup, Run&& run, Observe&& observe) {
   const int reps = opt.reps == 0 ? default_reps : opt.reps;
-  for (int i = 0; i < opt.warmup; ++i) { setup(); run(); (void)observe(); }
+  auto prepare = [&] {
+    setup();
+#ifdef FASTPOLY_BENCH_HAS_SCRATCH_POOL
+    if (opt.cold_scratch) fpx::release_scratch_memory();
+#endif
+  };
+  for (int i = 0; i < opt.warmup; ++i) { prepare(); run(); (void)observe(); }
+#ifdef FASTPOLY_BENCH_HAS_SCRATCH_POOL
+  const auto before = fpx::scratch_memory_stats();
+#endif
   std::vector<double> times;
   times.reserve(static_cast<size_t>(reps));
   uint64_t hash = 0;
   for (int i = 0; i < reps; ++i) {
-    setup();
+    prepare();
     const auto t0 = clk::now();
     run();
     const auto t1 = clk::now();
@@ -154,6 +179,14 @@ Result measure(const Options& opt, int default_reps, Setup&& setup, Run&& run, O
   std::sort(times.begin(), times.end());
   const size_t mid = times.size() / 2;
   const double median = times.size() % 2 != 0 ? times[mid] : (times[mid - 1] + times[mid]) * 0.5;
+#ifdef FASTPOLY_BENCH_HAS_SCRATCH_POOL
+  if (opt.memory) {
+    const auto after = fpx::scratch_memory_stats();
+    std::fprintf(stderr, "scratch: timed_reps=%d system_allocations=%zu cache_hits=%zu retained_bytes=%zu retained_blocks=%zu\n",
+                 reps, after.system_allocations - before.system_allocations,
+                 after.cache_hits - before.cache_hits, after.cached_bytes, after.cached_blocks);
+  }
+#endif
   return {times.front(), median, hash, reps};
 }
 
@@ -198,6 +231,30 @@ void bench_poly(const Options& opt, const char* op, size_t n, F&& f) {
 }
 
 void bench_size(const Options& opt, size_t n) {
+  if (opt.op == "inv-short") {
+    const vec a{M::from_int(1), -M::from_int(1)};
+    bench_poly(opt, "inv-short", n, [&] { return fpx::poly::inv(a, n); });
+    return;
+  }
+  if (opt.op == "pow-linear") {
+    const vec a{1, 1};
+    bench_poly(opt, "pow-linear", n, [&] { return fpx::poly::pow(a, 1000003, n); });
+    return;
+  }
+  if (opt.op == "pow-short") {
+    const vec a{1, 1};
+    bench_poly(opt, "pow-short", n, [&] { return fpx::poly::pow(a, 64, n); });
+    return;
+  }
+  if (opt.op == "div-small") {
+    std::mt19937_64 rng(4 + n);
+    const vec a = rnd(n, rng), b = rnd(41, rng);
+    vec q, r;
+    report(opt, "div-small", n, measure(opt, 3, [&] { vec().swap(q); vec().swap(r); },
+        [&] { auto result = fpx::poly::divmod(a, b); q = std::move(result.first); r = std::move(result.second); },
+        [&] { return checksum(q) ^ std::rotl(checksum(r), 17); }));
+    return;
+  }
   if (opt.op == "plan") {
     std::mt19937_64 rng(1 + n);
     const vec input = rnd(n, rng);

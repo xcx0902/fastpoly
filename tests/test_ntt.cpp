@@ -181,6 +181,12 @@ FP_TEST(ntt_plan_rejects_bad_sizes) {
     threw = true;
   }
   CHECK(threw);
+  for (uint32_t n : {0u, 1u, 3u, 1u << 24}) {
+    threw = false;
+    try { (void)NttPlan<M>::get_ref(n); }
+    catch (const ntt_size_error&) { threw = true; }
+    CHECK(threw);
+  }
   CHECK_EQ(ntt_max_log<mod998244353>(), 23);
   CHECK_EQ(next_pow2(1), 1u);
   CHECK_EQ(next_pow2(1025), 2048u);
@@ -188,7 +194,28 @@ FP_TEST(ntt_plan_rejects_bad_sizes) {
 
 FP_TEST(ntt_plan_is_cached) {
   using M = mod998244353;
-  CHECK(NttPlan<M>::get(1024) == NttPlan<M>::get(1024));
+  const auto owning = NttPlan<M>::get(1024);
+  CHECK(owning == NttPlan<M>::get(1024));
+  CHECK(&NttPlan<M>::get_ref(1024) == owning.get());
+  CHECK_EQ(NttPlan<M>::get_ref(1024).size(), 1024u);
+}
+
+FP_TEST(ntt_plan_value_semantics) {
+  using M = mod998244353;
+  for (uint32_t n : {2u, 64u, 128u}) {
+    const auto& cached = NttPlan<M>::get_ref(n);
+    NttPlan<M> copy(cached);
+    NttPlan<M> assigned(NttPlan<M>::get_ref(8));
+    assigned = copy;
+    std::vector<uint32_t> input(n), actual(n), expected(n);
+    for (auto& x : input) x = M::from_int(rng() % M::mod).raw_val();
+    actual = expected = input;
+    copy.forward(actual.data());
+    cached.forward(expected.data());
+    CHECK(actual == expected);
+    assigned.inverse(actual.data());
+    CHECK(actual == input);
+  }
 }
 
 FP_TEST(ntt_constant_and_impulse) {
@@ -269,14 +296,17 @@ FP_TEST(ntt_concurrent_cold_plans) {
       start.arrive_and_wait();
       try {
         const uint32_t n = sizes[t];
-        plans[t] = Plan::get(n);
+        if (t & 1) plans[t] = Plan::get(n);
+        const auto& borrowed = Plan::get_ref(n);
+        if (!(t & 1)) plans[t] = Plan::get(n);
         std::vector<uint32_t> a(n);
         for (uint32_t i = 0; i < n; ++i)
           a[i] = Field::from_int(uint64_t(i + 1) * (t + 1)).raw_val();
         const auto original = a;
-        plans[t]->forward_lazy(a.data());
-        plans[t]->inverse(a.data());
-        correct[t] = a == original && plans[t] == Plan::get(n);
+        borrowed.forward_lazy(a.data());
+        borrowed.inverse(a.data());
+        correct[t] = a == original && plans[t] == Plan::get(n) &&
+                     &borrowed == plans[t].get();
       } catch (...) {
         correct[t] = false;
       }
@@ -286,6 +316,7 @@ FP_TEST(ntt_concurrent_cold_plans) {
   for (size_t t = 0; t < threads; ++t) {
     CHECK_MSG(correct[t], "concurrent transform thread=%zu n=%u", t, sizes[t]);
     CHECK(plans[t] == Plan::get(sizes[t]));
+    CHECK(plans[t].get() == &Plan::get_ref(sizes[t]));
     for (size_t u = 0; u < t; ++u)
       CHECK((plans[t] == plans[u]) == (sizes[t] == sizes[u]));
   }

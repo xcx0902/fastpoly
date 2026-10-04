@@ -611,6 +611,221 @@ inline native_t butterfly_mul(native_t a, native_t b) {
 }
 }
 }
+#include <array>
+#include <bit>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <new>
+#include <utility>
+#ifndef FASTPOLY_SCRATCH_CACHE_BYTES
+#define FASTPOLY_SCRATCH_CACHE_BYTES (64u * 1024u * 1024u)
+#endif
+namespace fpx {
+struct ScratchMemoryStats {
+  size_t cached_bytes = 0;
+  size_t cached_blocks = 0;
+  size_t system_allocations = 0;
+  size_t cache_hits = 0;
+};
+namespace detail {
+inline constexpr size_t limb_alignment = 64;
+class AlignedBuffer {
+ public:
+  AlignedBuffer() = default;
+  explicit AlignedBuffer(size_t n) { resize_uninitialized(n); }
+  AlignedBuffer(const AlignedBuffer&) = delete;
+  AlignedBuffer& operator=(const AlignedBuffer&) = delete;
+  AlignedBuffer(AlignedBuffer&& other) noexcept
+      : data_(std::exchange(other.data_, nullptr)),
+        size_(std::exchange(other.size_, 0)),
+        capacity_(std::exchange(other.capacity_, 0)) {}
+  AlignedBuffer& operator=(AlignedBuffer&& other) noexcept {
+    if (this != &other) {
+      reset();
+      data_ = std::exchange(other.data_, nullptr);
+      size_ = std::exchange(other.size_, 0);
+      capacity_ = std::exchange(other.capacity_, 0);
+    }
+    return *this;
+  }
+  ~AlignedBuffer() { reset(); }
+  uint32_t* data() noexcept { return data_; }
+  const uint32_t* data() const noexcept { return data_; }
+  size_t size() const noexcept { return size_; }
+  size_t capacity() const noexcept { return capacity_; }
+  uint32_t& operator[](size_t i) noexcept { return data_[i]; }
+  const uint32_t& operator[](size_t i) const noexcept { return data_[i]; }
+  void resize_uninitialized(size_t n) {
+    if (n > capacity_) {
+      if (n > std::numeric_limits<size_t>::max() / sizeof(uint32_t))
+        throw std::bad_array_new_length();
+      auto* p = static_cast<uint32_t*>(::operator new(
+          n * sizeof(uint32_t), std::align_val_t(limb_alignment)));
+      reset();
+      data_ = p;
+      capacity_ = n;
+    }
+    size_ = n;
+  }
+  void reset() noexcept {
+    ::operator delete(data_, std::align_val_t(limb_alignment));
+    data_ = nullptr;
+    size_ = capacity_ = 0;
+  }
+ private:
+  uint32_t* data_ = nullptr;
+  size_t size_ = 0, capacity_ = 0;
+};
+struct alignas(limb_alignment) ScratchBlock {
+  ScratchBlock* next;
+};
+static_assert(sizeof(ScratchBlock) == limb_alignment);
+inline size_t scratch_capacity(size_t n) {
+  constexpr size_t max_words =
+      (std::numeric_limits<size_t>::max() - sizeof(ScratchBlock)) / sizeof(uint32_t);
+  constexpr size_t max_capacity = std::bit_floor(max_words);
+  if (n > max_capacity) throw std::bad_array_new_length();
+  return std::bit_ceil(n < 16 ? size_t(16) : n);
+}
+inline ScratchBlock* new_scratch_block(size_t capacity) {
+  void* p = ::operator new(sizeof(ScratchBlock) + capacity * sizeof(uint32_t),
+                           std::align_val_t(limb_alignment));
+  return ::new (p) ScratchBlock{nullptr};
+}
+inline void delete_scratch_block(ScratchBlock* block) noexcept {
+  ::operator delete(block, std::align_val_t(limb_alignment));
+}
+inline uint32_t* scratch_payload(ScratchBlock* block) noexcept {
+  return reinterpret_cast<uint32_t*>(reinterpret_cast<unsigned char*>(block) + sizeof(ScratchBlock));
+}
+inline ScratchBlock* scratch_header(uint32_t* p) noexcept {
+  return reinterpret_cast<ScratchBlock*>(reinterpret_cast<unsigned char*>(p) - sizeof(ScratchBlock));
+}
+class ScratchPool;
+struct ScratchPoolLifetime { ScratchPool* pool = nullptr; };
+inline thread_local ScratchPoolLifetime scratch_pool_lifetime;
+class ScratchPool {
+ public:
+  ScratchPool() noexcept { scratch_pool_lifetime.pool = this; }
+  ScratchPool(const ScratchPool&) = delete;
+  ScratchPool& operator=(const ScratchPool&) = delete;
+  ~ScratchPool() {
+    clear();
+    scratch_pool_lifetime.pool = nullptr;
+  }
+  ScratchBlock* acquire(size_t capacity) {
+    const size_t slot = static_cast<size_t>(std::countr_zero(capacity));
+    Bucket& bucket = buckets_[slot];
+    if (bucket.head) {
+      ScratchBlock* p = bucket.head;
+      bucket.head = p->next;
+      --bucket.count;
+      stats_.cached_bytes -= sizeof(ScratchBlock) + capacity * sizeof(uint32_t);
+      --stats_.cached_blocks;
+      ++stats_.cache_hits;
+      return p;
+    }
+    ScratchBlock* p = new_scratch_block(capacity);
+    ++stats_.system_allocations;
+    return p;
+  }
+  void release(ScratchBlock* p, size_t capacity) noexcept {
+    constexpr size_t limit = FASTPOLY_SCRATCH_CACHE_BYTES;
+    const size_t bytes = sizeof(ScratchBlock) + capacity * sizeof(uint32_t);
+    const size_t slot = static_cast<size_t>(std::countr_zero(capacity));
+    Bucket& bucket = buckets_[slot];
+    if (bucket.count < 4 && bytes <= limit && stats_.cached_bytes <= limit - bytes) {
+      p->next = bucket.head;
+      bucket.head = p;
+      ++bucket.count;
+      stats_.cached_bytes += bytes;
+      ++stats_.cached_blocks;
+    } else {
+      delete_scratch_block(p);
+    }
+  }
+  void clear() noexcept {
+    for (Bucket& bucket : buckets_) {
+      while (bucket.head) {
+        ScratchBlock* p = bucket.head;
+        bucket.head = p->next;
+        delete_scratch_block(p);
+      }
+      bucket.count = 0;
+    }
+    stats_.cached_bytes = stats_.cached_blocks = 0;
+  }
+  ScratchMemoryStats stats() const noexcept { return stats_; }
+ private:
+  struct Bucket { ScratchBlock* head = nullptr; size_t count = 0; };
+  std::array<Bucket, std::numeric_limits<size_t>::digits> buckets_{};
+  ScratchMemoryStats stats_;
+};
+inline ScratchPool* current_scratch_pool() noexcept {
+  thread_local ScratchPool pool;
+  (void)pool;
+  return scratch_pool_lifetime.pool;
+}
+class ScratchBuffer {
+ public:
+  ScratchBuffer() = default;
+  explicit ScratchBuffer(size_t n) { resize_uninitialized(n); }
+  ScratchBuffer(const ScratchBuffer&) = delete;
+  ScratchBuffer& operator=(const ScratchBuffer&) = delete;
+  ScratchBuffer(ScratchBuffer&& other) noexcept
+      : data_(std::exchange(other.data_, nullptr)),
+        size_(std::exchange(other.size_, 0)),
+        capacity_(std::exchange(other.capacity_, 0)) {}
+  ScratchBuffer& operator=(ScratchBuffer&& other) noexcept {
+    if (this != &other) {
+      reset();
+      data_ = std::exchange(other.data_, nullptr);
+      size_ = std::exchange(other.size_, 0);
+      capacity_ = std::exchange(other.capacity_, 0);
+    }
+    return *this;
+  }
+  ~ScratchBuffer() { reset(); }
+  uint32_t* data() noexcept { return data_; }
+  const uint32_t* data() const noexcept { return data_; }
+  size_t size() const noexcept { return size_; }
+  size_t capacity() const noexcept { return capacity_; }
+  uint32_t& operator[](size_t i) noexcept { return data_[i]; }
+  const uint32_t& operator[](size_t i) const noexcept { return data_[i]; }
+  void resize_uninitialized(size_t n) {
+    if (n > capacity_) {
+      const size_t capacity = scratch_capacity(n);
+      ScratchPool* pool = current_scratch_pool();
+      ScratchBlock* p = pool ? pool->acquire(capacity) : new_scratch_block(capacity);
+      reset();
+      data_ = scratch_payload(p);
+      capacity_ = capacity;
+    }
+    size_ = n;
+  }
+  void reset() noexcept {
+    if (data_) {
+      ScratchPool* pool = scratch_pool_lifetime.pool;
+      if (pool) pool->release(scratch_header(data_), capacity_);
+      else delete_scratch_block(scratch_header(data_));
+    }
+    data_ = nullptr;
+    size_ = capacity_ = 0;
+  }
+ private:
+  uint32_t* data_ = nullptr;
+  size_t size_ = 0, capacity_ = 0;
+};
+}
+inline void release_scratch_memory() noexcept {
+  if (auto* pool = detail::scratch_pool_lifetime.pool) pool->clear();
+}
+inline ScratchMemoryStats scratch_memory_stats() noexcept {
+  if (auto* pool = detail::scratch_pool_lifetime.pool) return pool->stats();
+  return {};
+}
+}
 #include <algorithm>
 #include <array>
 #include <bit>
@@ -619,7 +834,7 @@ inline native_t butterfly_mul(native_t a, native_t b) {
 #include <memory>
 #include <mutex>
 #include <stdexcept>
-#include <vector>
+#include <utility>
 namespace fpx {
 template <class M>
 constexpr int ntt_max_log() {
@@ -656,28 +871,27 @@ class NttPlan {
   static constexpr uint32_t NINV = M::ninv;
   static constexpr uint32_t R = simd::rmod<MOD>;
   static constexpr bool LAZY = simd::lazy_ok<MOD>;
-  static std::shared_ptr<const NttPlan> get(uint32_t n) {
-    if (n < 2 || (n & (n - 1)) != 0)
-      throw ntt_size_error("NTT size must be a power of two");
-    if (n > ntt_max_size<M>())
-      throw ntt_size_error("NTT size exceeds 2^v2(mod-1) for this modulus");
-    constexpr size_t count = size_t(ntt_max_log<M>()) + 1;
-    struct Entry {
-      std::once_flag ready;
-      std::shared_ptr<const NttPlan> plan;
-    };
-    static std::array<Entry, count> cache;
-    thread_local std::array<std::shared_ptr<const NttPlan>, count> local;
-    const size_t slot = static_cast<size_t>(std::countr_zero(n));
-    if (!local[slot]) {
-      Entry& entry = cache[slot];
-      std::call_once(entry.ready, [&entry, n] {
-        entry.plan = std::shared_ptr<const NttPlan>(new NttPlan(n));
-      });
-      local[slot] = entry.plan;
+  NttPlan(const NttPlan& other)
+      : n_(other.n_), logn_(other.logn_), w4_(other.w4_),
+        w4_inv_(other.w4_inv_), inv_n_(other.inv_n_),
+        stage_count_(other.stage_count_), lens_(other.lens_),
+        fwd_(other.fwd_.size()), inv_(other.inv_.size()), off_(other.off_) {
+    if (fwd_.size() != 0) {
+      std::memcpy(fwd_.data(), other.fwd_.data(), fwd_.size() * sizeof(uint32_t));
+      std::memcpy(inv_.data(), other.inv_.data(), inv_.size() * sizeof(uint32_t));
     }
-    return local[slot];
   }
+  NttPlan& operator=(const NttPlan& other) {
+    if (this != &other) {
+      NttPlan copy(other);
+      *this = std::move(copy);
+    }
+    return *this;
+  }
+  NttPlan(NttPlan&&) noexcept = default;
+  NttPlan& operator=(NttPlan&&) noexcept = default;
+  static std::shared_ptr<const NttPlan> get(uint32_t n) { return cached_plan(n); }
+  static const NttPlan& get_ref(uint32_t n) { return *cached_plan(n); }
   uint32_t size() const { return n_; }
   int log_size() const { return logn_; }
   void forward(uint32_t* a) const { forward_impl<true>(a); }
@@ -690,12 +904,12 @@ class NttPlan {
       return;
     }
     size_t split = 0;
-    while (split < lens_.size() && lens_[split] > CACHE_BLOCK) ++split;
-    const uint32_t block = split < lens_.size() ? lens_[split] : n_;
+    while (split < stage_count_ && lens_[split] > CACHE_BLOCK) ++split;
+    const uint32_t block = split < stage_count_ ? lens_[split] : n_;
     for (uint32_t base = 0; base < n_; base += block) {
       uint32_t* p = a + base;
       if (logn_ & 1) radix2_fwd<false>(p, block);
-      for (size_t s = lens_.size(); s-- > split;) {
+      for (size_t s = stage_count_; s-- > split;) {
         if (s == 0) radix4_stage_inv<true>(p, lens_[s], s, block);
         else radix4_stage_inv<false>(p, lens_[s], s, block);
       }
@@ -706,20 +920,45 @@ class NttPlan {
     }
   }
  private:
+  static const std::shared_ptr<const NttPlan>& cached_plan(uint32_t n) {
+    if (n < 2 || (n & (n - 1)) != 0)
+      throw ntt_size_error("NTT size must be a power of two");
+    if (n > ntt_max_size<M>())
+      throw ntt_size_error("NTT size exceeds 2^v2(mod-1) for this modulus");
+    constexpr size_t count = size_t(ntt_max_log<M>()) + 1;
+    struct Entry {
+      std::once_flag ready;
+      std::shared_ptr<const NttPlan> plan;
+    };
+    static std::array<Entry, count> cache;
+    thread_local std::array<const Entry*, count> local{};
+    const size_t slot = static_cast<size_t>(std::countr_zero(n));
+    if (!local[slot]) {
+      Entry& entry = cache[slot];
+      std::call_once(entry.ready, [&entry, n] {
+        struct Builder final : NttPlan {
+          explicit Builder(uint32_t size) : NttPlan(size) {}
+        };
+        entry.plan = std::make_shared<Builder>(n);
+      });
+      local[slot] = &entry;
+    }
+    return local[slot]->plan;
+  }
   static constexpr uint32_t CACHE_BLOCK = 4096;
   template <bool CANON>
   void forward_impl(uint32_t* a) const {
     size_t split = 0;
-    while (split < lens_.size() && lens_[split] > CACHE_BLOCK) {
+    while (split < stage_count_ && lens_[split] > CACHE_BLOCK) {
       radix4_stage<false>(a, lens_[split], split, n_);
       ++split;
     }
-    const uint32_t block = split < lens_.size() ? lens_[split] : n_;
+    const uint32_t block = split < stage_count_ ? lens_[split] : n_;
     const bool radix4_last = (logn_ & 1) == 0;
     for (uint32_t base = 0; base < n_; base += block) {
       uint32_t* p = a + base;
-      for (size_t s = split; s < lens_.size(); ++s) {
-        if (CANON && radix4_last && s + 1 == lens_.size())
+      for (size_t s = split; s < stage_count_; ++s) {
+        if (CANON && radix4_last && s + 1 == stage_count_)
           radix4_stage<true>(p, lens_[s], s, block);
         else
           radix4_stage<false>(p, lens_[s], s, block);
@@ -732,8 +971,7 @@ class NttPlan {
       throw ntt_size_error("NTT size must be a power of two");
     if (n > ntt_max_size<M>())
       throw ntt_size_error("NTT size exceeds 2^v2(mod-1) for this modulus");
-    logn_ = 0;
-    while ((uint32_t(1) << logn_) < n_) ++logn_;
+    logn_ = static_cast<int>(std::countr_zero(n_));
     build();
   }
   static simd_t bmul(simd_t a, simd_t b) {
@@ -747,24 +985,22 @@ class NttPlan {
     }
   }
   void build() {
-    inv_n_ = M::from_int(n_).inv().raw_val();
+    inv_n_ = M::from_int(M::inv2).pow(static_cast<uint32_t>(logn_)).raw_val();
     const M w_n_m = M::from_int(M::primitive_root).pow((MOD - 1) / n_);
     w4_ = w_n_m.pow(n_ / 4).raw_val();
-    w4_inv_ = w_n_m.pow(n_ / 4).inv().raw_val();
-    for (uint32_t len = n_; len >= 4; len >>= 2) lens_.push_back(len);
+    w4_inv_ = n_ >= 4 ? MOD - w4_ : w4_;
+    for (uint32_t len = n_; len >= 4; len >>= 2) lens_[stage_count_++] = len;
     size_t total = 0;
-    for (uint32_t len : lens_) total += 3 * (len >> 2);
-    fwd_.resize(total);
-    inv_.resize(total);
-    off_.resize(lens_.size() + 1, 0);
+    for (size_t s = 0; s < stage_count_; ++s) total += 3 * (lens_[s] >> 2);
+    fwd_.resize_uninitialized(total);
+    inv_.resize_uninitialized(total);
     size_t pos = 0;
-    for (size_t s = 0; s < lens_.size(); ++s) {
+    M w = w_n_m, wi = w_n_m.inv();
+    for (size_t s = 0; s < stage_count_; ++s) {
       off_[s] = pos;
       const uint32_t m = lens_[s] >> 2;
-      M w = w_n_m;
-      for (size_t t = 0; t < s; ++t) { w = w * w; w = w * w; }
       const M w2 = w * w, w3 = w2 * w;
-      const M wi = w.inv(), wi2 = wi * wi, wi3 = wi2 * wi;
+      const M wi2 = wi * wi, wi3 = wi2 * wi;
       uint32_t cur = M::from_int(1).raw_val();
       uint32_t cur2 = cur, cur3 = cur;
       uint32_t icur = s == 0 ? inv_n_ : cur, icur2 = icur, icur3 = icur;
@@ -826,8 +1062,9 @@ class NttPlan {
         icur3 = M::reduce(uint64_t(icur3) * wi3v);
       }
       pos += 3 * m;
+      w = w2 * w2;
+      wi = wi2 * wi2;
     }
-    off_[lens_.size()] = pos;
   }
   template <bool LAST>
   void radix4_stage(uint32_t* a, uint32_t len, size_t s, uint32_t count) const {
@@ -1152,14 +1389,20 @@ class NttPlan {
   uint32_t n_ = 0;
   int logn_ = 0;
   uint32_t w4_ = 0, w4_inv_ = 0, inv_n_ = 0;
-  std::vector<uint32_t> lens_;
-  std::vector<uint32_t> fwd_, inv_;
-  std::vector<size_t> off_;
+  static constexpr size_t MAX_STAGES = size_t(ntt_max_log<M>()) / 2;
+  size_t stage_count_ = 0;
+  std::array<uint32_t, MAX_STAGES> lens_{};
+  detail::AlignedBuffer fwd_, inv_;
+  std::array<size_t, MAX_STAGES> off_{};
 };
 }
 #include <algorithm>
+#include <array>
+#include <bit>
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
+#include <iterator>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -1174,6 +1417,39 @@ class domain_error : public std::runtime_error {
 };
 template <class M>
 using vec = std::vector<M>;
+namespace detail {
+template <class M>
+uint32_t series_scratch_size(size_t n, size_t seed) {
+  if (n <= seed) return 0;
+  const size_t floor = std::bit_floor(n);
+  const uint32_t N = next_pow2(n - floor <= 8 ? floor : n);
+  if (N <= seed) return 0;
+  if (N > ntt_max_size<M>())
+    throw ntt_size_error("NTT size exceeds 2^v2(mod-1) for this modulus");
+  return N;
+}
+template <class M>
+void prepare_scratch(const vec<M>& src, size_t cnt,
+                     fpx::detail::ScratchBuffer& dst, size_t n) {
+  static_assert(sizeof(M) == sizeof(uint32_t), "Mont must be a single 32-bit limb");
+  dst.resize_uninitialized(n);
+  if (cnt != 0) std::memcpy(dst.data(), src.data(), cnt * sizeof(uint32_t));
+  std::memset(dst.data() + cnt, 0, (n - cnt) * sizeof(uint32_t));
+}
+template <class M>
+void scale_limbs(uint32_t* dst, const uint32_t* src, size_t n, M c) {
+  const auto factor = simd::set1(c.raw_val());
+  size_t i = 0;
+  for (; i + simd::lane <= n; i += simd::lane)
+    simd::store(dst + i, simd::mulmod<M::mod, M::ninv>(simd::load(src + i), factor));
+  for (; i < n; ++i) dst[i] = M::reduce(uint64_t(src[i]) * c.raw_val());
+}
+template <class M>
+void scale_inplace(vec<M>& a, M c) {
+  auto* p = reinterpret_cast<uint32_t*>(a.data());
+  scale_limbs(p, p, a.size(), c);
+}
+}
 inline constexpr size_t naive_threshold = 40;
 template <class M>
 void copy_prefix(const vec<M>& src, size_t cnt, vec<M>& dst) {
@@ -1188,6 +1464,21 @@ void pointwise_mul(uint32_t* dst, const uint32_t* b, size_t n) {
   constexpr uint32_t MOD = M::mod;
   constexpr bool LAZY = simd::lazy_ok<MOD>;
   size_t i = 0;
+  constexpr size_t W = simd::lane;
+  for (; i + 4*W <= n; i += 4*W) {
+    const auto x0 = simd::load(dst + i), y0 = simd::load(b + i);
+    const auto x1 = simd::load(dst + i + W), y1 = simd::load(b + i + W);
+    const auto x2 = simd::load(dst + i + 2*W), y2 = simd::load(b + i + 2*W);
+    const auto x3 = simd::load(dst + i + 3*W), y3 = simd::load(b + i + 3*W);
+    const auto v0 = simd::butterfly_mul<MOD, M::ninv, LAZY>(x0, y0);
+    const auto v1 = simd::butterfly_mul<MOD, M::ninv, LAZY>(x1, y1);
+    const auto v2 = simd::butterfly_mul<MOD, M::ninv, LAZY>(x2, y2);
+    const auto v3 = simd::butterfly_mul<MOD, M::ninv, LAZY>(x3, y3);
+    simd::store(dst + i, v0);
+    simd::store(dst + i + W, v1);
+    simd::store(dst + i + 2*W, v2);
+    simd::store(dst + i + 3*W, v3);
+  }
   for (; i + simd::lane <= n; i += simd::lane) {
     simd::store(dst + i, simd::butterfly_mul<MOD, M::ninv, LAZY>(
                              simd::load(dst + i), simd::load(b + i)));
@@ -1226,15 +1517,9 @@ vec<M> neg(vec<M> a) {
 template <class M>
 vec<M> mul_scalar(const vec<M>& a, M c) {
   vec<M> r(a.size());
-  constexpr uint32_t MOD = M::mod;
-  const simd::native_t c1 = simd::set1(c.raw_val());
-  size_t i = 0;
   auto* dst = reinterpret_cast<uint32_t*>(r.data());
   const auto* src = reinterpret_cast<const uint32_t*>(a.data());
-  for (; i + simd::lane <= a.size(); i += simd::lane) {
-    simd::store(dst + i, simd::mulmod<MOD, M::ninv>(simd::load(src + i), c1));
-  }
-  for (; i < a.size(); ++i) r[i] = a[i] * c;
+  detail::scale_limbs(dst, src, a.size(), c);
   return r;
 }
 template <class M>
@@ -1276,21 +1561,23 @@ vec<M> conv_limbs(const vec<M>& a, const vec<M>& b, size_t lim) {
     return r;
   }
   const uint32_t N = next_pow2(full);
-  auto plan = NttPlan<M>::get(N);
-  vec<M> fa(N, M());
-  copy_prefix(a, la, fa);
+  const auto& plan = NttPlan<M>::get_ref(N);
+  vec<M> fa;
+  fa.reserve(N);
+  fa.insert(fa.end(), a.data(), a.data() + la);
+  fa.resize(N);
   uint32_t* pa = reinterpret_cast<uint32_t*>(fa.data());
-  plan->forward_lazy(pa);
+  plan.forward_lazy(pa);
   if (a.data() == b.data() && la == lb) {
     pointwise_mul<M>(pa, pa, N);
   } else {
-    vec<M> fb(N, M());
-    copy_prefix(b, lb, fb);
-    auto* pb = reinterpret_cast<uint32_t*>(fb.data());
-    plan->forward_lazy(pb);
+    fpx::detail::ScratchBuffer fb;
+    detail::prepare_scratch(b, lb, fb, N);
+    auto* pb = fb.data();
+    plan.forward_lazy(pb);
     pointwise_mul<M>(pa, pb, N);
   }
-  plan->inverse(pa);
+  plan.inverse(pa);
   fa.resize(out);
   return fa;
 }
@@ -1357,7 +1644,8 @@ vec<M> integral(const vec<M>& a) {
 namespace detail {
 template <class M>
 void extend_inverse(const vec<M>& a, vec<M>& c, size_t wanted,
-                  vec<M>& scratch, vec<M>& spectrum) {
+                  fpx::detail::ScratchBuffer& scratch,
+                  fpx::detail::ScratchBuffer& spectrum) {
   const size_t k = c.size(), hlen = wanted - k;
   if (hlen <= 8) {
     const M inv0 = c[0];
@@ -1370,24 +1658,26 @@ void extend_inverse(const vec<M>& a, vec<M>& c, size_t wanted,
     return;
   }
   const uint32_t N = next_pow2(2*k);
-  auto plan = NttPlan<M>::get(N);
-  scratch.assign(N, M());
-  spectrum.assign(N, M());
-  std::copy_n(a.begin(), std::min(a.size(), wanted), scratch.begin());
-  std::copy(c.begin(), c.end(), spectrum.begin());
-  auto* pt = reinterpret_cast<uint32_t*>(scratch.data());
-  auto* pc = reinterpret_cast<uint32_t*>(spectrum.data());
-  plan->forward_lazy(pt);
-  plan->forward_lazy(pc);
+  const auto& plan = NttPlan<M>::get_ref(N);
+  prepare_scratch(a, std::min(a.size(), wanted), scratch, N);
+  prepare_scratch(c, c.size(), spectrum, N);
+  auto* pt = scratch.data();
+  auto* pc = spectrum.data();
+  plan.forward_lazy(pt);
+  plan.forward_lazy(pc);
   pointwise_mul<M>(pt, pc, N);
-  plan->inverse(pt);
-  for (size_t i = 0; i < hlen; ++i) scratch[i] = -scratch[k+i];
-  std::fill(scratch.data() + hlen, scratch.data() + scratch.size(), M());
-  plan->forward_lazy(pt);
+  plan.inverse(pt);
+  size_t i = 0;
+  const auto zero = simd::set1(0);
+  for (; i + simd::lane <= hlen; i += simd::lane)
+    simd::store(pt + i, simd::sub(zero, simd::load(pt + k + i), M::mod));
+  for (; i < hlen; ++i) pt[i] = pt[k+i] == 0 ? 0 : M::mod - pt[k+i];
+  std::memset(pt + hlen, 0, (N - hlen) * sizeof(uint32_t));
+  plan.forward_lazy(pt);
   pointwise_mul<M>(pt, pc, N);
-  plan->inverse(pt);
+  plan.inverse(pt);
   c.resize(wanted);
-  std::copy_n(scratch.data(), hlen, c.data() + k);
+  std::memcpy(c.data() + k, pt, hlen * sizeof(uint32_t));
 }
 template <class M>
 vec<M> inverse_seed(const vec<M>& a, size_t n) {
@@ -1400,21 +1690,76 @@ vec<M> inverse_seed(const vec<M>& a, size_t n) {
   }
   return c;
 }
+template <class M>
+vec<M> inverse_linear(const vec<M>& a, size_t n) {
+  vec<M> b(n);
+  const M first = a[0].inv(), ratio = -a[1]*first;
+  constexpr size_t W = simd::lane, block = 4*W;
+  if (n < block) {
+    M x = first;
+    for (size_t i = 0; i < n; ++i) { b[i] = x; x *= ratio; }
+    return b;
+  }
+  alignas(64) uint32_t seed[block];
+  M x = first;
+  for (size_t i = 0; i < block; ++i) { seed[i] = x.raw_val(); x *= ratio; }
+  auto x0 = simd::load(seed), x1 = simd::load(seed + W);
+  auto x2 = simd::load(seed + 2*W), x3 = simd::load(seed + 3*W);
+  const auto step = simd::set1(ratio.pow(block).raw_val());
+  auto* dst = reinterpret_cast<uint32_t*>(b.data());
+  size_t i = 0;
+  for (; i + block <= n; i += block) {
+    simd::store(dst + i, x0); simd::store(dst + i + W, x1);
+    simd::store(dst + i + 2*W, x2); simd::store(dst + i + 3*W, x3);
+    x0 = simd::mulmod<M::mod, M::ninv>(x0, step);
+    x1 = simd::mulmod<M::mod, M::ninv>(x1, step);
+    x2 = simd::mulmod<M::mod, M::ninv>(x2, step);
+    x3 = simd::mulmod<M::mod, M::ninv>(x3, step);
+  }
+  if (i != n) {
+    simd::store(seed, x0); simd::store(seed + W, x1);
+    simd::store(seed + 2*W, x2); simd::store(seed + 3*W, x3);
+    std::memcpy(dst + i, seed, (n - i) * sizeof(uint32_t));
+  }
+  return b;
+}
+template <class M>
+vec<M> inverse_short(const vec<M>& a, size_t cnt, size_t n) {
+  vec<M> b(n);
+  b[0] = a[0].inv();
+  std::array<M, 8> coefficients;
+  const size_t degree = cnt - 1;
+  for (size_t j = 0; j < degree; ++j) coefficients[j] = -a[j+1]*b[0];
+  for (size_t i = 1; i < n; ++i) {
+    M sum;
+    for (size_t j = 0; j < std::min(i, degree); ++j)
+      sum += coefficients[j]*b[i-j-1];
+    b[i] = sum;
+  }
+  return b;
+}
 }
 template <class M>
 vec<M> inv(const vec<M>& a, size_t n) {
   if (n == 0) return {};
   if (a.empty() || a[0].is_zero())
     throw domain_error("poly::inv: constant term is zero");
-  if (a.size() == 1) {
+  size_t cnt = std::min(a.size(), n);
+  while (cnt > 1 && a[cnt-1].is_zero()) --cnt;
+  if (cnt == 1) {
     vec<M> r(n, M());
     r[0] = a[0].inv();
     return r;
   }
   static_assert(sizeof(M) == sizeof(uint32_t), "Mont must be a single 32-bit limb");
+  if (cnt == 2) return detail::inverse_linear(a, n);
+  if (cnt <= 5 || (cnt <= 9 && n >= 4096))
+    return detail::inverse_short(a, cnt, n);
   const size_t seed = std::min(n, size_t(32));
+  const uint32_t scratch_n = detail::series_scratch_size<M>(n, seed);
   vec<M> b = detail::inverse_seed(a, seed);
-  vec<M> work, spectrum;
+  b.reserve(n);
+  fpx::detail::ScratchBuffer work(scratch_n), spectrum(scratch_n);
   for (size_t m = seed; m < n; m <<= 1)
     detail::extend_inverse(a, b, std::min(2 * m, n), work, spectrum);
   b.resize(n);
@@ -1448,9 +1793,19 @@ vec<M> exp(const vec<M>& a, size_t n) {
     return b;
   }
   const size_t seed = aprime.size() <= naive_threshold ? n : std::min<size_t>(n, 32);
+  const uint32_t scratch_n = detail::series_scratch_size<M>(n, seed);
   vec<M> denominators = inv_series<M>(n-1);
   vec<M> b(seed, M());
   b[0] = M::from_int(1);
+  if (aprime.size() == 1) {
+    M previous = b[0];
+    const M factor = aprime[0];
+    for (size_t i = 1; i < n; ++i) {
+      previous *= factor*denominators[i];
+      b[i] = previous;
+    }
+    return b;
+  }
   for (size_t i = 1; i < seed; ++i) {
     M sum;
     for (size_t j = 1; j <= i && j <= aprime.size(); ++j)
@@ -1458,8 +1813,10 @@ vec<M> exp(const vec<M>& a, size_t n) {
     b[i] = sum*denominators[i];
   }
   if (n == seed) return b;
+  b.reserve(n);
   vec<M> c = detail::inverse_seed(b, seed/2);
-  vec<M> spectrum, inverse_spectrum, work;
+  c.reserve(n/2);
+  fpx::detail::ScratchBuffer spectrum(scratch_n), inverse_spectrum(scratch_n), work(scratch_n);
   for (size_t m = seed; m < n; m *= 2) {
     const size_t m2 = std::min(2*m, n), hlen = m2-m;
     if (hlen <= 8) {
@@ -1475,33 +1832,30 @@ vec<M> exp(const vec<M>& a, size_t n) {
     if (c.size() < hlen)
       detail::extend_inverse(b, c, hlen, work, inverse_spectrum);
     const uint32_t N = next_pow2(2*m);
-    auto plan = NttPlan<M>::get(N);
-    spectrum.assign(N, M());
-    inverse_spectrum.assign(N, M());
-    work.assign(N, M());
-    std::copy(b.begin(), b.end(), spectrum.begin());
-    std::copy(c.begin(), c.end(), inverse_spectrum.begin());
-    std::copy_n(aprime.begin(), std::min(aprime.size(), m2-1), work.begin());
-    auto* pb = reinterpret_cast<uint32_t*>(spectrum.data());
-    auto* pc = reinterpret_cast<uint32_t*>(inverse_spectrum.data());
-    auto* pt = reinterpret_cast<uint32_t*>(work.data());
-    plan->forward_lazy(pb);
-    plan->forward_lazy(pt);
+    const auto& plan = NttPlan<M>::get_ref(N);
+    detail::prepare_scratch(b, b.size(), spectrum, N);
+    detail::prepare_scratch(c, c.size(), inverse_spectrum, N);
+    detail::prepare_scratch(aprime, std::min(aprime.size(), m2-1), work, N);
+    auto* pb = spectrum.data();
+    auto* pc = inverse_spectrum.data();
+    auto* pt = work.data();
+    plan.forward_lazy(pb);
+    plan.forward_lazy(pt);
     pointwise_mul<M>(pt, pb, N);
-    plan->inverse(pt);
-    for (size_t i = 0; i < hlen; ++i) work[i] = work[m-1+i];
-    std::fill(work.data() + hlen, work.data() + work.size(), M());
-    plan->forward_lazy(pt);
-    plan->forward_lazy(pc);
+    plan.inverse(pt);
+    std::memmove(pt, pt + m - 1, hlen * sizeof(uint32_t));
+    std::memset(pt + hlen, 0, (N - hlen) * sizeof(uint32_t));
+    plan.forward_lazy(pt);
+    plan.forward_lazy(pc);
     pointwise_mul<M>(pt, pc, N);
-    plan->inverse(pt);
+    plan.inverse(pt);
     pointwise_mul<M>(pt, reinterpret_cast<const uint32_t*>(denominators.data()) + m, hlen);
-    std::fill(work.data() + hlen, work.data() + work.size(), M());
-    plan->forward_lazy(pt);
+    std::memset(pt + hlen, 0, (N - hlen) * sizeof(uint32_t));
+    plan.forward_lazy(pt);
     pointwise_mul<M>(pt, pb, N);
-    plan->inverse(pt);
+    plan.inverse(pt);
     b.resize(m2);
-    std::copy_n(work.data(), hlen, b.data() + m);
+    std::memcpy(b.data() + m, pt, hlen * sizeof(uint32_t));
   }
   return b;
 }
@@ -1526,6 +1880,7 @@ vec<M> sqrt(const vec<M>& a, size_t n) {
     return r;
   }
   const size_t seed = std::min<size_t>(inner_n, 32);
+  const uint32_t scratch_n = detail::series_scratch_size<M>(inner_n, seed);
   const M half_inv = M::from_int(M::inv2);
   const M twice_root_inv = root0.inv()*half_inv;
   vec<M> b(seed, M());
@@ -1536,8 +1891,10 @@ vec<M> sqrt(const vec<M>& a, size_t n) {
     b[i] = residual*twice_root_inv;
   }
   if (inner_n > seed) {
+    b.reserve(inner_n);
     vec<M> c = detail::inverse_seed(b, seed/2);
-    vec<M> work, inverse_spectrum;
+    c.reserve(inner_n/2);
+    fpx::detail::ScratchBuffer work(scratch_n), inverse_spectrum(scratch_n);
     for (size_t m = seed; m < inner_n; m *= 2) {
       const size_t m2 = std::min(2*m, inner_n), hlen = m2-m;
       if (hlen <= 8) {
@@ -1552,25 +1909,24 @@ vec<M> sqrt(const vec<M>& a, size_t n) {
       if (c.size() < hlen)
         detail::extend_inverse(b, c, hlen, work, inverse_spectrum);
       const uint32_t N = next_pow2(2*m);
-      auto plan = NttPlan<M>::get(N);
-      work.assign(N, M());
-      inverse_spectrum.assign(N, M());
-      std::copy(b.begin(), b.end(), work.begin());
-      std::copy(c.begin(), c.end(), inverse_spectrum.begin());
-      auto* pt = reinterpret_cast<uint32_t*>(work.data());
-      auto* pc = reinterpret_cast<uint32_t*>(inverse_spectrum.data());
-      plan->forward_lazy(pt);
+      const auto& plan = NttPlan<M>::get_ref(N);
+      detail::prepare_scratch(b, b.size(), work, N);
+      detail::prepare_scratch(c, c.size(), inverse_spectrum, N);
+      auto* pt = work.data();
+      auto* pc = inverse_spectrum.data();
+      plan.forward_lazy(pt);
       pointwise_mul<M>(pt, pt, N);
-      plan->inverse(pt);
+      plan.inverse(pt);
       for (size_t i = 0; i < hlen; ++i)
-        work[i] = ((m+i < a.size()-v) ? a[v+m+i] : M()) - work[m+i];
-      std::fill(work.data() + hlen, work.data() + work.size(), M());
-      plan->forward_lazy(pt);
-      plan->forward_lazy(pc);
+        pt[i] = (((m+i < a.size()-v) ? a[v+m+i] : M()) - M::raw(pt[m+i])).raw_val();
+      std::memset(pt + hlen, 0, (N - hlen) * sizeof(uint32_t));
+      plan.forward_lazy(pt);
+      plan.forward_lazy(pc);
       pointwise_mul<M>(pt, pc, N);
-      plan->inverse(pt);
+      plan.inverse(pt);
       b.resize(m2);
-      for (size_t i = 0; i < hlen; ++i) b[m+i] = work[i]*half_inv;
+      auto* dst = reinterpret_cast<uint32_t*>(b.data() + m);
+      detail::scale_limbs(dst, pt, hlen, half_inv);
     }
   }
   if (half == 0) return b;
@@ -1599,23 +1955,45 @@ vec<M> pow(const vec<M>& a, uint64_t k, size_t n) {
   const size_t inner_n = n - sh;
   vec<M> u(std::min(a.size() - v, inner_n));
   copy_range(a, v, u.size(), u);
-  if (k <= 64) {
-    vec<M> r{M::from_int(1)}, base = u;
-    for (uint64_t e = k; e; e >>= 1) {
-      if (e & 1) { r = conv_limbs(r, base, inner_n); r.resize(inner_n); }
-      if (e > 1) { base = conv_limbs(base, base, inner_n); base.resize(inner_n); }
+  trim(u);
+  if (u.size() == 1) {
+    vec<M> r(n, M());
+    r[sh] = u[0].pow(k);
+    return r;
+  }
+  if (k > 64 && u.size() == 2 && inner_n <= M::mod) {
+    const uint32_t exponent = static_cast<uint32_t>(k % M::mod);
+    const size_t cnt = std::min(inner_n, size_t(exponent) + 1);
+    vec<M> divisors = inv_series<M>(cnt - 1);
+    vec<M> r(n, M());
+    r[sh] = u[0].pow(k);
+    const M ratio = u[1]*u[0].inv();
+    M factor = ratio*M::from_int(exponent);
+    for (size_t j = 1; j < cnt; ++j) {
+      r[sh+j] = r[sh+j-1]*factor*divisors[j];
+      factor -= ratio;
     }
+    return r;
+  }
+  if (k <= 64) {
+    vec<M> r{M::from_int(1)}, base = std::move(u);
+    for (uint64_t e = k; e; e >>= 1) {
+      if (e & 1) r = conv_limbs(r, base, inner_n);
+      if (e > 1) base = conv_limbs(base, base, inner_n);
+    }
+    r.resize(inner_n);
     if (sh == 0) return r;
     vec<M> out(n, M());
     for (size_t i = 0; i < r.size() && i + sh < n; ++i) out[i + sh] = r[i];
     return out;
   }
   const M c = u[0];
-  const vec<M> nrm = mul_scalar(u, c.inv());
+  vec<M> nrm = std::move(u);
+  detail::scale_inplace(nrm, c.inv());
   vec<M> l = log(nrm, inner_n);
-  l = mul_scalar(l, M::from_int(k));
+  detail::scale_inplace(l, M::from_int(k));
   vec<M> r = exp(l, inner_n);
-  r = mul_scalar(r, c.pow(k));
+  detail::scale_inplace(r, c.pow(k));
   if (sh == 0) return r;
   vec<M> out(n, M());
   for (size_t i = 0; i < r.size() && i + sh < n; ++i) out[i + sh] = r[i];
@@ -1623,22 +2001,39 @@ vec<M> pow(const vec<M>& a, uint64_t k, size_t n) {
 }
 template <class M>
 std::pair<vec<M>, vec<M>> divmod(const vec<M>& a_in, const vec<M>& b_in) {
-  vec<M> a = a_in, b = b_in;
-  trim(a);
-  trim(b);
-  if (b.empty()) throw domain_error("poly::divmod: division by zero polynomial");
-  if (a.size() < b.size()) return {vec<M>{}, a};
-  const size_t dn = a.size() - b.size() + 1;
-  vec<M> ra(a.rbegin(), a.rend());
-  vec<M> rb(b.rbegin(), b.rend());
+  size_t an = a_in.size(), bn = b_in.size();
+  while (an != 0 && a_in[an-1].is_zero()) --an;
+  while (bn != 0 && b_in[bn-1].is_zero()) --bn;
+  if (bn == 0) throw domain_error("poly::divmod: division by zero polynomial");
+  if (an < bn)
+    return {vec<M>{}, vec<M>(a_in.begin(), a_in.begin() + static_cast<std::ptrdiff_t>(an))};
+  if (bn == 1) {
+    vec<M> q(an);
+    detail::scale_limbs(reinterpret_cast<uint32_t*>(q.data()),
+                        reinterpret_cast<const uint32_t*>(a_in.data()), an, b_in[0].inv());
+    return {std::move(q), vec<M>{}};
+  }
+  const size_t dn = an - bn + 1;
+  vec<M> ra(std::make_reverse_iterator(a_in.data() + an),
+            std::make_reverse_iterator(a_in.data() + an - dn));
+  vec<M> rb(std::make_reverse_iterator(b_in.data() + bn),
+            std::make_reverse_iterator(b_in.data() + bn - std::min(bn, dn)));
   vec<M> ib = inv(rb, dn);
   vec<M> rq = conv_limbs(ra, ib, dn);
   rq.resize(dn, M());
-  vec<M> q(rq.rbegin(), rq.rend());
-  vec<M> r = sub(a, conv_limbs(b, q, a.size()));
-  r.resize(a.size(), M());
+  std::reverse(rq.begin(), rq.end());
+  vec<M> q = std::move(rq);
+  const size_t rn = bn - 1;
+  vec<M> r(a_in.data(), a_in.data() + rn);
+  vec<M> product = conv_limbs(b_in, q, rn);
+  auto* dst = reinterpret_cast<uint32_t*>(r.data());
+  const auto* src = reinterpret_cast<const uint32_t*>(product.data());
+  size_t i = 0;
+  for (; i + simd::lane <= product.size(); i += simd::lane)
+    simd::store(dst + i, simd::sub(simd::load(dst + i), simd::load(src + i), M::mod));
+  for (; i < product.size(); ++i) r[i] -= product[i];
   trim(r);
-  return {q, r};
+  return {std::move(q), std::move(r)};
 }
 template <class M>
 vec<M> div(const vec<M>& a, const vec<M>& b) { return divmod(a, b).first; }

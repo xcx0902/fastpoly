@@ -5,14 +5,19 @@
 #define FASTPOLY_POLY_HPP
 
 #include <algorithm>
+#include <array>
+#include <bit>
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
+#include <iterator>
 #include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "fastpoly/modint.hpp"
+#include "fastpoly/memory.hpp"
 #include "fastpoly/ntt.hpp"
 #include "fastpoly/simd.hpp"
 
@@ -32,6 +37,50 @@ class domain_error : public std::runtime_error {
 
 template <class M>
 using vec = std::vector<M>;
+
+namespace detail {
+
+// Newton uses powers of two, except that a final <=8-coefficient tail is
+// filled directly. Reserve the largest transform once, without allocating a
+// needless doubled buffer for that small tail.
+template <class M>
+uint32_t series_scratch_size(size_t n, size_t seed) {
+  if (n <= seed) return 0;
+  const size_t floor = std::bit_floor(n);
+  const uint32_t N = next_pow2(n - floor <= 8 ? floor : n);
+  if (N <= seed) return 0;
+  if (N > ntt_max_size<M>())
+    throw ntt_size_error("NTT size exceeds 2^v2(mod-1) for this modulus");
+  return N;
+}
+
+// A transform overwrites every limb. Copy the live coefficients first and
+// initialize only its zero padding; recycled scratch needs no value objects.
+template <class M>
+void prepare_scratch(const vec<M>& src, size_t cnt,
+                     fpx::detail::ScratchBuffer& dst, size_t n) {
+  static_assert(sizeof(M) == sizeof(uint32_t), "Mont must be a single 32-bit limb");
+  dst.resize_uninitialized(n);
+  if (cnt != 0) std::memcpy(dst.data(), src.data(), cnt * sizeof(uint32_t));
+  std::memset(dst.data() + cnt, 0, (n - cnt) * sizeof(uint32_t));
+}
+
+template <class M>
+void scale_limbs(uint32_t* dst, const uint32_t* src, size_t n, M c) {
+  const auto factor = simd::set1(c.raw_val());
+  size_t i = 0;
+  for (; i + simd::lane <= n; i += simd::lane)
+    simd::store(dst + i, simd::mulmod<M::mod, M::ninv>(simd::load(src + i), factor));
+  for (; i < n; ++i) dst[i] = M::reduce(uint64_t(src[i]) * c.raw_val());
+}
+
+template <class M>
+void scale_inplace(vec<M>& a, M c) {
+  auto* p = reinterpret_cast<uint32_t*>(a.data());
+  scale_limbs(p, p, a.size(), c);
+}
+
+}  // namespace detail
 
 /// Convolutions with a short operand are done directly.
 inline constexpr size_t naive_threshold = 40;
@@ -56,6 +105,23 @@ void pointwise_mul(uint32_t* dst, const uint32_t* b, size_t n) {
   constexpr uint32_t MOD = M::mod;
   constexpr bool LAZY = simd::lazy_ok<MOD>;
   size_t i = 0;
+  constexpr size_t W = simd::lane;
+  // Four independent products overlap the Montgomery multiply chains while
+  // retaining consecutive loads/stores for every SIMD backend.
+  for (; i + 4*W <= n; i += 4*W) {
+    const auto x0 = simd::load(dst + i), y0 = simd::load(b + i);
+    const auto x1 = simd::load(dst + i + W), y1 = simd::load(b + i + W);
+    const auto x2 = simd::load(dst + i + 2*W), y2 = simd::load(b + i + 2*W);
+    const auto x3 = simd::load(dst + i + 3*W), y3 = simd::load(b + i + 3*W);
+    const auto v0 = simd::butterfly_mul<MOD, M::ninv, LAZY>(x0, y0);
+    const auto v1 = simd::butterfly_mul<MOD, M::ninv, LAZY>(x1, y1);
+    const auto v2 = simd::butterfly_mul<MOD, M::ninv, LAZY>(x2, y2);
+    const auto v3 = simd::butterfly_mul<MOD, M::ninv, LAZY>(x3, y3);
+    simd::store(dst + i, v0);
+    simd::store(dst + i + W, v1);
+    simd::store(dst + i + 2*W, v2);
+    simd::store(dst + i + 3*W, v3);
+  }
   for (; i + simd::lane <= n; i += simd::lane) {
     simd::store(dst + i, simd::butterfly_mul<MOD, M::ninv, LAZY>(
                              simd::load(dst + i), simd::load(b + i)));
@@ -104,15 +170,9 @@ vec<M> neg(vec<M> a) {
 template <class M>
 vec<M> mul_scalar(const vec<M>& a, M c) {
   vec<M> r(a.size());
-  constexpr uint32_t MOD = M::mod;
-  const simd::native_t c1 = simd::set1(c.raw_val());
-  size_t i = 0;
   auto* dst = reinterpret_cast<uint32_t*>(r.data());
   const auto* src = reinterpret_cast<const uint32_t*>(a.data());
-  for (; i + simd::lane <= a.size(); i += simd::lane) {
-    simd::store(dst + i, simd::mulmod<MOD, M::ninv>(simd::load(src + i), c1));
-  }
-  for (; i < a.size(); ++i) r[i] = a[i] * c;
+  detail::scale_limbs(dst, src, a.size(), c);
   return r;
 }
 
@@ -169,21 +229,23 @@ vec<M> conv_limbs(const vec<M>& a, const vec<M>& b, size_t lim) {
   }
 
   const uint32_t N = next_pow2(full);
-  auto plan = NttPlan<M>::get(N);
-  vec<M> fa(N, M());
-  copy_prefix(a, la, fa);
+  const auto& plan = NttPlan<M>::get_ref(N);
+  vec<M> fa;
+  fa.reserve(N);
+  fa.insert(fa.end(), a.data(), a.data() + la);
+  fa.resize(N);  // Only the padding is initialized, after copying the prefix.
   uint32_t* pa = reinterpret_cast<uint32_t*>(fa.data());
-  plan->forward_lazy(pa);
+  plan.forward_lazy(pa);
   if (a.data() == b.data() && la == lb) {
     pointwise_mul<M>(pa, pa, N);
   } else {
-    vec<M> fb(N, M());
-    copy_prefix(b, lb, fb);
-    auto* pb = reinterpret_cast<uint32_t*>(fb.data());
-    plan->forward_lazy(pb);
+    fpx::detail::ScratchBuffer fb;
+    detail::prepare_scratch(b, lb, fb, N);
+    auto* pb = fb.data();
+    plan.forward_lazy(pb);
     pointwise_mul<M>(pa, pb, N);
   }
-  plan->inverse(pa);
+  plan.inverse(pa);
   fa.resize(out);
   return fa;
 }
@@ -277,7 +339,8 @@ namespace detail {
 // scratch buffers and preserving the c spectrum through the correction.
 template <class M>
 void extend_inverse(const vec<M>& a, vec<M>& c, size_t wanted,
-                  vec<M>& scratch, vec<M>& spectrum) {
+                  fpx::detail::ScratchBuffer& scratch,
+                  fpx::detail::ScratchBuffer& spectrum) {
   const size_t k = c.size(), hlen = wanted - k;
   // A handful of coefficients after a power-of-two boundary costs less than
   // another full transform. The new coefficients are filled in order.
@@ -292,24 +355,26 @@ void extend_inverse(const vec<M>& a, vec<M>& c, size_t wanted,
     return;
   }
   const uint32_t N = next_pow2(2*k);
-  auto plan = NttPlan<M>::get(N);
-  scratch.assign(N, M());
-  spectrum.assign(N, M());
-  std::copy_n(a.begin(), std::min(a.size(), wanted), scratch.begin());
-  std::copy(c.begin(), c.end(), spectrum.begin());
-  auto* pt = reinterpret_cast<uint32_t*>(scratch.data());
-  auto* pc = reinterpret_cast<uint32_t*>(spectrum.data());
-  plan->forward_lazy(pt);
-  plan->forward_lazy(pc);
+  const auto& plan = NttPlan<M>::get_ref(N);
+  prepare_scratch(a, std::min(a.size(), wanted), scratch, N);
+  prepare_scratch(c, c.size(), spectrum, N);
+  auto* pt = scratch.data();
+  auto* pc = spectrum.data();
+  plan.forward_lazy(pt);
+  plan.forward_lazy(pc);
   pointwise_mul<M>(pt, pc, N);
-  plan->inverse(pt);
-  for (size_t i = 0; i < hlen; ++i) scratch[i] = -scratch[k+i];
-  std::fill(scratch.data() + hlen, scratch.data() + scratch.size(), M());
-  plan->forward_lazy(pt);
+  plan.inverse(pt);
+  size_t i = 0;
+  const auto zero = simd::set1(0);
+  for (; i + simd::lane <= hlen; i += simd::lane)
+    simd::store(pt + i, simd::sub(zero, simd::load(pt + k + i), M::mod));
+  for (; i < hlen; ++i) pt[i] = pt[k+i] == 0 ? 0 : M::mod - pt[k+i];
+  std::memset(pt + hlen, 0, (N - hlen) * sizeof(uint32_t));
+  plan.forward_lazy(pt);
   pointwise_mul<M>(pt, pc, N);
-  plan->inverse(pt);
+  plan.inverse(pt);
   c.resize(wanted);
-  std::copy_n(scratch.data(), hlen, c.data() + k);
+  std::memcpy(c.data() + k, pt, hlen * sizeof(uint32_t));
 }
 
 template <class M>
@@ -322,6 +387,60 @@ vec<M> inverse_seed(const vec<M>& a, size_t n) {
     c[i] = -sum*c[0];
   }
   return c;
+}
+
+// A linear reciprocal is a geometric progression. Four independent SIMD
+// chains advance by ratio^(4*lane), avoiding a dependency between neighbours.
+template <class M>
+vec<M> inverse_linear(const vec<M>& a, size_t n) {
+  vec<M> b(n);
+  const M first = a[0].inv(), ratio = -a[1]*first;
+  constexpr size_t W = simd::lane, block = 4*W;
+  if (n < block) {
+    M x = first;
+    for (size_t i = 0; i < n; ++i) { b[i] = x; x *= ratio; }
+    return b;
+  }
+  alignas(64) uint32_t seed[block];
+  M x = first;
+  for (size_t i = 0; i < block; ++i) { seed[i] = x.raw_val(); x *= ratio; }
+  auto x0 = simd::load(seed), x1 = simd::load(seed + W);
+  auto x2 = simd::load(seed + 2*W), x3 = simd::load(seed + 3*W);
+  const auto step = simd::set1(ratio.pow(block).raw_val());
+  auto* dst = reinterpret_cast<uint32_t*>(b.data());
+  size_t i = 0;
+  for (; i + block <= n; i += block) {
+    simd::store(dst + i, x0); simd::store(dst + i + W, x1);
+    simd::store(dst + i + 2*W, x2); simd::store(dst + i + 3*W, x3);
+    x0 = simd::mulmod<M::mod, M::ninv>(x0, step);
+    x1 = simd::mulmod<M::mod, M::ninv>(x1, step);
+    x2 = simd::mulmod<M::mod, M::ninv>(x2, step);
+    x3 = simd::mulmod<M::mod, M::ninv>(x3, step);
+  }
+  if (i != n) {
+    simd::store(seed, x0); simd::store(seed + W, x1);
+    simd::store(seed + 2*W, x2); simd::store(seed + 3*W, x3);
+    std::memcpy(dst + i, seed, (n - i) * sizeof(uint32_t));
+  }
+  return b;
+}
+
+// Normalize the fixed short input once, then each new coefficient is a dot
+// product of at most eight neighbours; no transform or scratch is required.
+template <class M>
+vec<M> inverse_short(const vec<M>& a, size_t cnt, size_t n) {
+  vec<M> b(n);
+  b[0] = a[0].inv();
+  std::array<M, 8> coefficients;
+  const size_t degree = cnt - 1;
+  for (size_t j = 0; j < degree; ++j) coefficients[j] = -a[j+1]*b[0];
+  for (size_t i = 1; i < n; ++i) {
+    M sum;
+    for (size_t j = 0; j < std::min(i, degree); ++j)
+      sum += coefficients[j]*b[i-j-1];
+    b[i] = sum;
+  }
+  return b;
 }
 
 }  // namespace detail
@@ -337,16 +456,23 @@ vec<M> inv(const vec<M>& a, size_t n) {
   if (n == 0) return {};
   if (a.empty() || a[0].is_zero())
     throw domain_error("poly::inv: constant term is zero");
-  if (a.size() == 1) {  // constant: 1/a0 + 0*x + 0*x^2 + ...
+  size_t cnt = std::min(a.size(), n);
+  while (cnt > 1 && a[cnt-1].is_zero()) --cnt;
+  if (cnt == 1) {  // Includes padded constants and a constant prefix mod x^n.
     vec<M> r(n, M());
     r[0] = a[0].inv();
     return r;
   }
   static_assert(sizeof(M) == sizeof(uint32_t), "Mont must be a single 32-bit limb");
+  if (cnt == 2) return detail::inverse_linear(a, n);
+  if (cnt <= 5 || (cnt <= 9 && n >= 4096))
+    return detail::inverse_short(a, cnt, n);
 
   const size_t seed = std::min(n, size_t(32));
+  const uint32_t scratch_n = detail::series_scratch_size<M>(n, seed);
   vec<M> b = detail::inverse_seed(a, seed);
-  vec<M> work, spectrum;
+  b.reserve(n);
+  fpx::detail::ScratchBuffer work(scratch_n), spectrum(scratch_n);
   for (size_t m = seed; m < n; m <<= 1)
     detail::extend_inverse(a, b, std::min(2 * m, n), work, spectrum);
   b.resize(n);
@@ -391,9 +517,21 @@ vec<M> exp(const vec<M>& a, size_t n) {
   // Short input series admit an O(n*degree(a)) recurrence; in particular exp
   // of a linear polynomial is a single contiguous pass.
   const size_t seed = aprime.size() <= naive_threshold ? n : std::min<size_t>(n, 32);
+  const uint32_t scratch_n = detail::series_scratch_size<M>(n, seed);
   vec<M> denominators = inv_series<M>(n-1);
   vec<M> b(seed, M());
   b[0] = M::from_int(1);
+  if (aprime.size() == 1) {
+    // exp(c*x)[i] = exp(c*x)[i-1] * (c/i). Compute c/i independently
+    // from the previous coefficient, shortening the dependent multiply chain.
+    M previous = b[0];
+    const M factor = aprime[0];
+    for (size_t i = 1; i < n; ++i) {
+      previous *= factor*denominators[i];
+      b[i] = previous;
+    }
+    return b;
+  }
   for (size_t i = 1; i < seed; ++i) {
     M sum;
     for (size_t j = 1; j <= i && j <= aprime.size(); ++j)
@@ -401,8 +539,10 @@ vec<M> exp(const vec<M>& a, size_t n) {
     b[i] = sum*denominators[i];
   }
   if (n == seed) return b;
+  b.reserve(n);
   vec<M> c = detail::inverse_seed(b, seed/2);
-  vec<M> spectrum, inverse_spectrum, work;
+  c.reserve(n/2);
+  fpx::detail::ScratchBuffer spectrum(scratch_n), inverse_spectrum(scratch_n), work(scratch_n);
   for (size_t m = seed; m < n; m *= 2) {
     const size_t m2 = std::min(2*m, n), hlen = m2-m;
     if (hlen <= 8) {
@@ -418,36 +558,33 @@ vec<M> exp(const vec<M>& a, size_t n) {
     if (c.size() < hlen)
       detail::extend_inverse(b, c, hlen, work, inverse_spectrum);
     const uint32_t N = next_pow2(2*m);
-    auto plan = NttPlan<M>::get(N);
-    spectrum.assign(N, M());
-    inverse_spectrum.assign(N, M());
-    work.assign(N, M());
-    std::copy(b.begin(), b.end(), spectrum.begin());
-    std::copy(c.begin(), c.end(), inverse_spectrum.begin());
-    std::copy_n(aprime.begin(), std::min(aprime.size(), m2-1), work.begin());
-    auto* pb = reinterpret_cast<uint32_t*>(spectrum.data());
-    auto* pc = reinterpret_cast<uint32_t*>(inverse_spectrum.data());
-    auto* pt = reinterpret_cast<uint32_t*>(work.data());
-    plan->forward_lazy(pb);
-    plan->forward_lazy(pt);
+    const auto& plan = NttPlan<M>::get_ref(N);
+    detail::prepare_scratch(b, b.size(), spectrum, N);
+    detail::prepare_scratch(c, c.size(), inverse_spectrum, N);
+    detail::prepare_scratch(aprime, std::min(aprime.size(), m2-1), work, N);
+    auto* pb = spectrum.data();
+    auto* pc = inverse_spectrum.data();
+    auto* pt = work.data();
+    plan.forward_lazy(pb);
+    plan.forward_lazy(pt);
     pointwise_mul<M>(pt, pb, N);
-    plan->inverse(pt);
+    plan.inverse(pt);
     // a' b - b' is zero below degree m-1.  The wanted high range is
     // untouched by cyclic wraparound: deg(a'b) <= 3m-3.
-    for (size_t i = 0; i < hlen; ++i) work[i] = work[m-1+i];
-    std::fill(work.data() + hlen, work.data() + work.size(), M());
-    plan->forward_lazy(pt);
-    plan->forward_lazy(pc);
+    std::memmove(pt, pt + m - 1, hlen * sizeof(uint32_t));
+    std::memset(pt + hlen, 0, (N - hlen) * sizeof(uint32_t));
+    plan.forward_lazy(pt);
+    plan.forward_lazy(pc);
     pointwise_mul<M>(pt, pc, N);
-    plan->inverse(pt);
+    plan.inverse(pt);
     // Integrate the shifted high differential residual.
     pointwise_mul<M>(pt, reinterpret_cast<const uint32_t*>(denominators.data()) + m, hlen);
-    std::fill(work.data() + hlen, work.data() + work.size(), M());
-    plan->forward_lazy(pt);
+    std::memset(pt + hlen, 0, (N - hlen) * sizeof(uint32_t));
+    plan.forward_lazy(pt);
     pointwise_mul<M>(pt, pb, N);
-    plan->inverse(pt);
+    plan.inverse(pt);
     b.resize(m2);
-    std::copy_n(work.data(), hlen, b.data() + m);
+    std::memcpy(b.data() + m, pt, hlen * sizeof(uint32_t));
   }
   return b;
 }
@@ -476,6 +613,7 @@ vec<M> sqrt(const vec<M>& a, size_t n) {
     return r;
   }
   const size_t seed = std::min<size_t>(inner_n, 32);
+  const uint32_t scratch_n = detail::series_scratch_size<M>(inner_n, seed);
   const M half_inv = M::from_int(M::inv2);
   const M twice_root_inv = root0.inv()*half_inv;
   vec<M> b(seed, M());
@@ -486,8 +624,10 @@ vec<M> sqrt(const vec<M>& a, size_t n) {
     b[i] = residual*twice_root_inv;
   }
   if (inner_n > seed) {
+    b.reserve(inner_n);
     vec<M> c = detail::inverse_seed(b, seed/2);
-    vec<M> work, inverse_spectrum;
+    c.reserve(inner_n/2);
+    fpx::detail::ScratchBuffer work(scratch_n), inverse_spectrum(scratch_n);
     for (size_t m = seed; m < inner_n; m *= 2) {
       const size_t m2 = std::min(2*m, inner_n), hlen = m2-m;
       if (hlen <= 8) {
@@ -502,25 +642,24 @@ vec<M> sqrt(const vec<M>& a, size_t n) {
       if (c.size() < hlen)
         detail::extend_inverse(b, c, hlen, work, inverse_spectrum);
       const uint32_t N = next_pow2(2*m);
-      auto plan = NttPlan<M>::get(N);
-      work.assign(N, M());
-      inverse_spectrum.assign(N, M());
-      std::copy(b.begin(), b.end(), work.begin());
-      std::copy(c.begin(), c.end(), inverse_spectrum.begin());
-      auto* pt = reinterpret_cast<uint32_t*>(work.data());
-      auto* pc = reinterpret_cast<uint32_t*>(inverse_spectrum.data());
-      plan->forward_lazy(pt);
+      const auto& plan = NttPlan<M>::get_ref(N);
+      detail::prepare_scratch(b, b.size(), work, N);
+      detail::prepare_scratch(c, c.size(), inverse_spectrum, N);
+      auto* pt = work.data();
+      auto* pc = inverse_spectrum.data();
+      plan.forward_lazy(pt);
       pointwise_mul<M>(pt, pt, N);
-      plan->inverse(pt);
+      plan.inverse(pt);
       for (size_t i = 0; i < hlen; ++i)
-        work[i] = ((m+i < a.size()-v) ? a[v+m+i] : M()) - work[m+i];
-      std::fill(work.data() + hlen, work.data() + work.size(), M());
-      plan->forward_lazy(pt);
-      plan->forward_lazy(pc);
+        pt[i] = (((m+i < a.size()-v) ? a[v+m+i] : M()) - M::raw(pt[m+i])).raw_val();
+      std::memset(pt + hlen, 0, (N - hlen) * sizeof(uint32_t));
+      plan.forward_lazy(pt);
+      plan.forward_lazy(pc);
       pointwise_mul<M>(pt, pc, N);
-      plan->inverse(pt);
+      plan.inverse(pt);
       b.resize(m2);
-      for (size_t i = 0; i < hlen; ++i) b[m+i] = work[i]*half_inv;
+      auto* dst = reinterpret_cast<uint32_t*>(b.data() + m);
+      detail::scale_limbs(dst, pt, hlen, half_inv);
     }
   }
   if (half == 0) return b;
@@ -557,13 +696,38 @@ vec<M> pow(const vec<M>& a, uint64_t k, size_t n) {
   const size_t inner_n = n - sh;
   vec<M> u(std::min(a.size() - v, inner_n));
   copy_range(a, v, u.size(), u);
+  trim(u);
+  if (u.size() == 1) {
+    vec<M> r(n, M());
+    r[sh] = u[0].pow(k);
+    return r;
+  }
+  if (k > 64 && u.size() == 2 && inner_n <= M::mod) {
+    // For j < p, binomial(k,j) depends only on k mod p. Coefficients
+    // beyond that residue vanish, and all needed factorials are invertible.
+    const uint32_t exponent = static_cast<uint32_t>(k % M::mod);
+    const size_t cnt = std::min(inner_n, size_t(exponent) + 1);
+    vec<M> divisors = inv_series<M>(cnt - 1);
+    vec<M> r(n, M());
+    r[sh] = u[0].pow(k);
+    const M ratio = u[1]*u[0].inv();
+    M factor = ratio*M::from_int(exponent);
+    for (size_t j = 1; j < cnt; ++j) {
+      r[sh+j] = r[sh+j-1]*factor*divisors[j];
+      factor -= ratio;
+    }
+    return r;
+  }
 
   if (k <= 64) {  // binary exponentiation
-    vec<M> r{M::from_int(1)}, base = u;
+    vec<M> r{M::from_int(1)}, base = std::move(u);
     for (uint64_t e = k; e; e >>= 1) {
-      if (e & 1) { r = conv_limbs(r, base, inner_n); r.resize(inner_n); }
-      if (e > 1) { base = conv_limbs(base, base, inner_n); base.resize(inner_n); }
+      // Keep the actual support until the final result: early powers of a
+      // short polynomial need neither padded operands nor large transforms.
+      if (e & 1) r = conv_limbs(r, base, inner_n);
+      if (e > 1) base = conv_limbs(base, base, inner_n);
     }
+    r.resize(inner_n);
     if (sh == 0) return r;
     vec<M> out(n, M());
     for (size_t i = 0; i < r.size() && i + sh < n; ++i) out[i + sh] = r[i];
@@ -571,11 +735,12 @@ vec<M> pow(const vec<M>& a, uint64_t k, size_t n) {
   }
 
   const M c = u[0];
-  const vec<M> nrm = mul_scalar(u, c.inv());  // nrm(0) == 1
+  vec<M> nrm = std::move(u);
+  detail::scale_inplace(nrm, c.inv());  // nrm(0) == 1
   vec<M> l = log(nrm, inner_n);
-  l = mul_scalar(l, M::from_int(k));         // k mod Mod is the correct exponent
+  detail::scale_inplace(l, M::from_int(k));  // k mod Mod is the correct exponent
   vec<M> r = exp(l, inner_n);
-  r = mul_scalar(r, c.pow(k));
+  detail::scale_inplace(r, c.pow(k));
   if (sh == 0) return r;
   vec<M> out(n, M());
   for (size_t i = 0; i < r.size() && i + sh < n; ++i) out[i + sh] = r[i];
@@ -585,23 +750,42 @@ vec<M> pow(const vec<M>& a, uint64_t k, size_t n) {
 /// Euclidean division: a = b*q + r with deg(r) < deg(b). Both results trimmed.
 template <class M>
 std::pair<vec<M>, vec<M>> divmod(const vec<M>& a_in, const vec<M>& b_in) {
-  vec<M> a = a_in, b = b_in;
-  trim(a);
-  trim(b);
-  if (b.empty()) throw domain_error("poly::divmod: division by zero polynomial");
-  if (a.size() < b.size()) return {vec<M>{}, a};
-  const size_t dn = a.size() - b.size() + 1;
+  size_t an = a_in.size(), bn = b_in.size();
+  while (an != 0 && a_in[an-1].is_zero()) --an;
+  while (bn != 0 && b_in[bn-1].is_zero()) --bn;
+  if (bn == 0) throw domain_error("poly::divmod: division by zero polynomial");
+  if (an < bn)
+    return {vec<M>{}, vec<M>(a_in.begin(), a_in.begin() + static_cast<std::ptrdiff_t>(an))};
+  if (bn == 1) {
+    vec<M> q(an);
+    detail::scale_limbs(reinterpret_cast<uint32_t*>(q.data()),
+                        reinterpret_cast<const uint32_t*>(a_in.data()), an, b_in[0].inv());
+    return {std::move(q), vec<M>{}};
+  }
+  const size_t dn = an - bn + 1;
   // q = rev( rev(a) * inv(rev(b)) ) mod x^dn
-  vec<M> ra(a.rbegin(), a.rend());
-  vec<M> rb(b.rbegin(), b.rend());
+  vec<M> ra(std::make_reverse_iterator(a_in.data() + an),
+            std::make_reverse_iterator(a_in.data() + an - dn));
+  vec<M> rb(std::make_reverse_iterator(b_in.data() + bn),
+            std::make_reverse_iterator(b_in.data() + bn - std::min(bn, dn)));
   vec<M> ib = inv(rb, dn);
   vec<M> rq = conv_limbs(ra, ib, dn);
   rq.resize(dn, M());
-  vec<M> q(rq.rbegin(), rq.rend());
-  vec<M> r = sub(a, conv_limbs(b, q, a.size()));
-  r.resize(a.size(), M());
+  std::reverse(rq.begin(), rq.end());
+  vec<M> q = std::move(rq);
+  // Once q is known, the high coefficients of a-b*q cancel exactly. Compute
+  // only the low remainder instead of transforming those cancelling terms.
+  const size_t rn = bn - 1;
+  vec<M> r(a_in.data(), a_in.data() + rn);
+  vec<M> product = conv_limbs(b_in, q, rn);
+  auto* dst = reinterpret_cast<uint32_t*>(r.data());
+  const auto* src = reinterpret_cast<const uint32_t*>(product.data());
+  size_t i = 0;
+  for (; i + simd::lane <= product.size(); i += simd::lane)
+    simd::store(dst + i, simd::sub(simd::load(dst + i), simd::load(src + i), M::mod));
+  for (; i < product.size(); ++i) r[i] -= product[i];
   trim(r);
-  return {q, r};
+  return {std::move(q), std::move(r)};
 }
 
 template <class M>

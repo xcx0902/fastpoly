@@ -12,6 +12,7 @@
 ```
 include/fastpoly/modint.hpp   Montgomery 模数层
 include/fastpoly/simd.hpp     AVX2 / AVX-512 / NEON / 标量 的向量原语
+include/fastpoly/memory.hpp   64 字节对齐存储、按线程复用的有界临时内存池
 include/fastpoly/ntt.hpp      NTT plan（预计算 twiddle、按 n 缓存共享）
 include/fastpoly/poly.hpp     多项式模板与全部算术
 include/fastpoly/fastpoly.hpp 总入口
@@ -118,7 +119,10 @@ twiddle 按阶段预计算成**连续数组** `(w^k, w^2k, w^3k)` 及其逆，�
 `log2(n)` 为奇数时最后补一级 len=2 的 radix-2（该蝴蝶是自转置的，正逆共用同一份代码，且用
 `swap_pairs + pick_odd` 向量化成"成对互换 + 选择"三件套，不再是标量循环）。
 plan 按 `log2(n)` 缓存并共享：每个尺寸用独立的 `call_once` 构建，不同尺寸可并发预计算；
-线程缓存使热查找不经过互斥锁。尺寸上限由 `v2(mod-1)` 决定，越界直接抛 `ntt_size_error`。
+线程缓存使热查找不经过互斥锁。内部用 `get_ref(n)` 借用缓存持有的 plan，避免热路径上的
+`shared_ptr` 原子引用计数；原有 `get(n)` 接口保留。阶段长度和偏移用固定数组保存，twiddle
+使用 64 字节对齐的未初始化存储，直接生成有效数据；各级单位根由上一层平方两次得到。
+尺寸上限由 `v2(mod-1)` 决定，越界直接抛 `ntt_size_error`。
 
 小阶段按最多 **4096 个连续元素** 分块，在一个缓存块内完成所有剩余层，再处理下一块。
 末层 `len=4` 的三个 twiddle 都是 1，直接删除相应乘法。逆变换把 `1/n` 预乘进最后一级的
@@ -148,10 +152,15 @@ AVX-512 复用 AVX2 的 256 位网络（在 Rosetta 下可测），只是把两�
 留在 `2m` 而不是 `4m`。求逆先用 32 项递推启动，后续复用两个变换缓冲区，把高半误差搬回
 原缓冲区，不再分配中间的 `h` 和 `hv`。
 
+求逆先检查有效输入前缀，忽略输出范围之外的系数和末尾零。线性输入的逆元是等比数列，
+用四组独立 SIMD 链生成；次数不超过 4 的输入直接递推，`n >= 4096` 时放宽至次数 8。
+这些阈值由实测选择，较高次数继续使用 Newton/NTT。
+
 `exp` 和 `sqrt` 保存已有逆元前缀，随精度增长继续扩展。`exp` 从 `b'=a'b` 的高半残差出发，
 除以 `b`、积分，再乘以缓存的 `b` 频谱，只补新增系数；`sqrt` 用 `(a-b²)/(2b)` 的高半修正。
 两者的主变换长度均为 `2m`，消除了每轮从头求逆及完整 `log`/卷积。最终只剩至多 8 项时，
 直接递推追加，避免刚越过二次幂就再跑一整组变换。短输入的 `exp` 用系数递推；常数开方直接返回。
+线性 `exp` 单独生成相邻系数，先计算与前一项无关的乘法因子，避免通用求和循环。
 
 `pow` 对小指数走截断快速幂，对大指数走 `exp(k·log a)`：对 `j < n ≤ 2^23 ≪ mod`，二项式系数
 `binom(k, j)` 只依赖 `k mod mod`，所以 `k` 可以任意大。小规模卷积自动退回 O(nm) 朴素实现
@@ -160,6 +169,28 @@ AVX-512 复用 AVX2 的 256 位网络（在 Rosetta 下可测），只是把两�
 **点值乘法与数乘向量化。** `conv`/`inv` 里的逐点 Montgomery 乘法是一整趟 O(n) 遍历，
 标量实现下 `conv` 有约 15% 的时间花在这一趟上（`1.96 → 1.70 ns/(elem*log n)`）；换成
 `simd::mulmod` 后只剩一趟向量遍历，`mul_scalar`、微分、积分和指数修正同理向量化。
+
+**临时内存池与对齐。** 卷积的第二个频谱，以及 `inv`/`exp`/`sqrt` 的临时频谱和工作区，
+使用内部 `ScratchBuffer`：连续存放原始 32 位 Montgomery 数位，首地址按 64 字节对齐。
+按二次幂尺寸分桶，每个线程独立复用，不需要共享分配锁；同时存活的缓冲区拥有独立存储。
+每次只复制有效系数、清零填充尾部，增长时不复制旧频谱；返回结果仍是 `std::vector<M>`，
+卷积直接返回自己的结果缓冲区。Newton 输出预留最终容量，避免逐次扩容和搬运。
+临时工作区也一次预留本次运算实际需要的最大 NTT 容量，倍增期间复用同一个地址；最后至多
+8 项直接递推时，预留量保持在前一个二次幂，不申请额外的双倍工作区。
+
+默认每线程最多缓存 **64 MiB 空闲存储**（包含缓存块头），每个尺寸最多保留四块；活跃缓冲区
+和长期存活的 NTT plan 不计入该上限。线程退出时释放缓存，也可主动释放当前线程的空闲块：
+
+```cpp
+auto stats = fpx::scratch_memory_stats(); // 当前线程：缓存字节数、块数、系统申请数、命中数
+fpx::release_scratch_memory();           // 不影响正在使用的缓冲区或 NTT plan
+```
+
+编译前定义 `FASTPOLY_SCRATCH_CACHE_BYTES` 可调整上限，设为 `0` 则不保留空闲块；所有翻译单元
+必须使用一致的值。公开 `Poly` / `poly::vec` 继续兼容 `std::vector`。小指数幂保留中间乘积的
+实际长度，到最终输出才补零；大指数幂原地数乘。常数幂直接生成，线性输入且新增系数下标小于
+模数时用二项式递推，并在指数模 `mod` 后的有效次数结束。除法只反转商所需的高位系数，余数只计算低于
+除数次数的部分，常数除数直接执行一次 SIMD 数乘。
 
 ## 验证
 
@@ -181,6 +212,9 @@ ASan+UBSan，以及在 Apple Silicon 上通过 **Rosetta 交叉运行 x86-64 的
 另有惰性表示范围、未对齐缓冲区、并发冷 plan 构建、窄卷积、平方别名、非整幂截断及带赋值开方
 的边界回归。单文件发行版由维护头文件生成，用同一套测试验证：
 
+`test_memory` 还覆盖缓存污染后的六模数独立递推对照、分配复用计数、缓存上限、嵌套所有权、
+跨线程移动、异常安全和线程/静态析构顺序；可用 `-DFASTPOLY_SCRATCH_CACHE_BYTES=0` 验证禁用缓存。
+
 ```bash
 python3 scripts/amalgamate.py
 python3 scripts/amalgamate.py --check
@@ -189,9 +223,60 @@ FASTPOLY_TEST_SINGLE_HEADER=1 ./scripts/run-tests.sh
 
 ## 性能
 
+### 2026-10-04：对齐内存池与运算路径优化
+
+基线是本轮修改前的 `57b9540`。本机 Apple Silicon / NEON，Clang 21、
+`-std=c++20 -O2 -DNDEBUG`、单线程。两版使用同一份基准源码和确定性输入，交替运行三轮，
+每轮每项预热 2 次、测量 7 次，取各轮中位数的中位数。64 至 `2^20` 的 225 组输出 checksum
+全部一致，完整数据见 `bench/performance-20261004.csv`。
+
+| 操作（n = 2^20） | 本轮优化前 ms | 本轮优化后 ms | 加速 |
+| --- | ---: | ---: | ---: |
+| NTT 正向 | 2.801 | 2.804 | 1.00× |
+| NTT 逆向 | 3.164 | 3.068 | 1.03× |
+| 卷积 | 24.048 | 20.881 | 1.15× |
+| 求逆 | 32.788 | 28.753 | 1.14× |
+| log | 58.659 | 54.428 | 1.08× |
+| exp | 70.611 | 63.497 | 1.11× |
+| sqrt | 47.859 | 43.403 | 1.10× |
+| pow（指数 1000003） | 130.840 | 119.133 | 1.10× |
+| 线性求逆 `1/(1-x)` | 32.138 | 0.588 | 54.68× |
+| 线性 exp `exp(x)` | 12.697 | 6.090 | 2.09× |
+| 短输入幂 `(1+x)^64` | 75.297 | 0.307 | 245.07× |
+| 线性幂 `(1+x)^1000003` | 108.414 | 9.947 | 10.90× |
+| 除法（除数次数 40） | 69.397 | 51.197 | 1.36× |
+
+主扫描中出现微秒级回退的四项额外用 9 轮、每轮 1001 次、预热 50 次复测：128 项卷积
+1.04×、128 项平方 1.00×、256 项 NTT 正向 1.00×、512 项求逆 1.05×；所有 checksum 一致。
+这些小尺寸测量见 `bench/performance-20261004-small.csv`，主扫描原始结果仍完整保留。
+
+冷 plan 另用 13 组交替的新进程测量，`2^20` 构建中位数 **1.699 → 1.179 ms（1.44×）**，
+数据见 `bench/performance-20261004-plan.csv`。热查表使用借用接口 `get_ref` 后，4M 次查询
+平均每次 **5.683 → 2.208 ns**（9 组交替测量，六个尺寸循环），记录在
+`bench/performance-20261004-lookup.csv`。
+
+临时池统计独立于计时，见 `bench/performance-20261004-memory.csv`：`n=2^20` 时首次
+`inv`/`exp`/`sqrt` 分别只申请 **2 / 3 / 2** 个临时块；预热后的调用申请数均为 **0**，
+分别保留约 **8 / 12 / 8 MiB** 空闲块。公开结果的 vector 分配和 NTT plan 存储不计入这些计数。
+
+复现成对测量（使用当前基准源码分别编译旧、新头文件）：
+
+```bash
+mkdir -p /tmp/fastpoly-before
+git archive 57b9540 include | tar -x -C /tmp/fastpoly-before
+clang++ -std=c++20 -O2 -DNDEBUG -I/tmp/fastpoly-before/include bench/bench.cpp -o /tmp/fastpoly-before/bench
+clang++ -std=c++20 -O2 -DNDEBUG -Iinclude bench/bench.cpp -o /tmp/fastpoly-after
+python3 scripts/compare-bench.py --before /tmp/fastpoly-before/bench --after /tmp/fastpoly-after \
+  --min-size 64 --max-size 1048576 --runs 3 --reps 7 --warmup 2 --output /tmp/fastpoly-comparison.csv
+./build/fastpoly_bench --size 1048576 --op exp --reps 3 --warmup 2 --memory
+./build/fastpoly_bench --size 1048576 --op exp --reps 3 --warmup 2 --memory --cold-scratch
+```
+
+### 2026-10-03：此前的 NTT 与级数优化
+
 2026-10-03，本机 Apple Silicon（arm64 / NEON，4 通道），`mod = 998244353`，单线程。
 Clang 21，`-std=c++20 -O2`；同一基准源码、同一确定性输入，每项预热 2 次、测量 7 次，
-下表取**中位数**，plan 已预热。优化前为 `6e25c22`，优化后为当前实现。
+下表取**中位数**，plan 已预热。优化前为 `6e25c22`，优化后为 2026-10-03 的实现。
 
 | 操作（n = 2^20） | 优化前 ms | 优化后 ms | 加速 |
 | --- | ---: | ---: | ---: |

@@ -1,0 +1,2 @@
+backend,operation,min_size,max_size,calls,before_ns,after_ns,speedup,pairs
+neon,get-to-get_ref,32,1024,4000000,5.6826,2.2080,2.57,9

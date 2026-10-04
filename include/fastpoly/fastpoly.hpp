@@ -10,6 +10,7 @@
 #define FASTPOLY_FASTPOLY_HPP
 
 #include "fastpoly/modint.hpp"
+#include "fastpoly/memory.hpp"
 #include "fastpoly/ntt.hpp"
 #include "fastpoly/poly.hpp"
 #include "fastpoly/simd.hpp"
