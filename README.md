@@ -218,8 +218,15 @@ ASan+UBSan，以及在 Apple Silicon 上通过 **Rosetta 交叉运行 x86-64 的
 ```bash
 python3 scripts/amalgamate.py
 python3 scripts/amalgamate.py --check
+python3 tests/test_amalgamate.py
 FASTPOLY_TEST_SINGLE_HEADER=1 ./scripts/run-tests.sh
 ```
+
+合并脚本按 C++ token 压缩空白，并把重复序列提取为临时宏；宏展开后的公共名称、
+类型和实现保持不变。临时宏使用 Clang / GCC / MSVC 支持的 `push_macro` / `pop_macro`
+保存和恢复调用方定义，且全部在头文件末尾清理。系统头文件在定义临时宏前包含。
+生成结果确定，可用 `--check` 检查；Python 回归测试还对四种 SIMD 分支的预处理 token
+与维护头文件逐一比对，覆盖配置覆盖、重复包含和临时宏泄漏。
 
 ## 性能
 
