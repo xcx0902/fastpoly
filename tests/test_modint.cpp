@@ -235,6 +235,60 @@ void chunk_layout_contract() {
   }
 }
 
+template <class M>
+void wide_fixed_contract() {
+  if constexpr (simd::backend::q32 && simd::lazy_ok<M::mod>) {
+    constexpr size_t L = simd::lane;
+    constexpr uint32_t P = M::mod;
+    const uint32_t edges[] = {0, 1, P - 1, P, P + 1, 2*P - 1,
+                              2*P, 3*P - 1, 3*P, 4*P - 1, UINT32_MAX};
+    uint32_t a[L], out[L];
+    for (const uint32_t w : {0u, 1u, 2u, P/2, P - 1}) {
+      const uint32_t mont = M::from_int(w).raw_val();
+      const auto fixed = simd::fixed_twiddle<P, M::ninv>(mont);
+      for (size_t offset = 0; offset < std::size(edges); ++offset) {
+        for (size_t k = 0; k < L; ++k) a[k] = edges[(offset + k) % std::size(edges)];
+        const auto v = simd::load(a);
+        simd::store(out, simd::mul_twiddle<P, M::ninv>(v, fixed));
+        for (size_t k = 0; k < L; ++k) {
+          CHECK(out[k] < 2*P);
+          CHECK_EQ(out[k] % P, ref_mul(a[k], w, P));
+        }
+        // A canonical twiddle also permits an arbitrary unsigned Montgomery
+        // multiplicand: a*mont < P*2^32. Include 4*P-1 and UINT32_MAX.
+        simd::store(out, simd::mulmod_lazy<P, M::ninv>(v, simd::set1(mont)));
+        for (size_t k = 0; k < L; ++k) {
+          CHECK(out[k] < 2*P);
+          CHECK_EQ(out[k] % P, ref_mul(a[k], w, P));
+        }
+      }
+    }
+  }
+}
+
+template <class Backend = simd::backend>
+void split_radix8_layout_contract() {
+  if constexpr (Backend::split_radix8) {
+    constexpr size_t L = simd::lane;
+    uint32_t input[2*L], even[L], odd[L], result[2*L];
+    for (size_t i = 0; i < 2*L; ++i) input[i] = static_cast<uint32_t>(i);
+    const auto a = simd::load(input), b = simd::load(input + L);
+    const auto e = Backend::unzip_even(a, b), o = Backend::unzip_odd(a, b);
+    simd::store(even, e); simd::store(odd, o);
+    bool seen[L]{};
+    for (size_t i = 0; i < L; ++i) {
+      CHECK(even[i] < 2*L);
+      CHECK_EQ(even[i] % 2, 0u);
+      CHECK_EQ(odd[i], even[i] + 1);
+      CHECK(!seen[even[i]/2]);
+      seen[even[i]/2] = true;
+    }
+    simd::store(result, Backend::zip_low(e, o));
+    simd::store(result + L, Backend::zip_high(e, o));
+    for (size_t i = 0; i < 2*L; ++i) CHECK_EQ(result[i], input[i]);
+  }
+}
+
 template <int L>
 void chunk_layout_contract_all() {
   chunk_layout_contract<1>();
@@ -275,6 +329,17 @@ FP_TEST(fixed_simd_multipliers) {
 
 FP_TEST(simd_chunk_layout) {
   chunk_layout_contract_all<simd::lane>();
+  split_radix8_layout_contract();
+}
+
+FP_TEST(simd_wide_fixed_inputs) {
+  wide_fixed_contract<mod998244353>();
+  wide_fixed_contract<mod1004535809>();
+  wide_fixed_contract<mod469762049>();
+  wide_fixed_contract<mod167772161>();
+  wide_fixed_contract<mod754974721>();
+  wide_fixed_contract<Mont<1073741789u, 2>>();
+  wide_fixed_contract<Mont<3u, 2>>();
 }
 
 FP_TEST_MAIN()

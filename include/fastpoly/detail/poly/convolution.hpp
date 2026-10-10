@@ -37,8 +37,8 @@ vec<M> conv_limbs(const vec<M>& a, const vec<M>& b, size_t lim) {
     constexpr size_t tile = 4096;
     for (size_t base = 0; base < out; base += tile) {
       const size_t end = std::min(out, base + tile);
-      for (size_t i = 0; i < short_n && i < end; ++i) {
-        if (small[i].is_zero()) continue;
+      auto accumulate = [&](size_t i) {
+        if (small[i].is_zero()) return;
         const size_t begin = std::max(base, i);
         const size_t limit = std::min(end, i + long_n);
         const auto c = simd::fixed_twiddle<M::mod, M::ninv>(small[i].raw_val());
@@ -48,7 +48,38 @@ vec<M> conv_limbs(const vec<M>& a, const vec<M>& b, size_t lim) {
           simd::store(dst + i + j, simd::add(simd::load(dst + i + j), v, M::mod));
         }
         for (; j < cnt; ++j) r[i + j] += small[i] * large[j];
+      };
+      size_t i = 0;
+      if constexpr (simd::backend::q32 && simd::lazy_ok<M::mod>) {
+        // With q = floor(w*2^32/MOD) and canonical a < MOD, the lazy
+        // remainder a*w-floor(a*q/2^32)*MOD is < MOD + MOD^2/2^32.
+        // Each product is thus < 5*MOD/4. Two
+        // products plus a canonical accumulator are < 7*MOD/2 < 2^32.
+        // Share the accumulator load/store and reduce only their sum.
+        for (; i + 1 < short_n && i < end; i += 2) {
+          if (small[i].is_zero() || small[i + 1].is_zero()) {
+            accumulate(i);
+            if (i + 1 < end) accumulate(i + 1);
+            continue;
+          }
+          const auto c0 = simd::fixed_twiddle<M::mod, M::ninv>(small[i].raw_val());
+          const auto c1 = simd::fixed_twiddle<M::mod, M::ninv>(small[i + 1].raw_val());
+          if (i >= base) r[i] += small[i] * large[0];
+          const size_t last = i + long_n;
+          if (last >= base && last < end) r[last] += small[i + 1] * large[long_n - 1];
+          size_t j = std::max(base, i + 1);
+          const size_t limit = std::min(end, last);
+          for (; j + simd::lane <= limit; j += simd::lane) {
+            const auto v0 = simd::mul_twiddle<M::mod, M::ninv>(simd::load(src + j - i), c0);
+            const auto v1 = simd::mul_twiddle<M::mod, M::ninv>(simd::load(src + j - i - 1), c1);
+            const auto sum = simd::add_wide(simd::load(dst + j), simd::add_wide(v0, v1));
+            simd::store(dst + j, simd::reduce_full(simd::reduce_full(sum, 2*M::mod), M::mod));
+          }
+          for (; j < limit; ++j)
+            r[j] += small[i]*large[j - i] + small[i + 1]*large[j - i - 1];
+        }
       }
+      for (; i < short_n && i < end; ++i) accumulate(i);
     }
     return r;
   }

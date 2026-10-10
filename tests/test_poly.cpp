@@ -558,6 +558,43 @@ FP_TEST(poly_optimized_boundaries_all_moduli) {
 namespace {
 
 template <class Field>
+void paired_convolution_boundaries() {
+  const size_t width = static_cast<size_t>(simd::lane);
+  for (const size_t long_n : {width - 1, width, width + 1, size_t(4097)}) {
+    for (const size_t short_n : {size_t(2), size_t(3), size_t(16), size_t(39), size_t(40)}) {
+      for (unsigned pattern = 0; pattern < 3; ++pattern) {
+        std::vector<Field> a(short_n), b(long_n);
+        for (size_t i = 0; i < short_n; ++i)
+          a[i] = Field::raw(pattern == 1 && i % 3 != 0 ? 0 : Field::mod - 1);
+        for (size_t i = 0; i < long_n; ++i)
+          b[i] = Field::raw(pattern == 2 && i % 3 != 0 ? 0 : Field::mod - 1);
+        // Raw extrema maximize the Shoup error; sparse pairs exercise both
+        // one-coefficient fallbacks. Clip inside a pair and at the tile edge.
+        for (const size_t n : {size_t(1), width, width + 1, size_t(4095),
+                               size_t(4096), size_t(4097), short_n + long_n}) {
+          const auto want = reference_product(a, b, n);
+          CHECK_MSG(poly::conv(a, b, n) == want,
+                    "paired conv mod=%u short=%zu long=%zu n=%zu pattern=%u",
+                    Field::mod, short_n, long_n, n, pattern);
+          CHECK(poly::conv(b, a, n) == want);
+        }
+      }
+    }
+  }
+}
+
+}  // namespace
+
+FP_TEST(poly_paired_convolution_boundaries) {
+  paired_convolution_boundaries<mod998244353>();
+  paired_convolution_boundaries<mod469762049>();
+  paired_convolution_boundaries<Mont<1073741789u, 2>>();
+  paired_convolution_boundaries<mod1224736769>();
+}
+
+namespace {
+
+template <class Field>
 void inverse_table_and_linear_series() {
   for (const size_t n : {size_t(65535), size_t(65536), size_t(65537), size_t(262147)}) {
     const auto table = poly::inv_series<Field>(n);

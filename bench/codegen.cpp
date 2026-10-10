@@ -35,4 +35,22 @@ void fastpoly_fixed7(const uint32_t* src, uint32_t* dst) {
   const auto factor = fpx::simd::fixed_twiddle<M::mod, M::ninv>(M::from_int(7).raw_val());
   fpx::simd::store(dst, fpx::simd::mul_twiddle_full<M::mod, M::ninv>(fpx::simd::load(src), factor));
 }
+// Variable twiddles keep the multiplication visible instead of folding a
+// small scalar coefficient into shifts. Both paths accept lazy input limbs.
+void fastpoly_twiddle_diff(const uint32_t* a, const uint32_t* b,
+                          const uint32_t* twiddle, uint32_t* dst) {
+  using M = fpx::mod998244353;
+  const auto factor = fpx::simd::decode_twiddle<M::mod>(fpx::simd::load(twiddle));
+  fpx::simd::store(dst, fpx::simd::mul_twiddle_diff<M::mod, M::ninv>(
+      fpx::simd::load(a), fpx::simd::load(b), factor));
+}
+#if defined(FPX_HAVE_AVX2_INTRIN)
+void fastpoly_q32_diff(const uint32_t* a, const uint32_t* b,
+                      const uint32_t* value, const uint32_t* quotient, uint32_t* dst) {
+  using M = fpx::mod998244353;
+  const fpx::simd::FixedTwiddle factor{{fpx::simd::load(value), fpx::simd::load(quotient)}};
+  fpx::simd::store(dst, fpx::simd::mul_twiddle_diff<M::mod, M::ninv>(
+      fpx::simd::load(a), fpx::simd::load(b), factor));
+}
+#endif
 }

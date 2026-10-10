@@ -163,8 +163,22 @@ inline native_t sub_wide(native_t a, native_t b) { return _mm512_sub_epi32(a, b)
 struct backend {
   static constexpr bool q31 = false;
   static constexpr bool q32 = true;
-  static constexpr bool split_radix8 = false;
+  static constexpr bool split_radix8 = true;
   static constexpr bool parallel_linear_exp = false;
+
+  // Keep the k=0/1 split lane-local; no cross-ZMM permutation is needed.
+  static native_t unzip_even(native_t a, native_t b) {
+    a = _mm512_shuffle_epi32(a, (_MM_PERM_ENUM)0xD8);
+    b = _mm512_shuffle_epi32(b, (_MM_PERM_ENUM)0xD8);
+    return _mm512_unpacklo_epi64(a, b);
+  }
+  static native_t unzip_odd(native_t a, native_t b) {
+    a = _mm512_shuffle_epi32(a, (_MM_PERM_ENUM)0xD8);
+    b = _mm512_shuffle_epi32(b, (_MM_PERM_ENUM)0xD8);
+    return _mm512_unpackhi_epi64(a, b);
+  }
+  static native_t zip_low(native_t a, native_t b) { return _mm512_unpacklo_epi32(a, b); }
+  static native_t zip_high(native_t a, native_t b) { return _mm512_unpackhi_epi32(a, b); }
 
   // A width-2 stage has unity twiddles in even lanes. Only odd lanes multiply.
   template <uint32_t MOD, uint32_t NINV>

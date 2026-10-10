@@ -178,8 +178,21 @@ inline native_t sub_wide(native_t a, native_t b) { return _mm256_sub_epi32(a, b)
 struct backend {
   static constexpr bool q31 = false;
   static constexpr bool q32 = true;
-  static constexpr bool split_radix8 = false;
+  static constexpr bool split_radix8 = true;
   static constexpr bool parallel_linear_exp = false;
+
+  // Split k=0/1 columns inside each 128-bit lane. The block order may
+  // differ from NEON; zip_low/high exactly undo this order before store4m.
+  static native_t unzip_even(native_t a, native_t b) {
+    a = _mm256_shuffle_epi32(a, 0xD8); b = _mm256_shuffle_epi32(b, 0xD8);
+    return _mm256_unpacklo_epi64(a, b);
+  }
+  static native_t unzip_odd(native_t a, native_t b) {
+    a = _mm256_shuffle_epi32(a, 0xD8); b = _mm256_shuffle_epi32(b, 0xD8);
+    return _mm256_unpackhi_epi64(a, b);
+  }
+  static native_t zip_low(native_t a, native_t b) { return _mm256_unpacklo_epi32(a, b); }
+  static native_t zip_high(native_t a, native_t b) { return _mm256_unpackhi_epi32(a, b); }
 
   // A width-2 stage has unity twiddles in even lanes. Only odd lanes multiply.
   template <uint32_t MOD, uint32_t NINV>

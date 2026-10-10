@@ -1,0 +1,165 @@
+{
+  "date": "2026-10-10",
+  "baseline_commit": "89d420c774732a80a6db184b1da79ad18d04db44",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+  "host_architecture": "arm64",
+  "avx2_execution": "Rosetta on Apple Silicon",
+  "native_x86_hardware_timings": false,
+  "benchmark_flags": [
+    "-std=c++20",
+    "-O2",
+    "-DNDEBUG",
+    "-arch",
+    "x86_64",
+    "-mavx2"
+  ],
+  "benchmark_source_sha256": "302aea9864ef83380a7b9a7fbba3a36a34b54f20889c46d970ec3d82c9e58327",
+  "codegen_source_sha256": "cfb06472805f7b8ec5219cc07c65346580292941c7b1603de6f8ef8da6452223",
+  "measurement": "Alternate before/after processes each round; use the median repetition per round and median across rounds. Compare all output checksums. No other builds/tests run during final benchmark measurements.",
+  "datasets": {
+    "performance-20261010-avx-lazy.csv": {
+      "min_size": 64,
+      "max_size": 262144,
+      "runs": 3,
+      "reps": 9,
+      "warmup": 5
+    },
+    "performance-20261010-avx-lazy-large.csv": {
+      "min_size": 1048576,
+      "max_size": 1048576,
+      "runs": 3,
+      "reps": 5,
+      "warmup": 3
+    },
+    "performance-20261010-avx-lazy-moduli.csv": {
+      "moduli_roots": {
+        "469762049": 3,
+        "1073479681": 11,
+        "1224736769": 3
+      },
+      "min_size": 1024,
+      "max_size": 131072,
+      "runs": 3,
+      "reps": 9,
+      "warmup": 5
+    },
+    "performance-20261010-avx-lazy-neon.csv": {
+      "execution": "Native NEON",
+      "min_size": 1024,
+      "max_size": 262144,
+      "runs": 3,
+      "reps": 7,
+      "warmup": 5
+    },
+    "performance-20261010-avx-lazy-small.csv": {
+      "min_size": 2,
+      "max_size": 64,
+      "runs": 7,
+      "reps": 1001,
+      "warmup": 50
+    },
+    "performance-20261010-avx-lazy-codegen.csv": {
+      "source": "bench/codegen.cpp",
+      "flags": {
+        "avx2": [
+          "-mavx2"
+        ],
+        "avx512": [
+          "-mavx512f",
+          "-mavx512vl"
+        ]
+      },
+      "includes_function_prologue_epilogue": true
+    },
+    "performance-20261010-avx-lazy-plan.csv": {
+      "sizes": [
+        1024,
+        65536,
+        1048576
+      ],
+      "runs": 13,
+      "reps": 1,
+      "warmup": 0,
+      "fresh_process_per_sample": true
+    },
+    "performance-20261010-avx-lazy-neon-recheck.csv": {
+      "size": 8192,
+      "operation": "exp",
+      "runs": 9,
+      "reps": 31,
+      "warmup": 7
+    }
+  },
+  "avx512_validation": {
+    "native_compile_flags": [
+      "-mavx512f",
+      "-mavx512vl"
+    ],
+    "portable_model": "SIMDe v0.8.2, SIMDE_NO_NATIVE",
+    "native_hardware_execution": false,
+    "native_hardware_timings": false
+  },
+  "validation": {
+    "maintained_and_single_header": [
+      "NEON",
+      "NEON -march=native",
+      "ASan + UBSan",
+      "Rosetta AVX2",
+      "Rosetta x86 scalar",
+      "AVX-512 SIMDe model"
+    ],
+    "native_avx512_compile": true,
+    "amalgamation_tests": 10,
+    "cmake_tests": 4
+  },
+  "discarded_experiments": [
+    "Replace two all-lane low products with four wide products in Q32 multiplication",
+    "Three-chain rather than six-chain plan generation",
+    "Scalar Q32 tail replacement",
+    "Changing one/two-vector unrolling",
+    "Biased paired radix-2",
+    "Interchanging cached-stage block and twiddle loops"
+  ],
+  "before_headers_sha256": {
+    "fastpoly/detail/poly/base.hpp": "0e84a587241acf61173aa75b732d483619c8c4bce92b3d541ef28c2366101db5",
+    "fastpoly/detail/poly/basic.hpp": "504f0da113713f58b5a462b72c6bde4f2b444be34d713b06b19082df504ba823",
+    "fastpoly/detail/poly/calculus.hpp": "4fcf399229fcfbabcfaeed5406ff6bce772f7a55c3e2650136368833dc8dd0f1",
+    "fastpoly/detail/poly/convolution.hpp": "6a7c4f5711c3ab0d13caa3e69f38a9e7fff4b129f220f1fb44e8a59a8135ea8c",
+    "fastpoly/detail/poly/division.hpp": "f3e9ae5b1c32f751481b5e5867279cefcf154968688a12a501f282653a0a5004",
+    "fastpoly/detail/poly/exponential.hpp": "5dc47f5086c22ec958ac43a67b1890ea58cebf227b8f729e0c9ffb46172a3e30",
+    "fastpoly/detail/poly/inverse.hpp": "8ab0c7c0798ac362359e7413228fe09601cb97a72b303a7ce682250924d92c44",
+    "fastpoly/detail/poly/power.hpp": "ba15c8e79e9414604799ddbb1cc606fc990d9f6b51259d87b29e4c4723ab37f4",
+    "fastpoly/detail/poly/square_root.hpp": "431f0cec07dc97bedaca6505ef61024a4df316799b39439356851ce112d7109a",
+    "fastpoly/detail/simd/avx2.hpp": "4e835b1578003b8444947b7746b60467f2813acc1e4870b1e7df0c8de044f805",
+    "fastpoly/detail/simd/avx512.hpp": "3ba6f612b8a5bef0341a1dc6081461735d64681b6347cf761dd5c94e207c5d16",
+    "fastpoly/detail/simd/neon.hpp": "7d0aad49f55d241cdae703bb7d33296be868a78ba3d7607d1175a0a818cffb2c",
+    "fastpoly/detail/simd/scalar.hpp": "ad3ab3d2f592d6ae7eb1c51010b0d9ec69fd8541b168b1969431b0d0a8d09de0",
+    "fastpoly/fastpoly.hpp": "a767383d3ee8c504c45b3dcb35c9dfabb2907cdbfb616d50893ac92dd7aea0f5",
+    "fastpoly/memory.hpp": "80f2422312356966cf6be99b8fdc92988ee6089fca8760dee9f177c54fd4749f",
+    "fastpoly/modint.hpp": "41195df4512a7c5fd7383c45efe3103e26cba95533bf2b59db605a3b266c6b61",
+    "fastpoly/ntt.hpp": "4ea6257a08c202741720f3d5b8bf742d32e6cacf81657eb4fbc6042964c30f24",
+    "fastpoly/poly.hpp": "a80534c042e4392b87bc90bdcac94eca432d509f5533901147a0a00780a10205",
+    "fastpoly/simd.hpp": "8529b2c27835a004fa3ef815e66e694c4914fe2cb96023f503b61df16a77450f"
+  },
+  "after_headers_sha256": {
+    "fastpoly/detail/poly/base.hpp": "0e84a587241acf61173aa75b732d483619c8c4bce92b3d541ef28c2366101db5",
+    "fastpoly/detail/poly/basic.hpp": "504f0da113713f58b5a462b72c6bde4f2b444be34d713b06b19082df504ba823",
+    "fastpoly/detail/poly/calculus.hpp": "4fcf399229fcfbabcfaeed5406ff6bce772f7a55c3e2650136368833dc8dd0f1",
+    "fastpoly/detail/poly/convolution.hpp": "2358ba4162ad8ea59ee123d98a65deb1728e45772ebff79659eb0009d7184e54",
+    "fastpoly/detail/poly/division.hpp": "f3e9ae5b1c32f751481b5e5867279cefcf154968688a12a501f282653a0a5004",
+    "fastpoly/detail/poly/exponential.hpp": "5dc47f5086c22ec958ac43a67b1890ea58cebf227b8f729e0c9ffb46172a3e30",
+    "fastpoly/detail/poly/inverse.hpp": "8ab0c7c0798ac362359e7413228fe09601cb97a72b303a7ce682250924d92c44",
+    "fastpoly/detail/poly/power.hpp": "ba15c8e79e9414604799ddbb1cc606fc990d9f6b51259d87b29e4c4723ab37f4",
+    "fastpoly/detail/poly/square_root.hpp": "431f0cec07dc97bedaca6505ef61024a4df316799b39439356851ce112d7109a",
+    "fastpoly/detail/simd/avx2.hpp": "ccf6b9211ae0cbdf832eb852dbae7d2a7e829f8a0a29b2b231d6041c8258a398",
+    "fastpoly/detail/simd/avx512.hpp": "97608b3f20091abd53ed9e72689834767a848757785fa6656d36480161a2cb78",
+    "fastpoly/detail/simd/neon.hpp": "7d0aad49f55d241cdae703bb7d33296be868a78ba3d7607d1175a0a818cffb2c",
+    "fastpoly/detail/simd/scalar.hpp": "ad3ab3d2f592d6ae7eb1c51010b0d9ec69fd8541b168b1969431b0d0a8d09de0",
+    "fastpoly/fastpoly.hpp": "a767383d3ee8c504c45b3dcb35c9dfabb2907cdbfb616d50893ac92dd7aea0f5",
+    "fastpoly/memory.hpp": "80f2422312356966cf6be99b8fdc92988ee6089fca8760dee9f177c54fd4749f",
+    "fastpoly/modint.hpp": "41195df4512a7c5fd7383c45efe3103e26cba95533bf2b59db605a3b266c6b61",
+    "fastpoly/ntt.hpp": "472560f022d122f0557df4b4e8c7cbf79fbfe4f6c7e0def1eb5acf8b7259d61d",
+    "fastpoly/poly.hpp": "a80534c042e4392b87bc90bdcac94eca432d509f5533901147a0a00780a10205",
+    "fastpoly/simd.hpp": "7fd828c464dbf5a4196521bd8858f4d8fd25192f63e422f984b51c1219c735bc"
+  }
+}

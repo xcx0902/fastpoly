@@ -63,7 +63,8 @@ namespace fpx::simd {
 // Optional kernels have fixed lane layouts. Reject inconsistent new backends
 // here, before a capability can route a transform to the wrong layout.
 static_assert(!(backend::q31 && backend::q32));
-static_assert(!backend::split_radix8 || lane == 4);
+static_assert(!backend::split_radix8 || lane == 4 ||
+              (backend::q32 && (lane == 8 || lane == 16)));
 static_assert(!backend::parallel_linear_exp || lane == 4);
 
 /// Montgomery multiply for the NTT butterflies: picks the lazy kernel whenever
@@ -181,6 +182,10 @@ template <uint32_t MOD, uint32_t NINV>
 inline native_t mul_twiddle_diff(native_t a, native_t b, Twiddle w) {
   if constexpr (compact_twiddle<MOD>)
     return mul_twiddle_centered<MOD>(sub_wide(a, b), w);
+  else if constexpr (backend::q32 && lazy_ok<MOD>)
+    // a-b+2*MOD is in (0, 4*MOD). A canonical Montgomery twiddle
+    // keeps its product below MOD*2^32, so no minimum is needed here.
+    return mulmod_lazy<MOD, NINV>(add_wide(sub_wide(a, b), set1(2 * MOD)), w.value);
   else
     return butterfly_mul<MOD, NINV, lazy_ok<MOD>>(sub(a, b, rmod<MOD>), w.value);
 }
@@ -213,7 +218,11 @@ inline native_t mul_twiddle_full(native_t a, FixedTwiddle w) {
 }
 template <uint32_t MOD, uint32_t NINV>
 inline native_t mul_twiddle_diff(native_t a, native_t b, FixedTwiddle w) {
-  if constexpr (backend::q32)
+  if constexpr (backend::q32 && lazy_ok<MOD>)
+    // Q32 multiplication accepts any unsigned limb, including this biased
+    // difference below 4*MOD, and returns a value below 2*MOD.
+    return mul_twiddle<MOD, NINV>(add_wide(sub_wide(a, b), set1(2 * MOD)), w);
+  else if constexpr (backend::q32)
     return mul_twiddle<MOD, NINV>(sub(a, b, rmod<MOD>), w);
   else
     return mul_twiddle_diff<MOD, NINV>(a, b, static_cast<Twiddle>(w));

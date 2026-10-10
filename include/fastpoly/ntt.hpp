@@ -487,12 +487,12 @@ class NttPlan {
     radix4_inv<LAST, false>(a, len, s, count);
   }
 
-  // Four eight-point blocks occupy 32 consecutive limbs. Separate their k=0
+  // Eight-point blocks occupy 8*lane consecutive limbs. Separate their k=0
   // and k=1 columns: k=0 has only unity twiddles, while the paired radix-2
   // now computes each sum/difference once, using every lane. The inverse's
   // normalized n = 8 stage stays in the ordinary small kernel below.
-  template <bool INVERSE, bool UNITY>
-  static void split4_core(simd_t* x, Twiddle wa, Twiddle wb, Twiddle wc, Twiddle vm) {
+  template <bool INVERSE, bool UNITY, class T>
+  static void split4_core(simd_t* x, T wa, T wb, T wc, T vm) {
     if constexpr (INVERSE) {
       simd_t c1 = x[1], c2 = x[2], c3 = x[3];
       if constexpr (!UNITY) { c1 = bmul(c1, wb); c2 = bmul(c2, wa); c3 = bmul(c3, wc); }
@@ -514,12 +514,18 @@ class NttPlan {
   template <bool INVERSE, bool CANON, class Backend = simd::backend>
   void radix8_split(uint32_t* a, size_t s, uint32_t count) const {
     const auto* table = (INVERSE ? inv_.data() : fwd_.data()) + off_[s];
-    const Twiddle wa = tw_decode(simd::set1(table[1])), wb = tw_decode(simd::set1(table[3]));
-    const Twiddle wc = tw_decode(simd::set1(table[5])), vm = tw_const(INVERSE ? w4_inv_ : w4_);
-    for (uint32_t base = 0; base < count; base += 32) {
+    auto factor = [&](int i) {
+      if constexpr (X86_SHOUP)
+        return simd::FixedTwiddle{{simd::set1(table[i]), simd::set1(table[i + 6])}};
+      else
+        return tw_decode(simd::set1(table[i]));
+    };
+    const auto wa = factor(1), wb = factor(3), wc = factor(5);
+    const decltype(wa) vm = tw_fourth<INVERSE>();
+    for (uint32_t base = 0; base < count; base += 8*simd::lane) {
       simd_t lo[4], hi[4], x[4], y[4];
       simd::load4m<2>(a + base, lo[0], lo[1], lo[2], lo[3]);
-      simd::load4m<2>(a + base + 16, hi[0], hi[1], hi[2], hi[3]);
+      simd::load4m<2>(a + base + 4*simd::lane, hi[0], hi[1], hi[2], hi[3]);
       for (int j = 0; j < 4; ++j) {
         x[j] = Backend::unzip_even(lo[j], hi[j]);
         y[j] = Backend::unzip_odd(lo[j], hi[j]);
@@ -543,7 +549,7 @@ class NttPlan {
         lo[j] = Backend::zip_low(x[j], y[j]); hi[j] = Backend::zip_high(x[j], y[j]);
       }
       simd::store4m<2>(a + base, lo[0], lo[1], lo[2], lo[3]);
-      simd::store4m<2>(a + base + 16, hi[0], hi[1], hi[2], hi[3]);
+      simd::store4m<2>(a + base + 4*simd::lane, hi[0], hi[1], hi[2], hi[3]);
     }
   }
 
@@ -556,8 +562,8 @@ class NttPlan {
   /// the blocks differs, which the matching store undoes exactly).
   template <int W, bool LAST>
   void radix4_small(uint32_t* a, uint32_t len, size_t s, uint32_t count) const {
-    if constexpr (W == 2 && COMPACT && simd::backend::split_radix8) {
-      if (count >= 32) { radix8_split<false, LAST>(a, s, count); return; }
+    if constexpr (W == 2 && LAZY && FUSE_RADIX2 && simd::backend::split_radix8) {
+      if (count >= 8u*simd::lane) { radix8_split<false, LAST>(a, s, count); return; }
     }
     const uint32_t* A = fwd_.data() + off_[s];
     const uint32_t* B = A + W;
@@ -643,8 +649,8 @@ class NttPlan {
   /// Inverse counterpart of radix4_small.
   template <int W, bool LAST>
   void radix4_small_inv(uint32_t* a, uint32_t len, size_t s, uint32_t count) const {
-    if constexpr (W == 2 && COMPACT && !LAST && simd::backend::split_radix8) {
-      if (count >= 32) { radix8_split<true, false>(a, s, count); return; }
+    if constexpr (W == 2 && LAZY && FUSE_RADIX2 && !LAST && simd::backend::split_radix8) {
+      if (count >= 8u*simd::lane) { radix8_split<true, false>(a, s, count); return; }
     }
     const uint32_t* IA = inv_.data() + off_[s];
     const uint32_t* IB = IA + W;
