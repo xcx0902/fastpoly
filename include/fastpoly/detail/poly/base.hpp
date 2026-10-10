@@ -40,10 +40,12 @@ template <class M>
 uint32_t series_scratch_size(size_t n, size_t seed) {
   if (n <= seed) return 0;
   const size_t floor = std::bit_floor(n);
-  const uint32_t N = next_pow2(n - floor <= 8 ? floor : n);
+  const size_t need = n - floor <= 8 ? floor : n;
+  // Beyond the native root bound, doubling steps use coefficient-space
+  // products with CRT/blocking. Earlier native steps grow scratch as needed.
+  if (need > ntt_max_size<M>()) return 0;
+  const uint32_t N = next_pow2(need);
   if (N <= seed) return 0;
-  if (N > ntt_max_size<M>())
-    throw ntt_size_error("NTT size exceeds 2^v2(mod-1) for this modulus");
   return N;
 }
 
@@ -68,6 +70,7 @@ void scale_limbs(uint32_t* dst, const uint32_t* src, size_t n, M c) {
     if (n != 0) std::memset(dst, 0, n * sizeof(uint32_t));
     return;
   }
+  // In characteristic two, the zero/one cases above exhaust the field.
   const auto factor = simd::fixed_twiddle<M::mod, M::ninv>(c.raw_val());
   size_t i = 0;
   for (; i + simd::lane <= n; i += simd::lane)

@@ -31,6 +31,16 @@ void extend_inverse(const vec<M>& a, vec<M>& c, size_t wanted,
     }
     return;
   }
+  if (k > ntt_max_size<M>()/2) {
+    vec<M> product = conv_limbs(a, c, wanted);
+    vec<M> error(hlen);
+    for (size_t i = 0; i < hlen && k+i < product.size(); ++i)
+      error[i] = -product[k+i];
+    auto correction = conv_limbs(error, c, hlen);
+    correction.resize(hlen);
+    c.insert(c.end(), correction.begin(), correction.end());
+    return;
+  }
   const uint32_t N = next_pow2(2*k);
   const auto& plan = NttPlan<M>::get_ref(N);
   prepare_scratch(a, std::min(a.size(), wanted), scratch, N);
@@ -72,6 +82,12 @@ template <class M>
 vec<M> inverse_linear(const vec<M>& a, size_t n) {
   const M first = a[0].inv(), ratio = -a[1]*first;
   if (ratio.raw_val() == M::one) return vec<M>(n, first);
+  if constexpr (M::mod == 2) {
+    vec<M> b(n);
+    M value = first;
+    for (auto& x : b) { x = value; value *= ratio; }
+    return b;
+  }
   vec<M> b(n);
   constexpr size_t W = simd::lane, block = 4*W;
   if (n < block) {

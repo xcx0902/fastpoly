@@ -1,4 +1,4 @@
-// fastpoly - polynomial arithmetic modulo x^n over an NTT prime field.
+// fastpoly - polynomial arithmetic modulo x^n over a signed-32-bit prime field.
 // Implementation headers follow the algebra's dependency graph; this facade
 // supplies the complete free-function API and vector-compatible method syntax.
 #ifndef FASTPOLY_POLY_HPP
@@ -54,9 +54,9 @@ class Poly : public std::vector<M> {
   Poly integral() const { return poly::integral(*this); }
   /// Series inverse mod x^n (a(0) must be invertible).
   Poly inv(size_t n) const { return poly::inv(*this, n); }
-  /// Series logarithm mod x^n (a(0) must be 1).
+  /// Series logarithm mod x^n (a(0) must be 1; n <= M::mod).
   Poly log(size_t n) const { return poly::log(*this, n); }
-  /// Series exponential mod x^n (a(0) must be 0).
+  /// Series exponential mod x^n (a(0) must be 0; n <= M::mod).
   Poly exp(size_t n) const { return poly::exp(*this, n); }
   /// Series square root mod x^n.
   Poly sqrt(size_t n) const { return poly::sqrt(*this, n); }

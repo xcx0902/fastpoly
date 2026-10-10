@@ -1,6 +1,7 @@
 // fastpoly - umbrella header.
 //
-//   fpx::Mont<Mod, Root>      Montgomery field element for an NTT prime
+//   fpx::Mont<Mod, Root = 0>  prime field element (0 discovers a primitive root)
+//   fpx::ModInt<Mod>         modulus-only alias, including non-NTT primes and 2
 //   fpx::NttPlan<M>::get(n)   cached, SIMD-accelerated, permutation-free NTT
 //   fpx::Poly<M>              polynomial over GF(Mod), truncated mod x^n
 //

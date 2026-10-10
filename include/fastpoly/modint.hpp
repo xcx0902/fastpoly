@@ -1,11 +1,13 @@
-// fastpoly - Montgomery modular arithmetic for 32-bit NTT-friendly primes.
+// fastpoly - modular arithmetic for primes in the signed 32-bit range.
 //
-// Values are stored in Montgomery form (a * 2^32 mod p) so that modular
+// Odd-prime values are stored in Montgomery form (a * 2^32 mod p) so that modular
 // multiplication becomes mul + shift + conditional subtract: no 64-bit
 // division anywhere, and it maps perfectly onto SIMD lanes.
 #ifndef FASTPOLY_MODINT_HPP
 #define FASTPOLY_MODINT_HPP
 
+#include <array>
+#include <cstddef>
 #include <cstdint>
 #include <istream>
 #include <ostream>
@@ -21,21 +23,50 @@ constexpr uint32_t inv_mod_2_32(uint32_t a) {
   return x;
 }
 
+/// Find a primitive root of a prime. Only used when no root is supplied;
+/// explicit Mont<Mod, Root> instantiations retain their original constants.
+constexpr uint32_t primitive_root(uint32_t p) {
+  if (p == 2) return 1;
+  std::array<uint32_t, 10> factors{};
+  size_t count = 0;
+  uint32_t remaining = p - 1;
+  for (uint32_t d = 2; uint64_t(d)*d <= remaining; ++d) {
+    if (remaining % d != 0) continue;
+    factors[count++] = d;
+    do { remaining /= d; } while (remaining % d == 0);
+  }
+  if (remaining > 1) factors[count++] = remaining;
+  auto power = [p](uint64_t a, uint32_t e) {
+    uint64_t r = 1;
+    for (; e != 0; e >>= 1, a = a*a % p)
+      if (e & 1) r = r*a % p;
+    return r;
+  };
+  for (uint32_t root = 2; root < p; ++root) {
+    bool valid = true;
+    for (size_t i = 0; i < count; ++i)
+      if (power(root, (p - 1)/factors[i]) == 1) { valid = false; break; }
+    if (valid) return root;
+  }
+  return 0;
+}
+
 /// Montgomery arithmetic in GF(Mod).
-/// `Mod` must be an odd prime with `Mod < 2^31`; `Root` a primitive root mod Mod.
-template <uint32_t Mod, uint32_t Root>
+/// `Mod` must be prime with 2 <= Mod < 2^31. Root defaults to automatic
+/// discovery. Characteristic two uses ordinary one-bit residues.
+template <uint32_t Mod, uint32_t Root = 0>
 class Mont {
  public:
   static_assert(Mod < (1u << 31), "modulus must fit a signed 32-bit lane");
-  static_assert(Mod % 2 == 1, "modulus must be odd");
+  static_assert(Mod >= 2, "modulus must be prime and at least 2");
 
   static constexpr uint32_t mod = Mod;
-  static constexpr uint32_t primitive_root = Root;
+  static constexpr uint32_t primitive_root = Root != 0 ? Root : fpx::primitive_root(Mod);
   static constexpr uint32_t ninv =
       static_cast<uint32_t>(0u - inv_mod_2_32(Mod));  // -Mod^{-1} mod 2^32
   /// Montgomery form of the integer 1, i.e. R mod Mod.
   static constexpr uint32_t one =
-      static_cast<uint32_t>((static_cast<uint64_t>(1) << 32) % Mod);
+      Mod == 2 ? 1u : static_cast<uint32_t>((static_cast<uint64_t>(1) << 32) % Mod);
   /// R^2 mod Mod; `reduce(x * r2)` converts a plain x into Montgomery form.
   static constexpr uint32_t r2 =
       static_cast<uint32_t>(static_cast<uint64_t>(one) * one % Mod);
@@ -55,6 +86,7 @@ class Mont {
 
   /// Montgomery reduction of a full 64-bit product.
   static constexpr uint32_t reduce(uint64_t t) {
+    if constexpr (Mod == 2) return static_cast<uint32_t>(t & 1u);
     uint32_t m = static_cast<uint32_t>(t) * ninv;
     uint64_t u = (t + static_cast<uint64_t>(m) * Mod) >> 32;
     return static_cast<uint32_t>(u >= Mod ? u - Mod : u);
@@ -98,10 +130,14 @@ class Mont {
   }
 
   /// Multiplicative inverse; 0 maps to 0.
-  constexpr Mont inv() const { return pow(Mod - 2); }
+  constexpr Mont inv() const {
+    if constexpr (Mod == 2) return *this;
+    else return pow(Mod - 2);
+  }
 
   /// Square root (Tonelli-Shanks). Returns false when *this is a non-residue.
   bool sqrt(Mont& out) const {
+    if constexpr (Mod == 2) { out = *this; return true; }
     const Mont one_m = from_int(1);
     if (v_ == 0) { out = *this; return true; }
     if (pow((Mod - 1) / 2) != one_m) return false;  // Euler criterion
@@ -162,6 +198,11 @@ using mod469762049 = Mont<469762049u, 3>;    //   7*2^26 + 1
 using mod167772161 = Mont<167772161u, 3>;    //   5*2^25 + 1
 using mod754974721 = Mont<754974721u, 11>;   //  45*2^24 + 1
 using mod1224736769 = Mont<1224736769u, 3>;  //  73*2^24 + 1
+
+/// Convenient modulus-only spelling, with the same representation and API.
+template <uint32_t Mod>
+using ModInt = Mont<Mod>;
+using mod1000000007 = Mont<1000000007u>;
 
 }  // namespace fpx
 

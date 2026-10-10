@@ -11,7 +11,8 @@ namespace fpx::poly {
 /// Uses direct binary exponentiation for small exponents and the
 /// exp(k*log(a)) route otherwise.  The logarithm is legitimate for any integer
 /// k: on the normalized series (1 + O(x)) the j-th coefficient of (1+u)^k is
-/// binom(k, j) * ..., which depends on k only through k mod Mod, and j < n <= p.
+/// binom(k, j) * ..., which depends on k only through k mod Mod for j < n <= p.
+/// At larger precisions use binary exponentiation, retaining every exponent bit.
 template <class M>
 vec<M> pow(const vec<M>& a, uint64_t k, size_t n) {
   if (n == 0) return {};
@@ -57,7 +58,7 @@ vec<M> pow(const vec<M>& a, uint64_t k, size_t n) {
     return r;
   }
 
-  if (k <= 64) {  // binary exponentiation
+  if (k <= 64 || inner_n > M::mod) {  // binary exponentiation
     vec<M> r{M::from_int(1)}, base = std::move(u);
     for (uint64_t e = k; e; e >>= 1) {
       // Keep the actual support until the final result: early powers of a

@@ -11,6 +11,17 @@ namespace fpx::poly {
 template <class M>
 vec<M> sqrt(const vec<M>& a, size_t n) {
   if (n == 0) return {};
+  if constexpr (M::mod == 2) {
+    // Frobenius: (sum b_i*x^i)^2 = sum b_i*x^(2*i). Odd coefficients
+    // below the requested precision must vanish; unconstrained terms are zero.
+    vec<M> b(n);
+    for (size_t i = 0; i < std::min(a.size(), n); ++i) {
+      if (i & 1) {
+        if (!a[i].is_zero()) throw domain_error("poly::sqrt: nonzero odd coefficient in characteristic 2");
+      } else b[i/2] = a[i];
+    }
+    return b;
+  }
   size_t v = 0;
   while (v < a.size() && a[v].is_zero()) ++v;
   if (v == a.size()) return vec<M>(n, M());
@@ -57,6 +68,19 @@ vec<M> sqrt(const vec<M>& a, size_t n) {
       }
       if (c.size() < hlen)
         detail::extend_inverse(b, c, hlen, work, inverse_spectrum);
+      if (m > ntt_max_size<M>()/2) {
+        const auto square = conv_limbs(b, b, m2);
+        vec<M> residual(hlen);
+        for (size_t i = 0; i < hlen; ++i) {
+          residual[i] = m+i < a.size()-v ? a[v+m+i] : M();
+          if (m+i < square.size()) residual[i] -= square[m+i];
+        }
+        auto correction = conv_limbs(residual, c, hlen);
+        correction.resize(hlen);
+        detail::scale_inplace(correction, half_inv);
+        b.insert(b.end(), correction.begin(), correction.end());
+        continue;
+      }
       const uint32_t N = next_pow2(2*m);
       const auto& plan = NttPlan<M>::get_ref(N);
       detail::prepare_scratch(b, b.size(), work, N);

@@ -630,10 +630,13 @@ FP_TEST(poly_linear_power_characteristic_boundary) {
                                   std::numeric_limits<uint64_t>::max()}) {
     CHECK(fpx::poly::pow(linear, exponent, 17) ==
           ordinary_linear_power<Field>(7, 11, 0, exponent, 17));
-    bool threw = false;
-    try { (void)fpx::poly::pow(linear, exponent, 18); }
-    catch (const fpx::poly::domain_error&) { threw = true; }
-    CHECK(threw);
+    auto extended = ordinary_linear_power<Field>(7, 11, 0, exponent, 17);
+    extended.resize(18);
+    // Lucas/Frobenius: binom(k,17) = floor(k/17) (mod 17), and
+    // (11/7)^17 = 11/7. The first term beyond the characteristic survives.
+    extended[17] = Field::from_int(ordinary_power(7, exponent-1, Field::mod)) *
+                   Field::from_int(11) * Field::from_int(exponent/17);
+    CHECK(fpx::poly::pow(linear, exponent, 18) == extended);
     // Constants remain valid beyond the characteristic without integrating.
     const auto constant = fpx::poly::pow(std::vector<Field>{Field::from_int(7)}, exponent, 18);
     CHECK_EQ(constant[0].val(), ordinary_power(7, exponent, Field::mod));

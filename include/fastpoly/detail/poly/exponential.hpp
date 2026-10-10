@@ -86,6 +86,8 @@ vec<M> log(const vec<M>& a, size_t n) {
   if (n == 0) return {};
   if (a.empty() || a[0] != M::from_int(1))
     throw domain_error("poly::log: constant term must be 1");
+  if (n > M::mod)
+    throw domain_error("poly::log: required denominators must be invertible (n <= mod)");
   if (n == 1) return vec<M>(1, M());
   vec<M> d = detail::derivative_prefix(a, n);
   vec<M> ia = inv(a, n - 1);
@@ -115,7 +117,7 @@ vec<M> exp(const vec<M>& a, size_t n) {
     b[0] = M::from_int(1);
     return b;
   }
-  if constexpr (simd::backend::parallel_linear_exp) {
+  if constexpr (M::mod != 2 && simd::backend::parallel_linear_exp) {
     if (aprime.size() == 1 && n >= 256) return detail::exp_linear(aprime[0], n);
   }
   // Short input series admit an O(n*degree(a)) recurrence; in particular exp
@@ -161,6 +163,19 @@ vec<M> exp(const vec<M>& a, size_t n) {
     }
     if (c.size() < hlen)
       detail::extend_inverse(b, c, hlen, work, inverse_spectrum);
+    if (m > ntt_max_size<M>()/2) {
+      auto product = conv_limbs(aprime, b, m2-1);
+      vec<M> residual(hlen);
+      for (size_t i = 0; i < hlen && m-1+i < product.size(); ++i)
+        residual[i] = product[m-1+i];
+      auto correction = conv_limbs(residual, c, hlen);
+      correction.resize(hlen);
+      for (size_t i = 0; i < hlen; ++i) correction[i] *= denominators[m+i];
+      correction = conv_limbs(correction, b, hlen);
+      correction.resize(hlen);
+      b.insert(b.end(), correction.begin(), correction.end());
+      continue;
+    }
     const uint32_t N = next_pow2(2*m);
     const auto& plan = NttPlan<M>::get_ref(N);
     detail::prepare_scratch(b, b.size(), spectrum, N);

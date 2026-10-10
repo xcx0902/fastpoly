@@ -28,7 +28,7 @@ if [ "${FASTPOLY_TEST_SINGLE_HEADER:-0}" = 1 ]; then
     printf '#include "%s/fastpoly.hpp"\n' "$PWD" > "$TMP/include/fastpoly/$header.hpp"
   done
 fi
-for t in test_modint test_ntt test_poly test_memory; do
+for t in test_modint test_ntt test_poly test_prime_poly test_memory; do
   "$CXX" -std=c++20 -O2 -pthread "${INC[@]}" -include "$TMP/include/immintrin.h" \
     "tests/$t.cpp" -o "$TMP/$t"
   printf '\n== AVX-512 portable model | %s ==\n' "$t"

@@ -3,6 +3,7 @@
 #define FASTPOLY_DETAIL_POLY_CONVOLUTION_HPP
 
 #include "fastpoly/detail/poly/basic.hpp"
+#include "fastpoly/detail/poly/crt_convolution.hpp"
 
 namespace fpx::poly {
 
@@ -16,9 +17,19 @@ template <class M>
 vec<M> conv_limbs(const vec<M>& a, const vec<M>& b, size_t lim) {
   if (a.empty() || b.empty() || lim == 0) return {};
   const size_t la = std::min(a.size(), lim), lb = std::min(b.size(), lim);
+  if (la > SIZE_MAX - (lb - 1))
+    throw std::length_error("poly::conv: result length overflows size_t");
   const size_t full = la + lb - 1;
   const size_t out = std::min(full, lim);
   static_assert(sizeof(M) == sizeof(uint32_t), "Mont must be a single 32-bit limb");
+
+  if constexpr (M::mod == 2) {
+    if (std::min(la, lb) > naive_threshold) return detail::crt_convolution(a, b, out);
+    vec<M> r(out);
+    for (size_t i = 0; i < la; ++i)
+      for (size_t j = 0; j < lb && j < out-i; ++j) r[i+j] += a[i]*b[j];
+    return r;
+  }
 
   if (std::min(la, lb) <= naive_threshold) {
     vec<M> r(out, M());
@@ -84,6 +95,7 @@ vec<M> conv_limbs(const vec<M>& a, const vec<M>& b, size_t lim) {
     return r;
   }
 
+  if (full > ntt_max_size<M>()) return detail::crt_convolution(a, b, out);
   const uint32_t N = next_pow2(full);
   const auto& plan = NttPlan<M>::get_ref(N);
   vec<M> fa;

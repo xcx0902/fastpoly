@@ -18,6 +18,10 @@ vec<M> derivative_prefix(const vec<M>& a, size_t cnt) {
   cnt = std::min(a.size(), cnt);
   if (cnt <= 1) return {};
   vec<M> r(cnt - 1);
+  if constexpr (M::mod == 2) {
+    for (size_t i = 1; i < cnt; ++i) r[i-1] = a[i]*M::from_int(i);
+    return r;
+  }
   alignas(64) uint32_t factors[simd::lane];
   for (int k = 0; k < simd::lane; ++k) factors[k] = M::from_int(uint32_t(k + 1)).raw_val();
   auto factor = simd::load(factors);
@@ -93,6 +97,10 @@ vec<M> integral(const vec<M>& a) {
   if (a.empty()) return {};
   vec<M> inv = inv_series<M>(a.size());
   vec<M> r(a.size() + 1);
+  if constexpr (M::mod == 2) {
+    for (size_t i = 0; i < a.size(); ++i) r[i+1] = a[i]*inv[i+1];
+    return r;
+  }
   const auto* src = reinterpret_cast<const uint32_t*>(a.data());
   const auto* divisors = reinterpret_cast<const uint32_t*>(inv.data());
   auto* dst = reinterpret_cast<uint32_t*>(r.data());

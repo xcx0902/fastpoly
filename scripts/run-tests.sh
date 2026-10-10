@@ -16,7 +16,7 @@ cd "$(dirname "$0")/.."
 CXX="${CXX:-clang++}"
 INC=(-Iinclude)
 STD="-std=c++20 -pthread"
-TESTS="test_modint test_ntt test_poly test_memory"
+TESTS="test_modint test_ntt test_poly test_prime_poly test_memory"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 status=0
