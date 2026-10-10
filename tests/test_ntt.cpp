@@ -110,6 +110,8 @@ FP_TEST(ntt_mod469762049) { check_modulus<mod469762049>("469762049"); }
 FP_TEST(ntt_mod167772161) { check_modulus<mod167772161>("167772161"); }
 FP_TEST(ntt_mod754974721) { check_modulus<mod754974721>("754974721"); }
 FP_TEST(ntt_mod1224736769) { check_modulus<mod1224736769>("1224736769"); }
+FP_TEST(ntt_near_lazy_limit) { check_modulus<Mont<1073479681u, 11>>("1073479681", 13); }
+FP_TEST(ntt_near_signed_limit) { check_modulus<Mont<2013265921u, 31>>("2013265921"); }
 
 FP_TEST(ntt_small_sizes) {
   // smallest sizes, where every butterfly falls back to the scalar tail
@@ -278,6 +280,8 @@ FP_TEST(ntt_lazy_contract_all_moduli) {
   lazy_forward_contract<mod167772161>();
   lazy_forward_contract<mod754974721>();
   lazy_forward_contract<mod1224736769>();
+  lazy_forward_contract<Mont<1073479681u, 11>>();
+  lazy_forward_contract<Mont<2013265921u, 31>>();
 }
 
 FP_TEST(ntt_concurrent_cold_plans) {

@@ -1,0 +1,130 @@
+{
+  "date": "2026-10-09",
+  "host_architecture": "arm64",
+  "avx2_execution": "Rosetta on Apple Silicon",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+  "benchmark_flags": [
+    "-std=c++20",
+    "-O2",
+    "-DNDEBUG",
+    "-arch",
+    "x86_64",
+    "-mavx2"
+  ],
+  "baseline": "Workspace immediately before the AVX2 / AVX-512 optimization round, after the NEON optimization round. It is an uncommitted snapshot, not commit 3ab9f13.",
+  "before_headers_sha256": {
+    "fastpoly.hpp": "a767383d3ee8c504c45b3dcb35c9dfabb2907cdbfb616d50893ac92dd7aea0f5",
+    "memory.hpp": "80f2422312356966cf6be99b8fdc92988ee6089fca8760dee9f177c54fd4749f",
+    "modint.hpp": "41195df4512a7c5fd7383c45efe3103e26cba95533bf2b59db605a3b266c6b61",
+    "ntt.hpp": "44996bb7633abc9a4609200f20e1b4dc8706d61b42c042217d9528e7f7d2e7d2",
+    "poly.hpp": "1fc128779d1e04d97b7ea7d193224b1148a155e3f17e46490d93ac6fdbdb60d0",
+    "simd.hpp": "1d1c582d22e98f2d8e1bff5060b8736af7f925531e09dc31817a7296f6fff3cc"
+  },
+  "after_headers_sha256": {
+    "fastpoly.hpp": "a767383d3ee8c504c45b3dcb35c9dfabb2907cdbfb616d50893ac92dd7aea0f5",
+    "memory.hpp": "80f2422312356966cf6be99b8fdc92988ee6089fca8760dee9f177c54fd4749f",
+    "modint.hpp": "41195df4512a7c5fd7383c45efe3103e26cba95533bf2b59db605a3b266c6b61",
+    "ntt.hpp": "564c1b90050b93174c1f00c275d5bb0b28b464b595315cc1136745cdba7e08ec",
+    "poly.hpp": "0f4b6151aebbf1f2eb9861dafd6e911b27c5e2c3039095e2867c73d40ca77c64",
+    "simd.hpp": "c277fe89ef1eacba2702f86691b81264448cc9ef451121689447d9a6bbe0b615"
+  },
+  "benchmark_source_sha256": "302aea9864ef83380a7b9a7fbba3a36a34b54f20889c46d970ec3d82c9e58327",
+  "codegen_source_sha256": "a1435f9bd8313c6c5c5969425cc786aba57d301039ca9ee921d0b750e5d7d937",
+  "measurement": "Alternate before/after order in successive runs. Median of each run, then median across runs. Every full-output checksum must match.",
+  "datasets": {
+    "performance-20261009-x86-avx2.csv": {
+      "min_size": 64,
+      "max_size": 262144,
+      "runs": 3,
+      "reps": 9,
+      "warmup": 5
+    },
+    "performance-20261009-x86-large.csv": {
+      "min_size": 1048576,
+      "max_size": 1048576,
+      "runs": 3,
+      "reps": 5,
+      "warmup": 3
+    },
+    "performance-20261009-x86-moduli.csv": {
+      "moduli_roots": {
+        "469762049": 3,
+        "1073479681": 11,
+        "1224736769": 3
+      },
+      "min_size": 1024,
+      "max_size": 131072,
+      "runs": 3,
+      "reps": 7,
+      "warmup": 5
+    },
+    "performance-20261009-x86-neon-control.csv": {
+      "execution": "Native NEON",
+      "min_size": 1024,
+      "max_size": 262144,
+      "runs": 3,
+      "reps": 7,
+      "warmup": 5
+    },
+    "performance-20261009-x86-small.csv": {
+      "size": 256,
+      "operation": "inv-short",
+      "runs": 9,
+      "reps": 1001,
+      "warmup": 50
+    },
+    "performance-20261009-x86-plan.csv": {
+      "sizes": [
+        1024,
+        65536,
+        1048576
+      ],
+      "runs": 13,
+      "reps": 1,
+      "warmup": 0,
+      "fresh_process_per_sample": true
+    },
+    "performance-20261009-x86-codegen.csv": {
+      "flags": {
+        "avx2": [
+          "-mavx2"
+        ],
+        "avx512": [
+          "-mavx512f",
+          "-mavx512vl"
+        ]
+      },
+      "instruction_count_includes_function_prologue_epilogue": true
+    },
+    "performance-20261009-x86-memory.csv": {
+      "size": 1048576,
+      "operations": [
+        "conv",
+        "inv",
+        "exp",
+        "sqrt"
+      ],
+      "phases": [
+        {
+          "warmup": 0,
+          "reps": 1
+        },
+        {
+          "warmup": 2,
+          "reps": 3
+        }
+      ],
+      "scope": "Scratch pool only; excludes plan and output vector allocations."
+    }
+  },
+  "avx512_validation": {
+    "native_compile_flags": [
+      "-mavx512f",
+      "-mavx512vl"
+    ],
+    "portable_model": "SIMDe v0.8.2, SIMDE_NO_NATIVE",
+    "native_hardware_execution": false,
+    "native_hardware_timings": false
+  },
+  "native_x86_hardware_timings": false
+}

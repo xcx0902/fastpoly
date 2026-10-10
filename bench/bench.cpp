@@ -21,7 +21,13 @@
 #define FASTPOLY_BENCH_HAS_SCRATCH_POOL 1
 #endif
 
-using M = fpx::mod998244353;
+#ifndef FASTPOLY_BENCH_MOD
+#define FASTPOLY_BENCH_MOD 998244353u
+#endif
+#ifndef FASTPOLY_BENCH_ROOT
+#define FASTPOLY_BENCH_ROOT 3u
+#endif
+using M = fpx::Mont<FASTPOLY_BENCH_MOD, FASTPOLY_BENCH_ROOT>;
 using vec = fpx::poly::vec<M>;
 
 namespace {
@@ -51,6 +57,7 @@ void usage() {
       "                 square, skinny (40 x N), exp-linear (exp(x)),\n"
       "                 inv-short (1/(1-x)), pow-short ((1+x)^64),\n"
       "                 pow-linear ((1+x)^1000003), div-small (degree-40 divisor), plan\n"
+      "                 inv-series (1/i table), scale, inv-linear (1/(1-7*x))\n"
       "                 plan requires --warmup 0, measures one cold build\n"
       "  --reps R       Timed repetitions (default 5 for NTT, 3 otherwise)\n"
       "  --warmup W     Untimed repetitions (default 1)\n"
@@ -73,7 +80,8 @@ bool power_of_two(size_t n) { return n >= 2 && (n & (n - 1)) == 0; }
 bool selected(const Options& opt, std::string_view op) {
   const bool extra = op == "square" || op == "skinny" || op == "exp-linear" ||
                      op == "inv-short" || op == "pow-short" || op == "pow-linear" ||
-                     op == "div-small" || op == "plan";
+                     op == "div-small" || op == "plan" || op == "inv-series" ||
+                     op == "scale" || op == "inv-linear";
   return (opt.op == "all" && !extra) || opt.op == op ||
          (opt.op == "ntt" && op.starts_with("ntt-")) ||
          (opt.op == "series" && !extra && op != "conv" && !op.starts_with("ntt-"));
@@ -112,7 +120,7 @@ Options parse(int argc, char** argv) {
   const std::string_view ops[] = {"all", "ntt", "ntt-forward", "ntt-inverse", "conv",
                                   "series", "inv", "log", "exp", "sqrt", "pow",
                                   "square", "skinny", "exp-linear", "inv-short", "pow-short",
-                                  "pow-linear", "div-small", "plan"};
+                                  "pow-linear", "div-small", "plan", "inv-series", "scale", "inv-linear"};
   if (std::find(std::begin(ops), std::end(ops), opt.op) == std::end(ops))
     throw std::invalid_argument("unknown operation: " + std::string(opt.op));
   if (!power_of_two(opt.min_n)) throw std::invalid_argument("min-size must be a power of two >= 2");
@@ -125,6 +133,7 @@ Options parse(int argc, char** argv) {
   if (opt.max_n < opt.min_n) throw std::invalid_argument("max-size is below min-size");
   const size_t limit = (opt.op == "plan" || opt.op.starts_with("ntt")) ? fpx::ntt_max_size<M>()
                       : opt.op == "skinny" ? fpx::ntt_max_size<M>() - 39
+                      : opt.op == "inv-series" ? M::mod - 1
                       : opt.op == "exp-linear" ? M::mod
                       : fpx::ntt_max_size<M>() / 2;
   if (opt.max_n > limit) throw std::invalid_argument("size exceeds the selected operation's NTT limit");
@@ -231,6 +240,21 @@ void bench_poly(const Options& opt, const char* op, size_t n, F&& f) {
 }
 
 void bench_size(const Options& opt, size_t n) {
+  if (opt.op == "inv-series") {
+    bench_poly(opt, "inv-series", n, [&] { return fpx::poly::inv_series<M>(n); });
+    return;
+  }
+  if (opt.op == "scale") {
+    std::mt19937_64 rng(5 + n);
+    const vec a = rnd(n, rng);
+    bench_poly(opt, "scale", n, [&] { return fpx::poly::mul_scalar(a, M::from_int(7)); });
+    return;
+  }
+  if (opt.op == "inv-linear") {
+    const vec a{M::from_int(1), -M::from_int(7)};
+    bench_poly(opt, "inv-linear", n, [&] { return fpx::poly::inv(a, n); });
+    return;
+  }
   if (opt.op == "inv-short") {
     const vec a{M::from_int(1), -M::from_int(1)};
     bench_poly(opt, "inv-short", n, [&] { return fpx::poly::inv(a, n); });

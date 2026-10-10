@@ -471,7 +471,8 @@ void optimized_poly_boundaries() {
   for (const size_t short_n : {size_t(1), size_t(3), size_t(7), size_t(17),
                                size_t(31), size_t(39), size_t(40), size_t(41)}) {
     const auto short_operand = random(short_n);
-    for (const size_t n : {size_t(0), size_t(1), size_t(32), size_t(65), size_t(257), size_t(4137)}) {
+    for (const size_t n : {size_t(0), size_t(1), size_t(32), size_t(65), size_t(257),
+                           size_t(4095), size_t(4096), size_t(4097), size_t(4137)}) {
       const auto want = reference_product(long_operand, short_operand, n);
       CHECK_MSG(poly::conv(long_operand, short_operand, n) == want,
                 "skinny conv mod=%u short=%zu n=%zu", Field::mod, short_n, n);
@@ -552,6 +553,74 @@ FP_TEST(poly_optimized_boundaries_all_moduli) {
   optimized_poly_boundaries<mod167772161>();
   optimized_poly_boundaries<mod754974721>();
   optimized_poly_boundaries<mod1224736769>();
+}
+
+namespace {
+
+template <class Field>
+void inverse_table_and_linear_series() {
+  for (const size_t n : {size_t(65535), size_t(65536), size_t(65537), size_t(262147)}) {
+    const auto table = poly::inv_series<Field>(n);
+    CHECK_EQ(table.size(), n + 1);
+    CHECK(table[0].is_zero());
+    for (size_t i = 1; i <= n; ++i) {
+      CHECK(table[i].raw_val() < Field::mod);
+      CHECK_EQ(uint64_t(table[i].raw_val()) * i % Field::mod, Field::one);
+    }
+  }
+  for (const uint32_t c : {1u, 7u, Field::mod - 1}) {
+    for (const size_t n : {size_t(255), size_t(256), size_t(257), size_t(271),
+                           size_t(272), size_t(273), size_t(4095), size_t(4096),
+                           size_t(4097), size_t(65539)}) {
+      const std::vector<Field> a{Field(), Field::from_int(c), Field(), Field()};
+      const auto e = poly::exp(a, n);
+      CHECK_EQ(e.size(), n);
+      CHECK_EQ(e[0].raw_val(), Field::one);
+      // This coefficient definition uniquely pins exp(c*x), independently of
+      // factorial tables, SIMD scans and the library's inverse implementation.
+      for (size_t i = 1; i < n; ++i) {
+        CHECK(e[i].raw_val() < Field::mod);
+        CHECK_EQ(uint64_t(e[i].raw_val()) * i % Field::mod,
+                 uint64_t(e[i-1].raw_val()) * c % Field::mod);
+      }
+    }
+  }
+  const uint32_t fourth_root = Field::from_int(Field::primitive_root).pow((Field::mod - 1) / 4).val();
+  for (const uint32_t ratio : {1u, Field::mod - 1, 7u, fourth_root}) {
+    const Field constant = Field::from_int(3);
+    const std::vector<Field> a{constant, -constant * Field::from_int(ratio)};
+    for (const size_t n : {size_t(1), size_t(15), size_t(16), size_t(17), size_t(31),
+                           size_t(32), size_t(33), size_t(4097)}) {
+      const auto b = poly::inv(a, n);
+      CHECK_EQ(b.size(), n);
+      uint32_t expected = constant.inv().raw_val();
+      for (size_t i = 0; i < n; ++i) {
+        CHECK_EQ(b[i].raw_val(), expected);
+        expected = static_cast<uint32_t>(uint64_t(expected) * ratio % Field::mod);
+      }
+    }
+  }
+  std::vector<Field> a(4097);
+  for (size_t i = 0; i < a.size(); ++i) a[i] = Field::from_int(i * 131 + 17);
+  for (const uint32_t c : {0u, 1u, 7u, Field::mod - 1}) {
+    const auto b = poly::mul_scalar(a, Field::from_int(c));
+    CHECK_EQ(b.size(), a.size());
+    for (size_t i = 0; i < a.size(); ++i)
+      CHECK_EQ(b[i].raw_val(), uint64_t(a[i].raw_val()) * c % Field::mod);
+  }
+}
+
+}  // namespace
+
+FP_TEST(poly_inverse_tables_and_linear_series) {
+  inverse_table_and_linear_series<mod998244353>();
+  inverse_table_and_linear_series<mod1004535809>();
+  inverse_table_and_linear_series<mod469762049>();
+  inverse_table_and_linear_series<mod167772161>();
+  inverse_table_and_linear_series<mod754974721>();
+  inverse_table_and_linear_series<mod1224736769>();
+  inverse_table_and_linear_series<Mont<1073479681u, 11>>();
+  inverse_table_and_linear_series<Mont<2013265921u, 31>>();
 }
 
 FP_TEST_MAIN()

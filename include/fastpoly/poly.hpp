@@ -67,10 +67,18 @@ void prepare_scratch(const vec<M>& src, size_t cnt,
 
 template <class M>
 void scale_limbs(uint32_t* dst, const uint32_t* src, size_t n, M c) {
-  const auto factor = simd::set1(c.raw_val());
+  if (c.raw_val() == M::one) {
+    if (dst != src && n != 0) std::memcpy(dst, src, n * sizeof(uint32_t));
+    return;
+  }
+  if (c.is_zero()) {
+    if (n != 0) std::memset(dst, 0, n * sizeof(uint32_t));
+    return;
+  }
+  const auto factor = simd::fixed_twiddle<M::mod, M::ninv>(c.raw_val());
   size_t i = 0;
   for (; i + simd::lane <= n; i += simd::lane)
-    simd::store(dst + i, simd::mulmod<M::mod, M::ninv>(simd::load(src + i), factor));
+    simd::store(dst + i, simd::mul_twiddle_full<M::mod, M::ninv>(simd::load(src + i), factor));
   for (; i < n; ++i) dst[i] = M::reduce(uint64_t(src[i]) * c.raw_val());
 }
 
@@ -169,7 +177,9 @@ vec<M> neg(vec<M> a) {
 
 template <class M>
 vec<M> mul_scalar(const vec<M>& a, M c) {
+  if (c.raw_val() == M::one) return a;
   vec<M> r(a.size());
+  if (c.is_zero()) return r;
   auto* dst = reinterpret_cast<uint32_t*>(r.data());
   const auto* src = reinterpret_cast<const uint32_t*>(a.data());
   detail::scale_limbs(dst, src, a.size(), c);
@@ -208,22 +218,33 @@ vec<M> conv_limbs(const vec<M>& a, const vec<M>& b, size_t lim) {
 
   if (std::min(la, lb) <= naive_threshold) {
     vec<M> r(out, M());
-    // Broadcast the short operand and stream through the long operand/output.
-    // This also makes a scalar-times-polynomial product one contiguous pass.
+    // Finish each consecutive output tile while it stays in L1. For tiles
+    // after the first, every shifted accumulation starts at the same output
+    // address, avoiding repeatedly misaligned stores and full-size passes.
     const vec<M>& small = la <= lb ? a : b;
     const vec<M>& large = la <= lb ? b : a;
     const size_t short_n = std::min(la, lb), long_n = std::max(la, lb);
     auto* dst = reinterpret_cast<uint32_t*>(r.data());
     const auto* src = reinterpret_cast<const uint32_t*>(large.data());
-    for (size_t i = 0; i < short_n && i < out; ++i) {
-      const size_t cnt = std::min(long_n, out - i);
-      const auto c = simd::set1(small[i].raw_val());
-      size_t j = 0;
-      for (; j + simd::lane <= cnt; j += simd::lane) {
-        const auto v = simd::mulmod<M::mod, M::ninv>(simd::load(src + j), c);
-        simd::store(dst + i + j, simd::add(simd::load(dst + i + j), v, M::mod));
+    if (short_n == 1) {
+      detail::scale_limbs(dst, src, out, small[0]);
+      return r;
+    }
+    constexpr size_t tile = 4096;
+    for (size_t base = 0; base < out; base += tile) {
+      const size_t end = std::min(out, base + tile);
+      for (size_t i = 0; i < short_n && i < end; ++i) {
+        if (small[i].is_zero()) continue;
+        const size_t begin = std::max(base, i);
+        const size_t limit = std::min(end, i + long_n);
+        const auto c = simd::fixed_twiddle<M::mod, M::ninv>(small[i].raw_val());
+        size_t j = begin - i, cnt = limit - i;
+        for (; j + simd::lane <= cnt; j += simd::lane) {
+          const auto v = simd::mul_twiddle_full<M::mod, M::ninv>(simd::load(src + j), c);
+          simd::store(dst + i + j, simd::add(simd::load(dst + i + j), v, M::mod));
+        }
+        for (; j < cnt; ++j) r[i + j] += small[i] * large[j];
       }
-      for (; j < cnt; ++j) r[i + j] += small[i] * large[j];
     }
     return r;
   }
@@ -301,13 +322,41 @@ vec<M> inv_series(size_t n) {
   if (n == 0) return r;
   r[1] = M::from_int(1);
   const uint32_t count = static_cast<uint32_t>(n);
-  for (uint32_t i = 2; i <= count; ++i) {
+  uint32_t i = 2;
+  for (; i <= std::min(count, uint32_t(65536)); ++i) {
     // 1/i = -(mod/i) * (1/(mod%i)) mod mod
     const uint32_t q = M::mod / i, rem = M::mod % i;
     const uint32_t product = static_cast<uint32_t>(
         (uint64_t(q) * r[rem].raw_val()) % M::mod);
     // With prime mod and 1 < i < mod, q and the inverse are both nonzero.
     r[i] = M::raw(M::mod - product);
+  }
+  // Past this point mod/i stays constant over several consecutive indices.
+  // All remainders decrease within an interval and precede its first index,
+  // so these products are independent and need no per-element division.
+  while (i <= count) {
+    const uint32_t q = M::mod / i;
+    uint32_t rem = M::mod % i;
+    const uint32_t end = std::min(count, M::mod / q);
+#if defined(FPX_SIMD_NEON)
+    if constexpr (simd::compact_twiddle<M::mod>) {
+      if (i + 3 <= end) {
+        const auto factor = simd::fixed_twiddle<M::mod, M::ninv>(M::from_int(q).raw_val());
+        auto* dst = reinterpret_cast<uint32_t*>(r.data());
+        for (; i + 3 <= end; i += 4, rem -= 4 * q) {
+          const uint32x4_t v{r[rem].raw_val(), r[rem-q].raw_val(),
+                            r[rem-2*q].raw_val(), r[rem-3*q].raw_val()};
+          const auto product = simd::mul_twiddle_full<M::mod, M::ninv>(v, factor);
+          // Prime mod, 1 < i < mod: q and every inverse are nonzero.
+          simd::store(dst + i, vsubq_u32(simd::set1(M::mod), product));
+        }
+      }
+    }
+#endif
+    for (; i <= end; ++i, rem -= q) {
+      const uint32_t product = static_cast<uint32_t>(uint64_t(q) * r[rem].raw_val() % M::mod);
+      r[i] = M::raw(M::mod - product);
+    }
   }
   return r;
 }
@@ -393,8 +442,9 @@ vec<M> inverse_seed(const vec<M>& a, size_t n) {
 // chains advance by ratio^(4*lane), avoiding a dependency between neighbours.
 template <class M>
 vec<M> inverse_linear(const vec<M>& a, size_t n) {
-  vec<M> b(n);
   const M first = a[0].inv(), ratio = -a[1]*first;
+  if (ratio.raw_val() == M::one) return vec<M>(n, first);
+  vec<M> b(n);
   constexpr size_t W = simd::lane, block = 4*W;
   if (n < block) {
     M x = first;
@@ -406,20 +456,33 @@ vec<M> inverse_linear(const vec<M>& a, size_t n) {
   for (size_t i = 0; i < block; ++i) { seed[i] = x.raw_val(); x *= ratio; }
   auto x0 = simd::load(seed), x1 = simd::load(seed + W);
   auto x2 = simd::load(seed + 2*W), x3 = simd::load(seed + 3*W);
-  const auto step = simd::set1(ratio.pow(block).raw_val());
+  const M step_value = ratio.pow(block);
+  const auto step = simd::fixed_twiddle<M::mod, M::ninv>(step_value.raw_val());
   auto* dst = reinterpret_cast<uint32_t*>(b.data());
   size_t i = 0;
+  if (step_value.raw_val() == M::one) {
+    // A short-period geometric progression repeats the already canonical seed.
+    for (; i + block <= n; i += block) std::memcpy(dst + i, seed, sizeof(seed));
+    if (i != n) std::memcpy(dst + i, seed, (n - i) * sizeof(uint32_t));
+    return b;
+  }
+  auto store_value = [](uint32_t* p, simd::native_t v) {
+    if constexpr (simd::fixed_lazy<M::mod>) v = simd::reduce_full(v, M::mod);
+    simd::store(p, v);
+  };
+  auto advance = [&](simd::native_t v) {
+    if constexpr (simd::fixed_lazy<M::mod>) return simd::mul_twiddle<M::mod, M::ninv>(v, step);
+    else return simd::mul_twiddle_full<M::mod, M::ninv>(v, step);
+  };
   for (; i + block <= n; i += block) {
-    simd::store(dst + i, x0); simd::store(dst + i + W, x1);
-    simd::store(dst + i + 2*W, x2); simd::store(dst + i + 3*W, x3);
-    x0 = simd::mulmod<M::mod, M::ninv>(x0, step);
-    x1 = simd::mulmod<M::mod, M::ninv>(x1, step);
-    x2 = simd::mulmod<M::mod, M::ninv>(x2, step);
-    x3 = simd::mulmod<M::mod, M::ninv>(x3, step);
+    store_value(dst + i, x0); store_value(dst + i + W, x1);
+    store_value(dst + i + 2*W, x2); store_value(dst + i + 3*W, x3);
+    x0 = advance(x0); x1 = advance(x1);
+    x2 = advance(x2); x3 = advance(x3);
   }
   if (i != n) {
-    simd::store(seed, x0); simd::store(seed + W, x1);
-    simd::store(seed + 2*W, x2); simd::store(seed + 3*W, x3);
+    store_value(seed, x0); store_value(seed + W, x1);
+    store_value(seed + 2*W, x2); store_value(seed + 3*W, x3);
     std::memcpy(dst + i, seed, (n - i) * sizeof(uint32_t));
   }
   return b;
@@ -442,6 +505,79 @@ vec<M> inverse_short(const vec<M>& a, size_t cnt, size_t n) {
   }
   return b;
 }
+
+#if defined(FPX_SIMD_NEON)
+// Inclusive four-lane product scan, with Montgomery one in the shifted lanes.
+template <class M>
+simd::native_t prefix_product4(simd::native_t x) {
+  const auto one = simd::set1(M::one);
+  x = simd::butterfly_mul<M::mod, M::ninv, simd::lazy_ok<M::mod>>(
+      x, vextq_u32(one, x, 3));
+  return simd::butterfly_mul<M::mod, M::ninv, simd::lazy_ok<M::mod>>(
+      x, vextq_u32(one, x, 2));
+}
+
+// exp(c*x)[i] = c^i/i!. Compute the last coefficient using one factorial
+// inversion, then generate the output backwards. Four local scans and a scan
+// of their endpoints expose sixteen independent coefficients per block; only
+// the scalar endpoint carries a dependency between successive blocks.
+template <class M>
+vec<M> exp_linear(M c, size_t n) {
+  constexpr size_t block = 16;
+  const size_t degree = n - 1, full = degree / block * block;
+  alignas(64) uint32_t seed[block];
+  for (size_t k = 0; k < block; ++k) seed[k] = M::from_int(k + 1).raw_val();
+  simd::native_t products[4], factors[4];
+  const auto stride = simd::set1(M::from_int(block).raw_val());
+  for (size_t j = 0; j < 4; ++j) {
+    products[j] = simd::set1(M::one);
+    factors[j] = simd::load(seed + 4*j);
+  }
+  // Sixteen independent progressions compute degree! without a prefix table.
+  for (size_t i = 0; i < full; i += block) {
+    for (size_t j = 0; j < 4; ++j) {
+      products[j] = simd::butterfly_mul<M::mod, M::ninv, simd::lazy_ok<M::mod>>(products[j], factors[j]);
+      factors[j] = simd::add(factors[j], stride, M::mod);
+    }
+  }
+  for (size_t j = 0; j < 4; ++j) simd::store(seed + 4*j, products[j]);
+  M factorial = M::from_int(1);
+  for (const uint32_t x : seed) factorial *= M::raw(x);
+  for (size_t i = full + 1; i <= degree; ++i) factorial *= M::from_int(i);
+  M previous = c.pow(degree) * factorial.inv();
+  const M inverse_c = c.inv();
+  vec<M> b(n);
+  b[degree] = previous;
+  auto* dst = reinterpret_cast<uint32_t*>(b.data());
+  for (size_t k = 0; k < block; ++k) seed[k] = (M::from_int(degree-k)*inverse_c).raw_val();
+  for (size_t j = 0; j < 4; ++j) factors[j] = simd::load(seed + 4*j);
+  const auto decrement = simd::set1((M::from_int(block)*inverse_c).raw_val());
+  size_t pos = degree;
+  for (; pos >= block; pos -= block) {
+    auto x0 = prefix_product4<M>(factors[0]), x1 = prefix_product4<M>(factors[1]);
+    auto x2 = prefix_product4<M>(factors[2]), x3 = prefix_product4<M>(factors[3]);
+    const uint32x4_t ends{vgetq_lane_u32(x0, 3), vgetq_lane_u32(x1, 3),
+                          vgetq_lane_u32(x2, 3), vgetq_lane_u32(x3, 3)};
+    const auto joined = prefix_product4<M>(ends);
+    const auto scales = simd::butterfly_mul<M::mod, M::ninv, simd::lazy_ok<M::mod>>(
+        simd::set1(previous.raw_val()), vextq_u32(simd::set1(M::one), joined, 3));
+    x0 = simd::mulmod<M::mod, M::ninv>(x0, vdupq_laneq_u32(scales, 0));
+    x1 = simd::mulmod<M::mod, M::ninv>(x1, vdupq_laneq_u32(scales, 1));
+    x2 = simd::mulmod<M::mod, M::ninv>(x2, vdupq_laneq_u32(scales, 2));
+    x3 = simd::mulmod<M::mod, M::ninv>(x3, vdupq_laneq_u32(scales, 3));
+    previous = M::raw(vgetq_lane_u32(x3, 3));
+    auto reverse = [](simd::native_t x) { x = vrev64q_u32(x); return vextq_u32(x, x, 2); };
+    simd::store(dst + pos - 4, reverse(x0)); simd::store(dst + pos - 8, reverse(x1));
+    simd::store(dst + pos - 12, reverse(x2)); simd::store(dst + pos - 16, reverse(x3));
+    for (auto& factor : factors) factor = simd::sub(factor, decrement, M::mod);
+  }
+  for (; pos != 0; --pos) {
+    previous *= M::from_int(pos)*inverse_c;
+    b[pos-1] = previous;
+  }
+  return b;
+}
+#endif
 
 }  // namespace detail
 
@@ -514,6 +650,9 @@ vec<M> exp(const vec<M>& a, size_t n) {
     b[0] = M::from_int(1);
     return b;
   }
+#if defined(FPX_SIMD_NEON)
+  if (aprime.size() == 1 && n >= 256) return detail::exp_linear(aprime[0], n);
+#endif
   // Short input series admit an O(n*degree(a)) recurrence; in particular exp
   // of a linear polynomial is a single contiguous pass.
   const size_t seed = aprime.size() <= naive_threshold ? n : std::min<size_t>(n, 32);

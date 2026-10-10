@@ -107,6 +107,143 @@ void check_simd() {
   std::printf("  simd kernels (%s, %zu lanes) ok\n", simd::name, L);
 }
 
+template <class M>
+void fixed_kernel_contract() {
+  constexpr size_t L = static_cast<size_t>(simd::lane);
+  constexpr uint32_t bound = simd::rmod<M::mod>;
+  const uint64_t inverse_r = ref_pow(M::one, M::mod - 2, M::mod);
+  std::vector<uint32_t> a(L), b(L), mont(L), plain(L), out(L), encoded(L), decoded(L);
+  for (uint32_t t = 0; t < 2000; ++t) {
+    for (size_t k = 0; k < L; ++k) {
+      const uint32_t edges[] = {0, 1, M::mod - 1, M::mod - 2};
+      mont[k] = t % 3 == 0 ? edges[(t + k) % 4] : static_cast<uint32_t>(rng() % M::mod);
+      plain[k] = static_cast<uint32_t>(ref_mul(mont[k], inverse_r, M::mod));
+      a[k] = t % 7 == 0 ? bound - 1 : t % 7 == 1 ? 0 : static_cast<uint32_t>(rng() % bound);
+      b[k] = t % 7 == 0 ? 0 : t % 7 == 1 ? bound - 1 : static_cast<uint32_t>(rng() % bound);
+    }
+    const auto q = simd::encode_twiddle<M::mod, M::ninv, false>(simd::load(mont.data()));
+    const auto qr = simd::encode_twiddle<M::mod, M::ninv, true>(simd::load(mont.data()));
+    const auto floor = simd::decode_twiddle<M::mod>(q);
+    const auto nearest = simd::decode_twiddle<M::mod>(qr);
+    simd::store(encoded.data(), q);
+    simd::store(decoded.data(), floor.value);
+    for (size_t k = 0; k < L; ++k) {
+      if constexpr (simd::compact_twiddle<M::mod>) {
+        CHECK_EQ(encoded[k], (uint64_t(plain[k]) << 31) / M::mod);
+        CHECK_EQ(decoded[k], plain[k]);
+      } else {
+        CHECK_EQ(encoded[k], mont[k]);
+        CHECK_EQ(decoded[k], mont[k]);
+      }
+    }
+    simd::store(encoded.data(), qr);
+    simd::store(decoded.data(), nearest.value);
+    for (size_t k = 0; k < L; ++k) {
+      if constexpr (simd::compact_twiddle<M::mod>) {
+        CHECK_EQ(encoded[k], ((uint64_t(plain[k]) << 31) + M::mod / 2) / M::mod);
+        CHECK_EQ(decoded[k], plain[k]);
+      }
+    }
+    const auto va = simd::load(a.data()), vb = simd::load(b.data());
+    simd::store(out.data(), simd::mul_twiddle<M::mod, M::ninv>(va, floor));
+    for (size_t k = 0; k < L; ++k) {
+      CHECK(out[k] < bound);
+      CHECK_EQ(out[k] % M::mod, ref_mul(a[k], plain[k], M::mod));
+    }
+    simd::store(out.data(), simd::mul_twiddle_full<M::mod, M::ninv>(va, floor));
+    for (size_t k = 0; k < L; ++k) CHECK_EQ(out[k], ref_mul(a[k], plain[k], M::mod));
+    simd::store(out.data(), simd::mul_twiddle_diff<M::mod, M::ninv>(va, vb, nearest));
+    for (size_t k = 0; k < L; ++k) {
+      CHECK(out[k] < bound);
+      CHECK_EQ(out[k] % M::mod, ref_mul(uint64_t(a[k]) + 2ull*M::mod - b[k], plain[k], M::mod));
+    }
+    simd::store(out.data(), simd::mul_twiddle_sum<M::mod, M::ninv>(va, vb, nearest));
+    for (size_t k = 0; k < L; ++k) {
+      CHECK(out[k] < bound);
+      CHECK_EQ(out[k] % M::mod, ref_mul(uint64_t(a[k]) + b[k], plain[k], M::mod));
+    }
+    const size_t chosen = t % L;
+    const uint32_t chosen_mont = mont[chosen];
+    const auto fixed = simd::fixed_twiddle<M::mod, M::ninv>(chosen_mont);
+    const auto fixed_nearest = simd::fixed_twiddle<M::mod, M::ninv, true>(chosen_mont);
+    simd::store(out.data(), simd::mul_twiddle<M::mod, M::ninv>(va, fixed));
+    for (size_t k = 0; k < L; ++k) {
+      CHECK(out[k] < bound);
+      CHECK_EQ(out[k] % M::mod, ref_mul(a[k], plain[chosen], M::mod));
+    }
+    simd::store(out.data(), simd::mul_twiddle_full<M::mod, M::ninv>(va, fixed));
+    for (size_t k = 0; k < L; ++k) CHECK_EQ(out[k], ref_mul(a[k], plain[chosen], M::mod));
+    simd::store(out.data(), simd::mul_twiddle_diff<M::mod, M::ninv>(va, vb, fixed_nearest));
+    for (size_t k = 0; k < L; ++k) {
+      CHECK(out[k] < bound);
+      CHECK_EQ(out[k] % M::mod, ref_mul(uint64_t(a[k]) + 2ull*M::mod - b[k], plain[chosen], M::mod));
+    }
+    simd::store(out.data(), simd::mul_twiddle_sum<M::mod, M::ninv>(va, vb, fixed_nearest));
+    for (size_t k = 0; k < L; ++k) {
+      CHECK(out[k] < bound);
+      CHECK_EQ(out[k] % M::mod, ref_mul(uint64_t(a[k]) + b[k], plain[chosen], M::mod));
+    }
+#if defined(FPX_HAVE_AVX2_INTRIN)
+    simd::store(encoded.data(), fixed.quotient);
+    for (size_t k = 0; k < L; ++k)
+      CHECK_EQ(encoded[k], (uint64_t(plain[chosen]) << 32) / M::mod);
+    const auto packed = simd::fixed_twiddle_vector<M::mod, M::ninv>(simd::load(mont.data()));
+    simd::store(encoded.data(), packed.quotient); simd::store(decoded.data(), packed.value);
+    for (size_t k = 0; k < L; ++k) {
+      CHECK_EQ(encoded[k], (uint64_t(plain[k]) << 32) / M::mod);
+      CHECK_EQ(decoded[k], plain[k]);
+    }
+    for (size_t k = 0; k < L; ++k) mont[k] = k % 2 ? chosen_mont : M::one;
+    simd::store(out.data(), simd::mul_unity_even<M::mod, M::ninv>(va, simd::load(mont.data())));
+    for (size_t k = 0; k < L; ++k) {
+      CHECK(out[k] < bound);
+      if (k % 2 == 0) CHECK_EQ(out[k], a[k]);
+      else CHECK_EQ(out[k] % M::mod, ref_mul(a[k], plain[chosen], M::mod));
+    }
+#endif
+  }
+}
+
+template <int W>
+void chunk_layout_contract() {
+  constexpr size_t L = simd::lane, count = 4*L;
+  for (const size_t offset : {size_t(0), size_t(1), size_t(3), size_t(7), size_t(15)}) {
+    std::vector<uint32_t> input(count + offset), result(count + offset);
+    uint32_t* p = input.data() + offset;
+    for (size_t i = 0; i < count; ++i) p[i] = static_cast<uint32_t>(i);
+    simd::native_t x[4];
+    simd::load4m<W>(p, x[0], x[1], x[2], x[3]);
+    uint32_t columns[4][L];
+    bool seen[count]{};
+    for (size_t j = 0; j < 4; ++j) simd::store(columns[j], x[j]);
+    for (size_t i = 0; i < L; ++i) {
+      CHECK_EQ(columns[0][i] % (4*W), i % W);
+      for (size_t j = 0; j < 4; ++j) {
+        CHECK_EQ(columns[j][i], columns[0][i] + j*W);
+        CHECK(columns[j][i] < count);
+        CHECK(!seen[columns[j][i]]);
+        seen[columns[j][i]] = true;
+      }
+    }
+    for (size_t j = 0; j < 4; ++j) {
+      for (size_t i = 0; i < L; ++i) columns[j][i] += static_cast<uint32_t>(1000*(j + 1));
+      x[j] = simd::load(columns[j]);
+    }
+    simd::store4m<W>(result.data() + offset, x[0], x[1], x[2], x[3]);
+    for (size_t i = 0; i < count; ++i)
+      CHECK_EQ(result[offset + i], i + 1000*(i/W % 4 + 1));
+  }
+}
+
+template <int L>
+void chunk_layout_contract_all() {
+  chunk_layout_contract<1>();
+  if constexpr (L >= 2) chunk_layout_contract<2>();
+  if constexpr (L >= 4) chunk_layout_contract<4>();
+  if constexpr (L >= 8) chunk_layout_contract<8>();
+  if constexpr (L >= 16) chunk_layout_contract<16>();
+}
+
 }  // namespace
 
 FP_TEST(modint_998244353) { check_field<mod998244353>("998244353"); }
@@ -122,5 +259,22 @@ FP_TEST(modint_sqrt_p34b) { check_sqrt<mod1004535809>(); }
 
 FP_TEST(simd_kernels) { check_simd<mod998244353>(); }
 FP_TEST(simd_kernels_big) { check_simd<mod1224736769>(); }
+
+FP_TEST(fixed_simd_multipliers) {
+  fixed_kernel_contract<mod998244353>();
+  fixed_kernel_contract<mod1004535809>();
+  fixed_kernel_contract<mod469762049>();
+  fixed_kernel_contract<mod167772161>();
+  fixed_kernel_contract<mod754974721>();
+  fixed_kernel_contract<mod1224736769>();
+  fixed_kernel_contract<Mont<1073741789u, 2>>();  // prime just below 2^30
+  fixed_kernel_contract<Mont<1073479681u, 11>>(); // large NTT just below 2^30
+  fixed_kernel_contract<Mont<2013265921u, 31>>(); // full reduction near 2^31
+  fixed_kernel_contract<Mont<3u, 2>>();
+}
+
+FP_TEST(simd_chunk_layout) {
+  chunk_layout_contract_all<simd::lane>();
+}
 
 FP_TEST_MAIN()

@@ -1,0 +1,4 @@
+backend,operation,size,before_ms,after_ms,speedup,checksum,runs,reps,warmup
+avx2,plan,1024,0.012542000,0.018792000,0.667412,dbe543a62daebb33,13,1,0
+avx2,plan,65536,0.235625000,0.242292000,0.972484,b83db2bcacb85d37,13,1,0
+avx2,plan,1048576,3.685083000,3.668000000,1.004657,54c8128939e97daa,13,1,0

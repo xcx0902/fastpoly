@@ -43,45 +43,26 @@ namespace fpx {
 namespace simd {
 namespace x86 {
 /// 4-way de-interleave of 32 consecutive uint32 into four 8-lane vectors:
-/// lane i of `xj` receives p[4*i + j] for i = 0..7.  The row order inside a
-/// column is a fixed permutation (0,2,1,3,4,6,5,7); store4x8 undoes it exactly.
-/// Shared by the AVX2 and AVX-512 backends, the latter composing two halves.
+/// The row order inside a column is (0,2,4,6,1,3,5,7); store4x8 undoes it.
+/// AVX2 network; the AVX-512 backend uses its own full-width network below.
 inline void load4x8(const uint32_t* p, __m256i& x0, __m256i& x1, __m256i& x2, __m256i& x3) {
-  const __m128i a0 = _mm_loadu_si128((const __m128i*)(p + 0));
-  const __m128i a1 = _mm_loadu_si128((const __m128i*)(p + 4));
-  const __m128i a2 = _mm_loadu_si128((const __m128i*)(p + 8));
-  const __m128i a3 = _mm_loadu_si128((const __m128i*)(p + 12));
-  const __m128i b0 = _mm_loadu_si128((const __m128i*)(p + 16));
-  const __m128i b1 = _mm_loadu_si128((const __m128i*)(p + 20));
-  const __m128i b2 = _mm_loadu_si128((const __m128i*)(p + 24));
-  const __m128i b3 = _mm_loadu_si128((const __m128i*)(p + 28));
-  const __m128i t0 = _mm_unpacklo_epi32(a0, a1), t1 = _mm_unpackhi_epi32(a0, a1);
-  const __m128i t2 = _mm_unpacklo_epi32(a2, a3), t3 = _mm_unpackhi_epi32(a2, a3);
-  const __m128i u0 = _mm_unpacklo_epi32(b0, b1), u1 = _mm_unpackhi_epi32(b0, b1);
-  const __m128i u2 = _mm_unpacklo_epi32(b2, b3), u3 = _mm_unpackhi_epi32(b2, b3);
-  x0 = _mm256_set_m128i(_mm_unpacklo_epi32(u0, u2), _mm_unpacklo_epi32(t0, t2));
-  x1 = _mm256_set_m128i(_mm_unpackhi_epi32(u0, u2), _mm_unpackhi_epi32(t0, t2));
-  x2 = _mm256_set_m128i(_mm_unpacklo_epi32(u1, u3), _mm_unpacklo_epi32(t1, t3));
-  x3 = _mm256_set_m128i(_mm_unpackhi_epi32(u1, u3), _mm_unpackhi_epi32(t1, t3));
+  const __m256i a = _mm256_loadu_si256((const __m256i*)(p + 0));
+  const __m256i b = _mm256_loadu_si256((const __m256i*)(p + 8));
+  const __m256i c = _mm256_loadu_si256((const __m256i*)(p + 16));
+  const __m256i d = _mm256_loadu_si256((const __m256i*)(p + 24));
+  const __m256i t0 = _mm256_unpacklo_epi32(a, b), t1 = _mm256_unpackhi_epi32(a, b);
+  const __m256i t2 = _mm256_unpacklo_epi32(c, d), t3 = _mm256_unpackhi_epi32(c, d);
+  x0 = _mm256_unpacklo_epi64(t0, t2); x1 = _mm256_unpackhi_epi64(t0, t2);
+  x2 = _mm256_unpacklo_epi64(t1, t3); x3 = _mm256_unpackhi_epi64(t1, t3);
 }
 /// Exact inverse of load4x8.
 inline void store4x8(uint32_t* p, __m256i y0, __m256i y1, __m256i y2, __m256i y3) {
-  __m128i c0 = _mm256_castsi256_si128(y0), d0 = _mm256_extracti128_si256(y0, 1);
-  __m128i c1 = _mm256_castsi256_si128(y1), d1 = _mm256_extracti128_si256(y1, 1);
-  __m128i c2 = _mm256_castsi256_si128(y2), d2 = _mm256_extracti128_si256(y2, 1);
-  __m128i c3 = _mm256_castsi256_si128(y3), d3 = _mm256_extracti128_si256(y3, 1);
-  const __m128i w0 = _mm_unpacklo_epi32(c0, c1), w1 = _mm_unpackhi_epi32(c0, c1);
-  const __m128i w2 = _mm_unpacklo_epi32(c2, c3), w3 = _mm_unpackhi_epi32(c2, c3);
-  _mm_storeu_si128((__m128i*)(p + 0), _mm_unpacklo_epi64(w0, w2));
-  _mm_storeu_si128((__m128i*)(p + 4), _mm_unpacklo_epi64(w1, w3));
-  _mm_storeu_si128((__m128i*)(p + 8), _mm_unpackhi_epi64(w0, w2));
-  _mm_storeu_si128((__m128i*)(p + 12), _mm_unpackhi_epi64(w1, w3));
-  const __m128i z0 = _mm_unpacklo_epi32(d0, d1), z1 = _mm_unpackhi_epi32(d0, d1);
-  const __m128i z2 = _mm_unpacklo_epi32(d2, d3), z3 = _mm_unpackhi_epi32(d2, d3);
-  _mm_storeu_si128((__m128i*)(p + 16), _mm_unpacklo_epi64(z0, z2));
-  _mm_storeu_si128((__m128i*)(p + 20), _mm_unpacklo_epi64(z1, z3));
-  _mm_storeu_si128((__m128i*)(p + 24), _mm_unpackhi_epi64(z0, z2));
-  _mm_storeu_si128((__m128i*)(p + 28), _mm_unpackhi_epi64(z1, z3));
+  const __m256i t0 = _mm256_unpacklo_epi32(y0, y1), t1 = _mm256_unpackhi_epi32(y0, y1);
+  const __m256i t2 = _mm256_unpacklo_epi32(y2, y3), t3 = _mm256_unpackhi_epi32(y2, y3);
+  _mm256_storeu_si256((__m256i*)(p + 0), _mm256_unpacklo_epi64(t0, t2));
+  _mm256_storeu_si256((__m256i*)(p + 8), _mm256_unpackhi_epi64(t0, t2));
+  _mm256_storeu_si256((__m256i*)(p + 16), _mm256_unpacklo_epi64(t1, t3));
+  _mm256_storeu_si256((__m256i*)(p + 24), _mm256_unpackhi_epi64(t1, t3));
 }
 /// Chunk width 2 (four 8-element blocks): xj lane i gets p[(i/2)*8 + 2j + i%2].
 inline void load4m2x8(const uint32_t* p, __m256i& x0, __m256i& x1, __m256i& x2, __m256i& x3) {
@@ -195,25 +176,22 @@ inline native_t mulmod_lazy(native_t a, native_t b) {
   __m512i u1 = _mm512_srli_epi64(_mm512_add_epi64(t1, _mm512_mul_epu32(m1, vm)), 32);
   return _mm512_or_si512(u0, _mm512_slli_epi64(u1, 32));
 }
-/// 4-way de-interleave of 4*lane consecutive values (lane == 16 here); built
-/// from two AVX2-width transposes so it shares the tested 256-bit network.
+/// Four full-width loads and eight lane-local unpacks. The row permutation
+/// (0,4,8,12,1,5,9,13,2,6,10,14,3,7,11,15) is undone by store4.
 inline void load4(const uint32_t* p, native_t& x0, native_t& x1, native_t& x2, native_t& x3) {
-  __m256i l0, l1, l2, l3, h0, h1, h2, h3;
-  x86::load4x8(p, l0, l1, l2, l3);
-  x86::load4x8(p + 32, h0, h1, h2, h3);
-  x0 = _mm512_inserti64x4(_mm512_castsi256_si512(l0), h0, 1);
-  x1 = _mm512_inserti64x4(_mm512_castsi256_si512(l1), h1, 1);
-  x2 = _mm512_inserti64x4(_mm512_castsi256_si512(l2), h2, 1);
-  x3 = _mm512_inserti64x4(_mm512_castsi256_si512(l3), h3, 1);
+  const native_t a = load(p), b = load(p + 16), c = load(p + 32), d = load(p + 48);
+  const native_t t0 = _mm512_unpacklo_epi32(a, b), t1 = _mm512_unpackhi_epi32(a, b);
+  const native_t t2 = _mm512_unpacklo_epi32(c, d), t3 = _mm512_unpackhi_epi32(c, d);
+  x0 = _mm512_unpacklo_epi64(t0, t2); x1 = _mm512_unpackhi_epi64(t0, t2);
+  x2 = _mm512_unpacklo_epi64(t1, t3); x3 = _mm512_unpackhi_epi64(t1, t3);
 }
 inline void store4(uint32_t* p, native_t y0, native_t y1, native_t y2, native_t y3) {
-  x86::store4x8(p, _mm512_castsi512_si256(y0), _mm512_castsi512_si256(y1),
-                _mm512_castsi512_si256(y2), _mm512_castsi512_si256(y3));
-  x86::store4x8(p + 32, _mm512_extracti64x4_epi64(y0, 1), _mm512_extracti64x4_epi64(y1, 1),
-                _mm512_extracti64x4_epi64(y2, 1), _mm512_extracti64x4_epi64(y3, 1));
+  const native_t t0 = _mm512_unpacklo_epi32(y0, y1), t1 = _mm512_unpackhi_epi32(y0, y1);
+  const native_t t2 = _mm512_unpacklo_epi32(y2, y3), t3 = _mm512_unpackhi_epi32(y2, y3);
+  store(p, _mm512_unpacklo_epi64(t0, t2)); store(p + 16, _mm512_unpackhi_epi64(t0, t2));
+  store(p + 32, _mm512_unpacklo_epi64(t1, t3)); store(p + 48, _mm512_unpackhi_epi64(t1, t3));
 }
-/// Chunk width for the small-m stages: M < lane, M | lane.  Composed from two
-/// AVX2-width transposes, mirroring load4/store4.
+/// Small stages keep all sixteen lanes in native-width shuffle networks.
 template <int M>
 inline void load4m(const uint32_t* p, native_t& x0, native_t& x1, native_t& x2, native_t& x3) {
   if constexpr (M == static_cast<int>(lane)) {
@@ -232,18 +210,22 @@ inline void load4m(const uint32_t* p, native_t& x0, native_t& x1, native_t& x2, 
     x3 = _mm512_shuffle_i64x2(b, d, 0xEE);
   } else {
     static_assert(M == 2 || M == 4, "unsupported small chunk width");
-    __m256i l0, l1, l2, l3, h0, h1, h2, h3;
+    const native_t a = load(p), b = load(p + 16), c = load(p + 32), d = load(p + 48);
     if constexpr (M == 2) {
-      x86::load4m2x8(p, l0, l1, l2, l3);
-      x86::load4m2x8(p + 32, h0, h1, h2, h3);
+      const native_t u = _mm512_shuffle_i64x2(a, b, 0x88);
+      const native_t v = _mm512_shuffle_i64x2(a, b, 0xDD);
+      const native_t w = _mm512_shuffle_i64x2(c, d, 0x88);
+      const native_t z = _mm512_shuffle_i64x2(c, d, 0xDD);
+      x0 = _mm512_unpacklo_epi64(u, w); x1 = _mm512_unpackhi_epi64(u, w);
+      x2 = _mm512_unpacklo_epi64(v, z); x3 = _mm512_unpackhi_epi64(v, z);
     } else {
-      x86::load4m4x8(p, l0, l1, l2, l3);
-      x86::load4m4x8(p + 32, h0, h1, h2, h3);
+      const native_t u = _mm512_shuffle_i64x2(a, b, 0x44);
+      const native_t v = _mm512_shuffle_i64x2(a, b, 0xEE);
+      const native_t w = _mm512_shuffle_i64x2(c, d, 0x44);
+      const native_t z = _mm512_shuffle_i64x2(c, d, 0xEE);
+      x0 = _mm512_shuffle_i64x2(u, w, 0x88); x1 = _mm512_shuffle_i64x2(u, w, 0xDD);
+      x2 = _mm512_shuffle_i64x2(v, z, 0x88); x3 = _mm512_shuffle_i64x2(v, z, 0xDD);
     }
-    x0 = _mm512_inserti64x4(_mm512_castsi256_si512(l0), h0, 1);
-    x1 = _mm512_inserti64x4(_mm512_castsi256_si512(l1), h1, 1);
-    x2 = _mm512_inserti64x4(_mm512_castsi256_si512(l2), h2, 1);
-    x3 = _mm512_inserti64x4(_mm512_castsi256_si512(l3), h3, 1);
   }
 }
 template <int M>
@@ -263,15 +245,21 @@ inline void store4m(uint32_t* p, native_t y0, native_t y1, native_t y2, native_t
   } else {
     static_assert(M == 2 || M == 4, "unsupported small chunk width");
     if constexpr (M == 2) {
-      x86::store4m2x8(p, _mm512_castsi512_si256(y0), _mm512_castsi512_si256(y1),
-                      _mm512_castsi512_si256(y2), _mm512_castsi512_si256(y3));
-      x86::store4m2x8(p + 32, _mm512_extracti64x4_epi64(y0, 1), _mm512_extracti64x4_epi64(y1, 1),
-                      _mm512_extracti64x4_epi64(y2, 1), _mm512_extracti64x4_epi64(y3, 1));
+      const native_t u = _mm512_unpacklo_epi64(y0, y1), w = _mm512_unpackhi_epi64(y0, y1);
+      const native_t v = _mm512_unpacklo_epi64(y2, y3), z = _mm512_unpackhi_epi64(y2, y3);
+      const native_t lo = _mm512_set_epi64(11,10,3,2,9,8,1,0);
+      const native_t hi = _mm512_set_epi64(15,14,7,6,13,12,5,4);
+      store(p, _mm512_permutex2var_epi64(u, lo, v));
+      store(p + 16, _mm512_permutex2var_epi64(u, hi, v));
+      store(p + 32, _mm512_permutex2var_epi64(w, lo, z));
+      store(p + 48, _mm512_permutex2var_epi64(w, hi, z));
     } else {
-      x86::store4m4x8(p, _mm512_castsi512_si256(y0), _mm512_castsi512_si256(y1),
-                      _mm512_castsi512_si256(y2), _mm512_castsi512_si256(y3));
-      x86::store4m4x8(p + 32, _mm512_extracti64x4_epi64(y0, 1), _mm512_extracti64x4_epi64(y1, 1),
-                      _mm512_extracti64x4_epi64(y2, 1), _mm512_extracti64x4_epi64(y3, 1));
+      const native_t u = _mm512_shuffle_i64x2(y0, y1, 0x44);
+      const native_t v = _mm512_shuffle_i64x2(y0, y1, 0xEE);
+      const native_t w = _mm512_shuffle_i64x2(y2, y3, 0x44);
+      const native_t z = _mm512_shuffle_i64x2(y2, y3, 0xEE);
+      store(p, _mm512_shuffle_i64x2(u, w, 0x88)); store(p + 16, _mm512_shuffle_i64x2(u, w, 0xDD));
+      store(p + 32, _mm512_shuffle_i64x2(v, z, 0x88)); store(p + 48, _mm512_shuffle_i64x2(v, z, 0xDD));
     }
   }
 }
@@ -587,6 +575,236 @@ inline native_t butterfly_mul(native_t a, native_t b) {
   } else {
     return mulmod<MOD, NINV>(a, b);
   }
+}
+
+#if defined(FPX_HAVE_AVX2_INTRIN)
+/// A width-2 NTT stage has unity twiddles in every even lane. Preserve those
+/// lanes and run one widening multiply chain for the odd lanes only.
+template <uint32_t MOD, uint32_t NINV>
+inline native_t mul_unity_even(native_t a, native_t twiddle) {
+#if defined(FPX_SIMD_AVX512)
+  const native_t odd = _mm512_srli_epi64(a, 32), w = _mm512_srli_epi64(twiddle, 32);
+  const native_t t = _mm512_mul_epu32(odd, w);
+  const native_t m = _mm512_mul_epu32(odd, _mm512_mullo_epi32(w, set1(NINV)));
+  const native_t u = _mm512_add_epi64(t, _mm512_mul_epu32(m, set1(MOD)));
+  const native_t r = _mm512_mask_blend_epi32(0xAAAAu, a, u);
+#else
+  const native_t odd = _mm256_srli_epi64(a, 32), w = _mm256_srli_epi64(twiddle, 32);
+  const native_t t = _mm256_mul_epu32(odd, w);
+  const native_t m = _mm256_mul_epu32(odd, _mm256_mullo_epi32(w, set1(NINV)));
+  const native_t u = _mm256_add_epi64(t, _mm256_mul_epu32(m, set1(MOD)));
+  const native_t r = _mm256_blend_epi32(a, u, 0xAA);
+#endif
+  if constexpr (lazy_ok<MOD>) return r;
+  else return reduce_full(r, MOD);
+}
+#endif
+
+// NEON tables store compact Q31 quotients. Fixed x86 multipliers use Q32;
+// large x86 stages keep Montgomery tables to limit twiddle traffic.
+template <uint32_t MOD>
+inline constexpr bool compact_twiddle =
+#if defined(FPX_SIMD_NEON)
+    lazy_ok<MOD>;
+#else
+    false;
+#endif
+
+template <uint32_t MOD>
+inline constexpr bool fixed_lazy =
+#if defined(FPX_HAVE_AVX2_INTRIN)
+    lazy_ok<MOD>;
+#else
+    compact_twiddle<MOD>;
+#endif
+
+struct Twiddle { native_t value, quotient; };
+struct FixedTwiddle : Twiddle {};
+
+/// Encode an already canonical Montgomery limb as a Q31 quotient. ROUND
+/// selects nearest (signed butterfly differences) or floor (positive inputs).
+/// For t < MOD, m = t*NINV mod 2^32 and w = (t+m*MOD)/2^32 < MOD:
+///   w*2^31/MOD = m/2 + t/(2*MOD).
+/// Thus floor is m>>1 and nearest is ceil(m/2), without a division or REDC.
+template <uint32_t MOD, uint32_t NINV, bool ROUND>
+constexpr uint32_t encode_twiddle_scalar(uint32_t t) {
+  if constexpr (compact_twiddle<MOD>) {
+    const uint32_t m = t * NINV;
+    return ROUND ? m - (m >> 1) : m >> 1;
+  } else {
+    return t;
+  }
+}
+
+template <uint32_t MOD, uint32_t NINV, bool ROUND>
+inline native_t encode_twiddle(native_t t) {
+#if defined(FPX_SIMD_NEON)
+  if constexpr (compact_twiddle<MOD>) {
+    const native_t m = vmulq_u32(t, set1(NINV));
+    if constexpr (ROUND) return vhaddq_u32(m, set1(1));
+    else return vshrq_n_u32(m, 1);
+  } else
+#endif
+  return t;
+}
+
+/// Reconstruct w exactly from either Q31 encoding. Its error after scaling
+/// back is < MOD/2^31 < 1/2, so one rounded high multiply recovers w.
+template <uint32_t MOD>
+inline Twiddle decode_twiddle(native_t q) {
+#if defined(FPX_SIMD_NEON)
+  if constexpr (compact_twiddle<MOD>) {
+    return {vreinterpretq_u32_s32(vqrdmulhq_s32(
+                vreinterpretq_s32_u32(q), vdupq_n_s32(static_cast<int32_t>(MOD)))), q};
+  } else
+#endif
+  return {q, zero()};
+}
+
+template <uint32_t MOD, uint32_t NINV, bool ROUND = false>
+inline FixedTwiddle fixed_twiddle(uint32_t mont) {
+  const uint32_t q = encode_twiddle_scalar<MOD, NINV, ROUND>(mont);
+  if constexpr (compact_twiddle<MOD>) {
+    const uint32_t w = static_cast<uint32_t>(
+        (uint64_t(q) * MOD + (uint64_t(1) << 30)) >> 31);
+    return {{set1(w), set1(q)}};
+  } else {
+#if defined(FPX_HAVE_AVX2_INTRIN)
+    const uint32_t digit = mont*NINV;
+    const uint32_t value = static_cast<uint32_t>((uint64_t(digit)*MOD + mont) >> 32);
+    // value*2^32/MOD = digit + mont/MOD, and mont is canonical.
+    const uint32_t quotient = digit;
+    return {{set1(value), set1(quotient)}};
+#else
+    return {{set1(q), zero()}};
+#endif
+  }
+}
+
+#if defined(FPX_HAVE_AVX2_INTRIN)
+template <uint32_t MOD, uint32_t NINV>
+inline FixedTwiddle fixed_twiddle_vector(native_t mont) {
+#if defined(FPX_SIMD_AVX512)
+  const native_t q = _mm512_mullo_epi32(mont, set1(NINV));
+  const native_t lo = _mm512_and_si512(mont, _mm512_set1_epi64(0xffffffffu));
+  const native_t hi = _mm512_srli_epi64(mont, 32);
+  const native_t v0 = _mm512_add_epi64(_mm512_mul_epu32(q, set1(MOD)), lo);
+  const native_t v1 = _mm512_add_epi64(_mm512_mul_epu32(_mm512_srli_epi64(q, 32), set1(MOD)), hi);
+  return {{_mm512_mask_blend_epi32(0xAAAAu, _mm512_srli_epi64(v0, 32), v1), q}};
+#else
+  const native_t q = _mm256_mullo_epi32(mont, set1(NINV));
+  const native_t lo = _mm256_and_si256(mont, _mm256_set1_epi64x(0xffffffffu));
+  const native_t hi = _mm256_srli_epi64(mont, 32);
+  const native_t v0 = _mm256_add_epi64(_mm256_mul_epu32(q, set1(MOD)), lo);
+  const native_t v1 = _mm256_add_epi64(_mm256_mul_epu32(_mm256_srli_epi64(q, 32), set1(MOD)), hi);
+  return {{_mm256_blend_epi32(_mm256_srli_epi64(v0, 32), v1, 0xAA), q}};
+#endif
+}
+#endif
+
+/// Positive fixed multiplication: a < 2*MOD and a floor Q31 quotient.
+/// floor(a*q/2^31) underestimates a*w/MOD by < 2. The difference is in
+/// [0, 2*MOD); SQDMULH + MUL + MLS handles four lanes in three instructions.
+template <uint32_t MOD, uint32_t NINV>
+inline native_t mul_twiddle(native_t a, Twiddle w) {
+#if defined(FPX_SIMD_NEON)
+  if constexpr (compact_twiddle<MOD>) {
+    const native_t q = vreinterpretq_u32_s32(vqdmulhq_s32(
+        vreinterpretq_s32_u32(a), vreinterpretq_s32_u32(w.quotient)));
+    return vmlsq_u32(vmulq_u32(a, w.value), q, set1(MOD));
+  } else
+#endif
+  return butterfly_mul<MOD, NINV, lazy_ok<MOD>>(a, w.value);
+}
+
+template <uint32_t MOD, uint32_t NINV>
+inline native_t mul_twiddle_full(native_t a, Twiddle w) {
+  if constexpr (compact_twiddle<MOD>)
+    return reduce_full(mul_twiddle<MOD, NINV>(a, w), MOD);
+  else
+    return mulmod<MOD, NINV>(a, w.value);
+}
+
+#if defined(FPX_SIMD_NEON)
+/// Signed x in [-2*MOD, 2*MOD) and a nearest Q31 quotient. The reciprocal
+/// error is < |x|/2^32 < 1/2; rounding adds at most 1/2. Hence x*w-Q*MOD
+/// lies in (-MOD, MOD). Adding MOD restores the lazy positive interval.
+template <uint32_t MOD>
+inline native_t mul_twiddle_centered(native_t x, Twiddle w) {
+  const native_t q = vreinterpretq_u32_s32(vqrdmulhq_s32(
+      vreinterpretq_s32_u32(x), vreinterpretq_s32_u32(w.quotient)));
+  const native_t r = vmlsq_u32(vmulq_u32(x, w.value), q, set1(MOD));
+  return vaddq_u32(r, set1(MOD));
+}
+#endif
+
+template <uint32_t MOD, uint32_t NINV>
+inline native_t mul_twiddle_diff(native_t a, native_t b, Twiddle w) {
+#if defined(FPX_SIMD_NEON)
+  if constexpr (compact_twiddle<MOD>)
+    return mul_twiddle_centered<MOD>(vsubq_u32(a, b), w);
+  else
+#endif
+    return butterfly_mul<MOD, NINV, lazy_ok<MOD>>(sub(a, b, rmod<MOD>), w.value);
+}
+
+template <uint32_t MOD, uint32_t NINV>
+inline native_t mul_twiddle_sum(native_t a, native_t b, Twiddle w) {
+#if defined(FPX_SIMD_NEON)
+  if constexpr (compact_twiddle<MOD>)
+    return mul_twiddle_centered<MOD>(vsubq_u32(vaddq_u32(a, b), set1(2 * MOD)), w);
+  else
+#endif
+  if constexpr (lazy_ok<MOD>)
+    return mulmod_lazy<MOD, NINV>(add_wide(a, b), w.value);
+  else
+    return mulmod<MOD, NINV>(add(a, b, MOD), w.value);
+}
+
+// A fixed ordinary multiplier uses a floor Q32 quotient. For a < 2^32 the
+// estimated quotient undershoots by less than two, so the remainder is < 2*MOD.
+// Its two wide high products run in parallel with the all-lane low product.
+template <uint32_t MOD, uint32_t NINV>
+inline native_t mul_twiddle(native_t a, FixedTwiddle w) {
+#if defined(FPX_SIMD_AVX512)
+  const native_t q0 = _mm512_mul_epu32(a, w.quotient);
+  const native_t q1 = _mm512_mul_epu32(_mm512_srli_epi64(a, 32), _mm512_srli_epi64(w.quotient, 32));
+  const native_t q = _mm512_mask_blend_epi32(0xAAAAu, _mm512_srli_epi64(q0, 32), q1);
+  const native_t r = _mm512_sub_epi32(_mm512_mullo_epi32(a, w.value), _mm512_mullo_epi32(q, set1(MOD)));
+#elif defined(FPX_SIMD_AVX2)
+  const native_t q0 = _mm256_mul_epu32(a, w.quotient);
+  const native_t q1 = _mm256_mul_epu32(_mm256_srli_epi64(a, 32), _mm256_srli_epi64(w.quotient, 32));
+  const native_t q = _mm256_blend_epi32(_mm256_srli_epi64(q0, 32), q1, 0xAA);
+  const native_t r = _mm256_sub_epi32(_mm256_mullo_epi32(a, w.value), _mm256_mullo_epi32(q, set1(MOD)));
+#else
+  return mul_twiddle<MOD, NINV>(a, static_cast<Twiddle>(w));
+#endif
+#if defined(FPX_HAVE_AVX2_INTRIN)
+  if constexpr (lazy_ok<MOD>) return r;
+  else return reduce_full(r, MOD);
+#endif
+}
+template <uint32_t MOD, uint32_t NINV>
+inline native_t mul_twiddle_full(native_t a, FixedTwiddle w) {
+  if constexpr (lazy_ok<MOD>) return reduce_full(mul_twiddle<MOD, NINV>(a, w), MOD);
+  else return mul_twiddle<MOD, NINV>(a, w);
+}
+template <uint32_t MOD, uint32_t NINV>
+inline native_t mul_twiddle_diff(native_t a, native_t b, FixedTwiddle w) {
+#if defined(FPX_HAVE_AVX2_INTRIN)
+  return mul_twiddle<MOD, NINV>(sub(a, b, rmod<MOD>), w);
+#else
+  return mul_twiddle_diff<MOD, NINV>(a, b, static_cast<Twiddle>(w));
+#endif
+}
+template <uint32_t MOD, uint32_t NINV>
+inline native_t mul_twiddle_sum(native_t a, native_t b, FixedTwiddle w) {
+#if defined(FPX_HAVE_AVX2_INTRIN)
+  if constexpr (lazy_ok<MOD>) return mul_twiddle<MOD, NINV>(add_wide(a, b), w);
+  else return mul_twiddle<MOD, NINV>(add(a, b, MOD), w);
+#else
+  return mul_twiddle_sum<MOD, NINV>(a, b, static_cast<Twiddle>(w));
+#endif
 }
 
 }  // namespace simd

@@ -1,0 +1,17 @@
+backend,kernel,before_instructions,before_wide_multiply,before_low_multiply,before_shuffle,after_instructions,after_wide_multiply,after_low_multiply,after_shuffle
+avx2,fastpoly_columns1,36,0,0,16,21,0,0,8
+avx2,fastpoly_rows1,36,0,0,12,21,0,0,8
+avx2,fastpoly_columns2,21,0,0,8,21,0,0,8
+avx2,fastpoly_rows2,21,0,0,8,21,0,0,8
+avx2,fastpoly_columns4,17,0,0,4,17,0,0,4
+avx2,fastpoly_rows4,17,0,0,4,17,0,0,4
+avx2,fastpoly_fixed7,26,6,0,0,20,2,1,0
+avx512,fastpoly_columns1,69,0,0,44,21,0,0,8
+avx512,fastpoly_rows1,68,0,0,24,21,0,0,8
+avx512,fastpoly_columns2,21,0,0,8,21,0,0,8
+avx512,fastpoly_rows2,37,0,0,16,24,0,0,8
+avx512,fastpoly_columns4,21,0,0,8,19,0,0,8
+avx512,fastpoly_rows4,29,0,0,8,19,0,0,8
+avx512,fastpoly_columns8,15,0,0,4,15,0,0,4
+avx512,fastpoly_rows8,15,0,0,4,15,0,0,4
+avx512,fastpoly_fixed7,23,6,0,0,22,2,1,0
