@@ -11,7 +11,8 @@ import sys
 
 
 ROOT = Path(__file__).resolve().parent.parent
-HEADERS = ("modint", "simd", "memory", "ntt", "poly", "fastpoly")
+# Follow the umbrella's actual dependency graph instead of a second manual order.
+HEADERS = ("fastpoly",)
 IDENTIFIER = re.compile(r"(?:[^\W\d]|_)\w*")
 NUMBER = re.compile(r"(?:\d|\.\d)(?:[eEpP][+-]|[\w.]|'[\w])*", re.UNICODE)
 LITERAL = re.compile(r'(?:u8|u|U|L)?(R"|"|\')')
@@ -160,7 +161,8 @@ def chunks(source: str) -> list[tuple[bool, list[str]]]:
 def directive(tokens: list[str]) -> str:
     # chunks() encodes function-like macro names as 'F(' to preserve adjacency.
     if tokens[1:2] == ["define"]:
-        return "#define " + tokens[2] + " " + join_tokens(tokens[3:]) + "\n"
+        value = join_tokens(tokens[3:])
+        return "#define " + tokens[2] + (" " + value if value else "") + "\n"
     return join_tokens(tokens) + "\n"
 
 
@@ -170,21 +172,88 @@ def compact(source: str) -> str:
 
 
 def header_body(name: str) -> str:
-    path = ROOT / "include" / "fastpoly" / f"{name}.hpp"
-    source = path.read_text(encoding="utf-8")
-    guard = f"FASTPOLY_{name.upper()}_HPP"
-    lines = source.splitlines(keepends=True)
-    opening = next((i for i, line in enumerate(lines) if line.strip() == f"#ifndef {guard}"), None)
-    if opening is None or lines[opening + 1].strip() != f"#define {guard}":
-        raise ValueError(f"unexpected include guard in {path}")
-    last = max(i for i, line in enumerate(lines) if line.strip())
-    if not re.fullmatch(r"#endif(?:\s*//.*)?", lines[last].strip()):
-        raise ValueError(f"unexpected closing guard in {path}")
-    lines = lines[opening + 2:last]
-    lines = [line for line in lines if not re.fullmatch(
-        r'\s*#\s*include\s+"fastpoly/[^"\n]+\.hpp"\s*\n?', line
-    )]
-    return "".join(lines)
+    """Inline local dependencies at their include sites, including backend arms.
+
+    Unconditional dependencies are emitted once. Conditional includes get a
+    branch-local set: including a header in one arm must not suppress it in
+    another arm or later outside the conditional. Keep dependency guards too,
+    so a conditional inclusion followed by an unconditional one stays valid.
+    """
+    emitted = set()
+    local_include = re.compile(r'\s*#\s*include\s+"fastpoly/([^"\n]+\.hpp)"\s*\n?')
+
+    def expand(relative: str, seen: set[str], active: tuple[str, ...], *, outer=False):
+        if relative in active:
+            raise ValueError(f"cyclic local include: {' -> '.join((*active, relative))}")
+        if relative in seen:
+            return ""
+        seen.add(relative)
+        path = ROOT / "include" / "fastpoly" / relative
+        guard = "FASTPOLY_" + relative[:-4].upper().replace("/", "_") + "_HPP"
+        lines = path.read_text(encoding="utf-8").splitlines(keepends=True)
+        opening = next((i for i, line in enumerate(lines) if line.strip() == f"#ifndef {guard}"), None)
+        if opening is None or lines[opening + 1].strip() != f"#define {guard}":
+            raise ValueError(f"unexpected include guard in {path}")
+        last = max(i for i, line in enumerate(lines) if line.strip())
+        if not re.fullmatch(r"#endif(?:\s*//.*)?", lines[last].strip()):
+            raise ValueError(f"unexpected closing guard in {path}")
+        result = [] if outer else lines[:opening + 2]
+        depth = 0
+        for line in lines[opening + 2:last]:
+            if match := local_include.fullmatch(line):
+                result.append(expand(match[1], seen if depth == 0 else seen.copy(),
+                                     (*active, relative)))
+            else:
+                result.append(line)
+                if re.match(r"\s*#\s*(?:if|ifdef|ifndef)\b", line):
+                    depth += 1
+                elif re.match(r"\s*#\s*endif\b", line):
+                    depth -= 1
+        if depth:
+            raise ValueError(f"unbalanced conditional in {path}")
+        if not outer:
+            result.extend(lines[last:])
+        return "".join(result)
+
+    return expand(f"{name}.hpp", emitted, (), outer=True)
+
+
+def separate_includes(parts: list[tuple[bool, list[str]]]):
+    """Hoist system includes, retaining their architecture conditionals.
+
+    The complete branch prefix (if + preceding elif/else) selects the same arm
+    as the source. Library guards are irrelevant to system-header selection.
+    All system headers must be read before compression aliases are defined.
+    """
+    preamble, body, stack, seen = [], [], [], set()
+    for is_directive, tokens in parts:
+        if not is_directive:
+            body.append((False, tokens))
+            continue
+        kind = tokens[1]
+        if kind in ("if", "ifdef", "ifndef"):
+            stack.append([tokens])
+        elif kind in ("elif", "else"):
+            stack[-1].append(tokens)
+        elif kind == "endif":
+            stack.pop()
+        if kind == "include":
+            if tokens[2:3] != ["<"]:
+                raise ValueError(f"unexpanded local include: {join_tokens(tokens)}")
+            context = [frame for frame in stack if not (
+                frame[0][1] == "ifndef"
+                and re.fullmatch(r"FASTPOLY_\w+_HPP", frame[0][2]))]
+            key = (tuple(tuple(tuple(line) for line in frame) for frame in context), tuple(tokens))
+            if key not in seen:
+                seen.add(key)
+                preamble.extend(directive(line) for frame in context for line in frame)
+                preamble.append(directive(tokens))
+                preamble.extend("#endif\n" for _ in context)
+        else:
+            body.append((True, tokens))
+    if stack:
+        raise ValueError("unbalanced conditional in expanded headers")
+    return preamble, body
 
 
 def macro_open(name: str, tokens: tuple[str, ...]) -> str:
@@ -298,47 +367,13 @@ def compress(code: list[list[str]]) -> tuple[list[list[str]], list[tuple[str, tu
 
 
 def generate() -> str:
-    preamble = []
-    body = []
-    seen_includes = set()
-    for name in HEADERS:
-        parts = chunks(header_body(name))
-        first_code = next((i for i, (is_directive, _) in enumerate(parts) if not is_directive), len(parts))
-        depth = 0
-        preamble_end = 0
-        for i, (_, tokens) in enumerate(parts[:first_code]):
-            if tokens[1] in ("if", "ifdef", "ifndef"):
-                depth += 1
-            elif tokens[1] == "endif":
-                depth -= 1
-            if depth == 0:
-                preamble_end = i + 1
-        depth = 0
-        # All system includes must precede alias definitions, so compression
-        # cannot affect implementation details in the standard/SIMD headers.
-        for _, tokens in parts[:preamble_end]:
-            kind = tokens[1]
-            if kind in ("if", "ifdef", "ifndef"):
-                depth += 1
-            elif kind == "endif":
-                depth -= 1
-            if kind == "include" and depth == 0:
-                include = tuple(tokens)
-                if include in seen_includes:
-                    continue
-                seen_includes.add(include)
-            preamble.append(directive(tokens))
-        if depth:
-            raise ValueError(f"preamble conditional crosses into code in {name}.hpp")
-        for is_directive, tokens in parts[preamble_end:]:
-            if is_directive and tokens[1] == "include":
-                raise ValueError(f"system include after code in {name}.hpp")
-        body.extend(parts[preamble_end:])
+    parts = [part for name in HEADERS for part in chunks(header_body(name))]
+    preamble, body = separate_includes(parts)
     code, dictionary = compress([tokens for is_directive, tokens in body if not is_directive])
     it = iter(code)
     banner = (
         "// fastpoly - standalone C++20 header.\n"
-        "// Generated by scripts/amalgamate.py; edit include/fastpoly/*.hpp.\n"
+        "// Generated by scripts/amalgamate.py; edit include/fastpoly/ headers.\n"
         "#ifndef FASTPOLY_SINGLE_HPP\n#define FASTPOLY_SINGLE_HPP\n"
     )
     return (banner + "".join(preamble)

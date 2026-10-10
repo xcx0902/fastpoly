@@ -10,6 +10,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.dont_write_bytecode = True
@@ -23,6 +24,38 @@ def tokens(source):
 
 
 class AmalgamateTests(unittest.TestCase):
+    @unittest.skipUnless(shutil.which(os.environ.get('CXX', 'clang++')), 'C++ preprocessor unavailable')
+    def test_conditional_and_shared_dependencies(self):
+        # A conditional include must not consume a dependency needed by another
+        # arm or by a later unconditional include. Diamond dependencies still
+        # define the shared type once, with its declaration before its users.
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            headers = root / 'include/fastpoly'
+            headers.mkdir(parents=True)
+            sources = {
+                'leaf': 'struct Leaf { int value; };\n',
+                'adapter': '#include "fastpoly/leaf.hpp"\nstruct Adapter { Leaf value; };\n',
+                'sample': ('#if defined(PICK_FIRST)\n#include "fastpoly/leaf.hpp"\n'
+                           '#elif defined(PICK_SECOND)\n#include "fastpoly/leaf.hpp"\n#endif\n'
+                           '#include "fastpoly/adapter.hpp"\n#include "fastpoly/leaf.hpp"\n'
+                           'Adapter result;\n'),
+            }
+            for name, body in sources.items():
+                guard = f'FASTPOLY_{name.upper()}_HPP'
+                (headers / f'{name}.hpp').write_text(
+                    f'#ifndef {guard}\n#define {guard}\n{body}\n#endif\n')
+            with patch.object(amalgamate, 'ROOT', root):
+                expanded = amalgamate.header_body('sample')
+            base = [os.environ.get('CXX', 'clang++'), '-E', '-P', '-x', 'c++',
+                    '-I', str(root / 'include')]
+            for flags in ([], ['-DPICK_FIRST'], ['-DPICK_SECOND']):
+                with self.subTest(flags=flags):
+                    original = subprocess.check_output(base + flags + [str(headers / 'sample.hpp')], text=True)
+                    bundled = subprocess.check_output(base + flags + ['-'], input=expanded, text=True)
+                    self.assertEqual(tokens(original), tokens(bundled))
+                    self.assertEqual(tokens(bundled).count('Leaf'), 2)
+
     def test_token_boundaries(self):
         source = """
         a + +b; a - -b; a / *b; a / /b; a < : b; a : : b;

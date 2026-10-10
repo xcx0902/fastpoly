@@ -93,12 +93,7 @@ class NttPlan {
   static constexpr uint32_t R = simd::rmod<MOD>;
   static constexpr bool LAZY = simd::lazy_ok<MOD>;
   static constexpr bool COMPACT = simd::compact_twiddle<MOD>;
-  static constexpr bool X86_SHOUP =
-#if defined(FPX_HAVE_AVX2_INTRIN)
-      true;
-#else
-      false;
-#endif
+  static constexpr bool X86_SHOUP = simd::backend::q32;
   static constexpr uint32_t SHOUP_BLOCK = 2048;
   // Keep the terminal radix-2 in the width-2 kernel, avoiding another pass.
   static constexpr bool FUSE_RADIX2 = COMPACT || X86_SHOUP;
@@ -242,22 +237,22 @@ class NttPlan {
     return simd::fixed_twiddle<MOD, NINV, ROUND>(mont);
   }
   static auto cursor_step(uint32_t mont) {
-#if defined(FPX_HAVE_AVX2_INTRIN)
-    // Six independent cursors already hide the Montgomery dependency. A
-    // single-word factor avoids spilling twelve Shoup constants on AVX2.
-    return Twiddle{simd::set1(mont), simd::zero()};
-#else
-    return simd::fixed_twiddle<MOD, NINV>(mont);
-#endif
+    if constexpr (X86_SHOUP) {
+      // Six independent cursors already hide the Montgomery dependency. A
+      // single-word factor avoids spilling twelve Shoup constants on AVX2.
+      return Twiddle{simd::set1(mont), simd::zero()};
+    } else {
+      return simd::fixed_twiddle<MOD, NINV>(mont);
+    }
   }
   template <bool INVERSE>
   auto tw_fourth() const {
-#if defined(FPX_HAVE_AVX2_INTRIN)
-    constexpr uint32_t root = M::from_int(M::primitive_root).pow((MOD - 1)/4).raw_val();
-    return tw_const(INVERSE ? MOD - root : root);
-#else
-    return tw_const(INVERSE ? w4_inv_ : w4_);
-#endif
+    if constexpr (X86_SHOUP) {
+      constexpr uint32_t root = M::from_int(M::primitive_root).pow((MOD - 1)/4).raw_val();
+      return tw_const(INVERSE ? MOD - root : root);
+    } else {
+      return tw_const(INVERSE ? w4_inv_ : w4_);
+    }
   }
   template <int POWER, bool INVERSE = false>
   static auto tw_eighth_mont() {
@@ -403,23 +398,23 @@ class NttPlan {
         icur2 = M::reduce(uint64_t(icur2) * wi2v);
         icur3 = M::reduce(uint64_t(icur3) * wi3v);
       }
-#if defined(FPX_HAVE_AVX2_INTRIN)
-      if (qoff != 0) {
-        for (uint32_t* p : {A, IA}) {
-          uint32_t k = 0;
-          for (; k + simd::lane <= qoff; k += simd::lane) {
-            const auto t = simd::fixed_twiddle_vector<MOD, NINV>(simd::load(p + k));
-            simd::store(p + k, t.value);
-            simd::store(p + k + qoff, t.quotient);
-          }
-          for (; k < qoff; ++k) {
-            const uint32_t mont = p[k], q = mont*NINV;
-            p[k] = static_cast<uint32_t>((uint64_t(q)*MOD + mont) >> 32);
-            p[k + qoff] = q;
+      if constexpr (X86_SHOUP) {
+        if (qoff != 0) {
+          for (uint32_t* p : {A, IA}) {
+            uint32_t k = 0;
+            for (; k + simd::lane <= qoff; k += simd::lane) {
+              const auto t = simd::fixed_twiddle_vector<MOD, NINV>(simd::load(p + k));
+              simd::store(p + k, t.value);
+              simd::store(p + k + qoff, t.quotient);
+            }
+            for (; k < qoff; ++k) {
+              const uint32_t mont = p[k], q = mont*NINV;
+              p[k] = static_cast<uint32_t>((uint64_t(q)*MOD + mont) >> 32);
+              p[k + qoff] = q;
+            }
           }
         }
       }
-#endif
       pos += 3*m + qoff;
       w = w2 * w2;
       wi = wi2 * wi2;
@@ -492,7 +487,6 @@ class NttPlan {
     radix4_inv<LAST, false>(a, len, s, count);
   }
 
-#if defined(FPX_SIMD_NEON)
   // Four eight-point blocks occupy 32 consecutive limbs. Separate their k=0
   // and k=1 columns: k=0 has only unity twiddles, while the paired radix-2
   // now computes each sum/difference once, using every lane. The inverse's
@@ -517,7 +511,7 @@ class NttPlan {
       }
     }
   }
-  template <bool INVERSE, bool CANON>
+  template <bool INVERSE, bool CANON, class Backend = simd::backend>
   void radix8_split(uint32_t* a, size_t s, uint32_t count) const {
     const auto* table = (INVERSE ? inv_.data() : fwd_.data()) + off_[s];
     const Twiddle wa = tw_decode(simd::set1(table[1])), wb = tw_decode(simd::set1(table[3]));
@@ -527,8 +521,8 @@ class NttPlan {
       simd::load4m<2>(a + base, lo[0], lo[1], lo[2], lo[3]);
       simd::load4m<2>(a + base + 16, hi[0], hi[1], hi[2], hi[3]);
       for (int j = 0; j < 4; ++j) {
-        x[j] = vuzp1q_u32(lo[j], hi[j]);
-        y[j] = vuzp2q_u32(lo[j], hi[j]);
+        x[j] = Backend::unzip_even(lo[j], hi[j]);
+        y[j] = Backend::unzip_odd(lo[j], hi[j]);
       }
       if constexpr (INVERSE) {
         for (int j = 0; j < 4; ++j) {
@@ -546,13 +540,12 @@ class NttPlan {
         if constexpr (CANON) {
           x[j] = simd::reduce_full(x[j], MOD); y[j] = simd::reduce_full(y[j], MOD);
         }
-        lo[j] = vzip1q_u32(x[j], y[j]); hi[j] = vzip2q_u32(x[j], y[j]);
+        lo[j] = Backend::zip_low(x[j], y[j]); hi[j] = Backend::zip_high(x[j], y[j]);
       }
       simd::store4m<2>(a + base, lo[0], lo[1], lo[2], lo[3]);
       simd::store4m<2>(a + base + 16, hi[0], hi[1], hi[2], hi[3]);
     }
   }
-#endif
 
   /// Specialised stage for chunk width W == len/4 < lane.  The stage is a set of
   /// independent 4W-point transforms on *consecutive* blocks; with m < lane the
@@ -563,11 +556,9 @@ class NttPlan {
   /// the blocks differs, which the matching store undoes exactly).
   template <int W, bool LAST>
   void radix4_small(uint32_t* a, uint32_t len, size_t s, uint32_t count) const {
-#if defined(FPX_SIMD_NEON)
-    if constexpr (W == 2 && COMPACT) {
+    if constexpr (W == 2 && COMPACT && simd::backend::split_radix8) {
       if (count >= 32) { radix8_split<false, LAST>(a, s, count); return; }
     }
-#endif
     const uint32_t* A = fwd_.data() + off_[s];
     const uint32_t* B = A + W;
     const uint32_t* C = B + W;
@@ -600,14 +591,12 @@ class NttPlan {
         y1 = simd::sub(t0, t2, R);
         y2 = simd::add(t1, t3, R);
         y3 = simd::sub(t1, t3, R);
-#if defined(FPX_HAVE_AVX2_INTRIN)
-      } else if constexpr (W == 2) {
+      } else if constexpr (W == 2 && X86_SHOUP) {
         // Every even lane has k=0, hence its twiddle is unity. Multiply only
         // odd lanes; reduce the sum so its even lanes can pass through.
         y1 = simd::mul_unity_even<MOD, NINV>(simd::sub(t0, t2, R), tw_eighth_mont<2>());
         y2 = simd::mul_unity_even<MOD, NINV>(simd::add(t1, t3, R), tw_eighth_mont<1>());
         y3 = simd::mul_unity_even<MOD, NINV>(simd::sub(t1, t3, R), tw_eighth_mont<3>());
-#endif
       } else {
         y1 = submul(t0, t2, wb);
         y2 = addmul(t1, t3, wa);
@@ -654,11 +643,9 @@ class NttPlan {
   /// Inverse counterpart of radix4_small.
   template <int W, bool LAST>
   void radix4_small_inv(uint32_t* a, uint32_t len, size_t s, uint32_t count) const {
-#if defined(FPX_SIMD_NEON)
-    if constexpr (W == 2 && COMPACT && !LAST) {
+    if constexpr (W == 2 && COMPACT && !LAST && simd::backend::split_radix8) {
       if (count >= 32) { radix8_split<true, false>(a, s, count); return; }
     }
-#endif
     const uint32_t* IA = inv_.data() + off_[s];
     const uint32_t* IB = IA + W;
     const uint32_t* IC = IB + W;
@@ -688,12 +675,10 @@ class NttPlan {
       simd_t c1, c2, c3;
       if constexpr (W == 1 && !LAST) {
         c1 = b1; c2 = b2; c3 = b3;
-#if defined(FPX_HAVE_AVX2_INTRIN)
-      } else if constexpr (W == 2 && !LAST) {
+      } else if constexpr (W == 2 && !LAST && X86_SHOUP) {
         c1 = simd::mul_unity_even<MOD, NINV>(b1, tw_eighth_mont<2, true>());
         c2 = simd::mul_unity_even<MOD, NINV>(b2, tw_eighth_mont<1, true>());
         c3 = simd::mul_unity_even<MOD, NINV>(b3, tw_eighth_mont<3, true>());
-#endif
       } else {
         c1 = bmul(b1, iw2); c2 = bmul(b2, iw1); c3 = bmul(b3, iw3);
       }

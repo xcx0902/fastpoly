@@ -11,10 +11,12 @@
 
 ```
 include/fastpoly/modint.hpp   Montgomery 模数层
-include/fastpoly/simd.hpp     AVX2 / AVX-512 / NEON / 标量 的向量原语
+include/fastpoly/simd.hpp     后端选择、统一的模运算与 twiddle 接口
+include/fastpoly/detail/simd/ 各架构的向量原语及编译期能力
 include/fastpoly/memory.hpp   64 字节对齐存储、按线程复用的有界临时内存池
 include/fastpoly/ntt.hpp      NTT plan（预计算 twiddle、按 n 缓存共享）
-include/fastpoly/poly.hpp     多项式模板与全部算术
+include/fastpoly/detail/poly/ 按代数操作分层的多项式算法
+include/fastpoly/poly.hpp     多项式模板与完整自由函数 API 的入口
 include/fastpoly/fastpoly.hpp 总入口
 fastpoly.hpp                自动生成的单文件发行版
 tests/  bench/  scripts/run-tests.sh  scripts/amalgamate.py
@@ -61,6 +63,24 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j
 ./scripts/run-tests.sh          # 一次跑遍所有可用后端
 ```
+
+## 代码架构
+
+架构选择集中在 `simd.hpp` 的一个条件组；AVX2、AVX-512、NEON 和标量的机器指令各自放在
+`detail/simd/` 中。每个后端通过 `simd::backend` 声明 Q31、Q32、radix-8 分列和线性指数扫描
+等能力。公共 twiddle 算术、NTT 和级数算法用 `if constexpr` 选择这些能力，编译期删除不适用
+的分支；NTT 和多项式算法中不再出现架构宏或原生指令。后端能力对应固定通道布局的条件由
+`static_assert` 检查。
+
+多项式实现按依赖拆分：`base` 提供系数类型、异常和数位操作；`basic` 与 `convolution` 提供
+基本算术和乘积；`calculus`、`inverse`、`exponential`、`square_root` 实现级数运算；
+`power` 和 `division` 组合这些操作。每个实现头文件显式包含所需依赖。`poly.hpp` 保留完整
+自由函数接口和 `Poly<M>` 方法接口，使用方式与之前一致。
+
+新增后端时，实现原语并声明其能力，再在唯一的选择点注册；新增多项式操作时，在对应模块
+实现并从入口包含即可。单文件生成器递归跟随实际头文件依赖，在条件分支内保留独立的包含
+状态，不再维护第二份头文件顺序。对齐存储、临时内存池、twiddle 表布局、算法阈值和循环
+展开方式都沿用现有实现。
 
 ## 算法与优化
 
@@ -284,9 +304,54 @@ FASTPOLY_SIMDE_DIR=/path/to/simde FASTPOLY_TEST_SINGLE_HEADER=1 ./scripts/run-te
 类型和实现保持不变。临时宏使用 Clang / GCC / MSVC 支持的 `push_macro` / `pop_macro`
 保存和恢复调用方定义，且全部在头文件末尾清理。系统头文件在定义临时宏前包含。
 生成结果确定，可用 `--check` 检查；Python 回归测试还对四种 SIMD 分支的预处理 token
-与维护头文件逐一比对，覆盖配置覆盖、重复包含和临时宏泄漏。
+与维护头文件逐一比对，覆盖配置覆盖、重复包含、条件依赖、共享依赖和临时宏泄漏。
 
 ## 性能
+
+### 2026-10-10：按后端能力与代数依赖重构
+
+重构前为 `220d8fd`。维护源码中的架构条件组从 **32 个 `#if` 降至 1 个**；
+`#if/#elif/#else` 合计从 49 行降至 4 行（不计包含保护和缓存配置的 `#ifndef`）。
+多项式算法按操作拆分，四个后端保留原有指令、数据布局和专用路径。
+
+Apple Clang 21、`-std=c++20 -O2 -DNDEBUG` 下，使用同一份 `bench/bench.cpp`
+分别编译重构前后的头文件。**八个模数 × 四个后端的完整汇编均一致**：仅统一因编译期
+后端模板参数产生的 C++ 符号名称；指令顺序、寄存器、常量、分支、局部标签、对齐和展开
+信息都逐字比较，没有忽略指令差异。八个模数包括六个常用素数及 `1073479681`、
+`2013265921` 两个边界模数。32 组摘要保存在
+[bench/performance-20261010-refactor-codegen.csv](bench/performance-20261010-refactor-codegen.csv)。
+`bench/codegen.cpp` 的四后端原生 SIMD 探针汇编也与重构前逐字一致。
+
+原生 NEON 配对计时覆盖 18 项操作、`n = 2..2^20` 的全部二次幂，共 **360 组**。
+每组交替运行三个测量批次，每批预热两次、测量七次；全部输出校验和一致，重构前耗时 / 重构后
+耗时的整体中位数为 **1.000**。另对最初波动较大的三个场景，以及 `257/4097/262145/524289`
+的五种级数操作做 **23 组重点复测**，每组五个交替批次、每批预热三次、测量十一次；校验和
+全部一致，耗时比中位数为 **0.999**，范围为 `0.983..1.044`，没有重现最初的大幅差异。
+NEON 基准程序链接后的 `__text` 机器码及 98 个文本符号的地址也完全一致。
+原始数据保存在 [完整测量](bench/performance-20261010-refactor-neon.csv) 和
+[重点复测](bench/performance-20261010-refactor-recheck.csv)。七个极小场景低于计时器分辨率，
+保留耗时与校验和，`speedup` 留空；不据此判断加速。
+
+源码与单文件版通过原生 NEON、`-march=native`、ASan+UBSan、Rosetta AVX2、x86 标量的完整
+测试矩阵，并通过 AVX-512 SIMDe 模型测试；单文件生成器的十项回归和 CMake 构建也通过。
+
+复现完整汇编检查：
+
+```bash
+mkdir -p /tmp/fastpoly-before
+git archive 220d8fd include | tar -x -C /tmp/fastpoly-before
+python3 scripts/compare-codegen.py --before-include /tmp/fastpoly-before/include \
+  --label neon --output /tmp/fastpoly-codegen.csv
+# Apple Silicon 上交叉检查 AVX-512（无需执行硬件指令）：
+python3 scripts/compare-codegen.py --before-include /tmp/fastpoly-before/include \
+  --label avx512 --flag=-arch --flag=x86_64 --flag=-mavx512f --flag=-mavx512vl \
+  --output /tmp/fastpoly-codegen-avx512.csv
+```
+
+脚本默认检查六个常用素数；追加 `--moduli` 可指定 `模数:原根` 的逗号分隔列表。
+AVX2 使用 `--flag=-mavx2`，x86 标量省略该选项；原生 x86 主机无需 `--flag=-arch --flag=x86_64`。
+汇编一致性覆盖已实例化的运算及其数据分支；不同编译器或优化选项可用同一脚本复查。
+AVX-512 的正确性通过 SIMDe 模型验证，本机没有原生 x86 硬件计时。
 
 ### 2026-10-09：AVX2 / AVX-512 固定乘法与全宽转置
 

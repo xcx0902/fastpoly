@@ -52,8 +52,11 @@ def main():
             raise RuntimeError(f"different SIMD backends at {key}: {backends}")
         b = statistics.median(float(row["median_ms"]) for row in before)
         a = statistics.median(float(row["median_ms"]) for row in after)
+        # Tiny operations may finish within one clock tick. Keep their hashes
+        # and times, but leave the ratio empty instead of inventing a speedup.
+        speedup = f"{b / a:.6f}" if a > 0 and b > 0 else ""
         output.append([next(iter(backends)), key[0], key[1], f"{b:.9f}", f"{a:.9f}",
-                       f"{b / a:.6f}", next(iter(hashes)), args.runs, args.reps, args.warmup])
+                       speedup, next(iter(hashes)), args.runs, args.reps, args.warmup])
     with args.output.open("w", newline="") as stream:
         writer = csv.writer(stream)
         writer.writerow(["backend", "operation", "size", "before_ms", "after_ms", "speedup",
