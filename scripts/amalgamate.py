@@ -13,6 +13,7 @@ import sys
 ROOT = Path(__file__).resolve().parent.parent
 # Follow the umbrella's actual dependency graph instead of a second manual order.
 HEADERS = ("fastpoly",)
+PATHS = ("scalar", "neon", "avx2", "avx512")
 IDENTIFIER = re.compile(r"(?:[^\W\d]|_)\w*")
 NUMBER = re.compile(r"(?:\d|\.\d)(?:[eEpP][+-]|[\w.]|'[\w])*", re.UNICODE)
 LITERAL = re.compile(r'(?:u8|u|U|L)?(R"|"|\')')
@@ -171,7 +172,55 @@ def compact(source: str) -> str:
                    for is_directive, tokens in chunks(source))
 
 
-def header_body(name: str) -> str:
+def select_paths(source: str, paths: tuple[str, ...]) -> str:
+    """Filter simd.hpp's selection arms before expanding their dependencies.
+
+    Keep the source's conditions and priority, not a second architecture table.
+    An omitted scalar backend must never become an implicit fallback.
+    """
+    selection = re.compile(
+        r'^#if defined\(__AVX512F__\).*?^#endif[^\n]*', re.MULTILINE | re.DOTALL)
+    match = selection.search(source)
+    if match is None:
+        raise ValueError("cannot find SIMD backend selection in simd.hpp")
+    arms = re.findall(r'^(#(?:if|elif|else)[^\n]*)\n(.*?)(?=^#(?:elif|else|endif)\b)',
+                      match[0], re.MULTILINE | re.DOTALL)
+    result = []
+    found = set()
+    conditional = False
+    for condition, body in arms:
+        backend = re.search(r'"fastpoly/detail/simd/(\w+)\.hpp"', body)
+        if backend is None:
+            raise ValueError("unexpected SIMD selection arm")
+        path = backend[1]
+        found.add(path)
+        if path not in paths:
+            continue
+        if path == "scalar":
+            if conditional:
+                result.append("#else\n")
+        else:
+            result.append(re.sub(r'^#(?:if|elif)', '#elif' if conditional else '#if',
+                                 condition) + "\n")
+            conditional = True
+        result.append(body)
+    if found != set(PATHS):
+        raise ValueError("unexpected SIMD backend set in simd.hpp")
+    if conditional:
+        if "scalar" not in paths:
+            result.append('#else\n#error "fastpoly: no enabled SIMD path matches this target"\n')
+        result.append("#endif")
+    return source[:match.start()] + "".join(result) + source[match.end():]
+
+
+def normalize_paths(paths=None) -> tuple[str, ...]:
+    selected = set(PATHS if paths is None else paths)
+    if not selected or selected - set(PATHS):
+        raise ValueError("paths must be a nonempty subset of " + ", ".join(PATHS))
+    return tuple(path for path in PATHS if path in selected)
+
+
+def header_body(name: str, paths=None) -> str:
     """Inline local dependencies at their include sites, including backend arms.
 
     Unconditional dependencies are emitted once. Conditional includes get a
@@ -179,6 +228,7 @@ def header_body(name: str) -> str:
     another arm or later outside the conditional. Keep dependency guards too,
     so a conditional inclusion followed by an unconditional one stays valid.
     """
+    paths = normalize_paths(paths)
     emitted = set()
     local_include = re.compile(r'\s*#\s*include\s+"fastpoly/([^"\n]+\.hpp)"\s*\n?')
 
@@ -190,7 +240,10 @@ def header_body(name: str) -> str:
         seen.add(relative)
         path = ROOT / "include" / "fastpoly" / relative
         guard = "FASTPOLY_" + relative[:-4].upper().replace("/", "_") + "_HPP"
-        lines = path.read_text(encoding="utf-8").splitlines(keepends=True)
+        source = path.read_text(encoding="utf-8")
+        if relative == "simd.hpp":
+            source = select_paths(source, paths)
+        lines = source.splitlines(keepends=True)
         opening = next((i for i, line in enumerate(lines) if line.strip() == f"#ifndef {guard}"), None)
         if opening is None or lines[opening + 1].strip() != f"#define {guard}":
             raise ValueError(f"unexpected include guard in {path}")
@@ -216,6 +269,99 @@ def header_body(name: str) -> str:
         return "".join(result)
 
     return expand(f"{name}.hpp", emitted, (), outer=True)
+
+
+# The single-header distribution promises these spellings. Keep the complete
+# poly/modint surfaces, including aliases, public constants and helper functions.
+# Parameter names, template parameters and private members are not API names.
+PUBLIC_NAMES = frozenset("""
+    fpx poly Poly Mont ModInt mod998244353 mod1004535809 mod469762049
+    mod167772161 mod754974721 mod1224736769 mod1000000007
+    domain_error vec naive_threshold copy_prefix copy_range pointwise_mul
+    trim add sub neg mul_scalar shift eval conv_limbs conv derivative integral
+    inv_series inv log exp sqrt pow divmod div mod base value_type degree resize_
+    mul to_ints from_ints inv_mod_2_32 primitive_root ninv one r2 inv2
+    from_int raw reduce val raw_val is_zero str
+""".split())
+CPP_KEYWORDS = frozenset("""
+    alignas alignof and and_eq asm auto bitand bitor bool break case catch char
+    char8_t char16_t char32_t class compl concept const consteval constexpr
+    constinit const_cast continue co_await co_return co_yield decltype default
+    delete do double dynamic_cast else enum explicit export extern false float
+    for friend goto if inline int long mutable namespace new noexcept not not_eq
+    nullptr operator or or_eq private protected public register reinterpret_cast
+    requires return short signed sizeof static static_assert static_cast struct
+    switch template this thread_local throw true try typedef typeid typename
+    union unsigned using virtual void volatile wchar_t while xor xor_eq final override
+""".split())
+# Names supplied by system headers without std:: qualification, and members of
+# standard-library types. Shared spellings are kept everywhere: resolving a
+# dependent member's type would require a full C++ compiler. New external APIs
+# used by the maintained headers must be added here if not covered automatically.
+EXTERNAL_NAMES = frozenset("""
+    std uint8_t uint16_t uint32_t uint64_t int8_t int16_t int32_t int64_t
+    size_t ptrdiff_t nullptr_t NULL SIZE_MAX UINT32_MAX UINT64_MAX
+    data size capacity empty begin end back front first second insert reserve
+    resize clear pop_back push_back emplace_back get reset release swap
+    max min value count digits
+""".split())
+EXTERNAL_SIMD = re.compile(
+    r"(?:u?int|float|poly)\d+x\d+(?:x\d+)?_t|v\w+_(?:[sufp]\d+)(?:_[sufp]\d+)*")
+
+
+def short_name(index: int) -> str:
+    """C++ identifiers in length order, without reserved leading underscores."""
+    first = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    rest = first + "0123456789"
+    width, count = 1, len(first)
+    while index >= count:
+        index -= count
+        width += 1
+        count *= len(rest)
+    suffix = ""
+    for _ in range(width - 1):
+        suffix = rest[index % len(rest)] + suffix
+        index //= len(rest)
+    return first[index] + suffix
+
+
+def implementation_renames(parts: list[tuple[bool, list[str]]]) -> dict[str, str]:
+    """Rename implementation spellings across all headers, not just detail.
+
+    Use one injective map for declarations and references, including dependent
+    template members, constructor/destructor names and local variables. Preserve
+    the public API manifest, C++/system names and all preprocessor identifiers.
+    Names shared with an external/public API are conservatively kept globally.
+    The pass is repository-specific; it is not a general C++ name resolver.
+    """
+    code = [token for is_directive, block in parts if not is_directive for token in block]
+    protected = set(PUBLIC_NAMES | CPP_KEYWORDS | EXTERNAL_NAMES)
+    protected.update(token.rstrip("(") for is_directive, block in parts if is_directive
+                     for token in block)
+    for i, token in enumerate(code):
+        if (token.startswith("_") or EXTERNAL_SIMD.fullmatch(token)
+                or (i >= 2 and code[i - 2:i] == ["std", "::"])):
+            protected.add(token)
+    counts = Counter(token for token in code if IDENTIFIER.fullmatch(token))
+    used = set(counts) | protected
+    names = sorted(counts.keys() - protected, key=lambda name: (-counts[name], name))
+    mapping = {}
+    index = 0
+    for name in names:
+        short = short_name(index)
+        while short in used:
+            index += 1
+            short = short_name(index)
+        if len(short) < len(name):
+            mapping[name] = short
+            used.add(short)
+            index += 1
+    return mapping
+
+
+def rename_parts(parts, mapping):
+    return [(is_directive, block if is_directive else [mapping.get(t, t) for t in block])
+            for is_directive, block in parts]
 
 
 def separate_includes(parts: list[tuple[bool, list[str]]]):
@@ -366,14 +512,17 @@ def compress(code: list[list[str]]) -> tuple[list[list[str]], list[tuple[str, tu
     return code, dictionary
 
 
-def generate() -> str:
-    parts = [part for name in HEADERS for part in chunks(header_body(name))]
+def generate(paths=None) -> str:
+    paths = normalize_paths(paths)
+    parts = [part for name in HEADERS for part in chunks(header_body(name, paths))]
+    parts = rename_parts(parts, implementation_renames(parts))
     preamble, body = separate_includes(parts)
     code, dictionary = compress([tokens for is_directive, tokens in body if not is_directive])
     it = iter(code)
     banner = (
         "// fastpoly - standalone C++20 header.\n"
         "// Generated by scripts/amalgamate.py; edit include/fastpoly/ headers.\n"
+        f"// Paths: {', '.join(paths)}.\n"
         "#ifndef FASTPOLY_SINGLE_HPP\n#define FASTPOLY_SINGLE_HPP\n"
     )
     return (banner + "".join(preamble)
@@ -387,8 +536,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "fastpoly.hpp")
     parser.add_argument("--check", action="store_true", help="fail if the output needs regeneration")
+    parser.add_argument("--paths", nargs="+", choices=PATHS, default=PATHS,
+                        help="backends to include (default: all); scalar enables fallback")
     args = parser.parse_args()
-    generated = generate()
+    generated = generate(args.paths)
     if args.check:
         if not args.output.exists() or args.output.read_text(encoding="utf-8") != generated:
             print(f"{args.output} is stale; run scripts/amalgamate.py", file=sys.stderr)

@@ -353,6 +353,10 @@ x86 另检查 Q32 编码和单位偶通道乘法；转置测试按独立下标�
 ```bash
 python3 scripts/amalgamate.py
 python3 scripts/amalgamate.py --check
+# 仅保留指定后端（空格分隔）；默认仍包含全部四种后端。
+python3 scripts/amalgamate.py --paths scalar neon --output fastpoly-arm.hpp
+python3 scripts/amalgamate.py --paths avx2 avx512 --output fastpoly-x86.hpp
+python3 scripts/amalgamate.py --paths scalar neon --output fastpoly-arm.hpp --check
 python3 tests/test_amalgamate.py
 FASTPOLY_TEST_SINGLE_HEADER=1 ./scripts/run-tests.sh
 ```
@@ -368,11 +372,22 @@ FASTPOLY_SIMDE_DIR=/path/to/simde FASTPOLY_TEST_SINGLE_HEADER=1 ./scripts/run-te
 软件模型检查运算结果和范围；原生 AVX-512 的指令支持另用 `-mavx512f -mavx512vl`
 编译检查，性能仍需在实际硬件上测量。
 
-合并脚本按 C++ token 压缩空白，并把重复序列提取为临时宏；宏展开后的公共名称、
-类型和实现保持不变。临时宏使用 Clang / GCC / MSVC 支持的 `push_macro` / `pop_macro`
+合并脚本先缩短整个实现中的命名空间、函数、类型、模板参数、局部变量和成员变量名称，
+再按 C++ token 压缩空白，并把重复序列提取为临时宏。缩名不限于 `detail`，
+也覆盖 SIMD、NTT、内存管理，以及公开函数的方法体和私有成员。
+`poly` / `modint` 公共接口保持不变；与公共接口、标准库或预处理指令共用的标识符
+保守保留，intrinsic 名称和字符串内容不变。按出现频率分配不冲突的短名称，且只接受更短的替换。
+生成头文件仅保证 `poly` / `modint` 接口名称稳定，其他实现接口可能改名。
+维护头文件引入新 API 时需同步脚本中的公共/外部名称清单。
+临时宏使用 Clang / GCC / MSVC 支持的 `push_macro` / `pop_macro`
 保存和恢复调用方定义，且全部在头文件末尾清理。系统头文件在定义临时宏前包含。
-生成结果确定，可用 `--check` 检查；Python 回归测试还对四种 SIMD 分支的预处理 token
-与维护头文件逐一比对，覆盖配置覆盖、重复包含、条件依赖、共享依赖和临时宏泄漏。
+`--paths` 在展开依赖前移除未选中的后端及其系统头文件，仍按 AVX-512 → AVX2 → NEON
+的顺序选择目标架构支持的后端；只有显式包含 `scalar` 才保留标量回退。
+若没有所选后端匹配编译目标，则报编译错误。仅生成 `scalar` 可在 SIMD 目标上强制使用标量。
+生成结果确定，可用相同 `--paths` 和 `--output` 参数配合 `--check` 检查。
+Python 回归测试对四种 SIMD 分支的预处理 token 在还原内部名称后与维护头文件逐一比对，
+并覆盖全部 15 种非空后端组合、配置覆盖、重复包含、条件依赖、共享依赖和临时宏泄漏。
+单头文件 C++ 测试会同步改写测试对内部名称的引用。
 
 ## 性能
 

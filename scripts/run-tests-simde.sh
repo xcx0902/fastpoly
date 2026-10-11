@@ -22,15 +22,18 @@ cat > "$TMP/include/immintrin.h" <<'SHIM'
 using _MM_PERM_ENUM = int;
 SHIM
 INC=(-I"$TMP/include" -I"$SIMDE_DIR" -Iinclude)
+TEST_SOURCE=tests
 if [ "${FASTPOLY_TEST_SINGLE_HEADER:-0}" = 1 ]; then
   mkdir -p "$TMP/include/fastpoly"
   for header in modint simd memory ntt poly fastpoly; do
     printf '#include "%s/fastpoly.hpp"\n' "$PWD" > "$TMP/include/fastpoly/$header.hpp"
   done
+  python3 tests/test_amalgamate.py --prepare-single-header-tests "$TMP/tests"
+  TEST_SOURCE="$TMP/tests"
 fi
 for t in test_modint test_ntt test_poly test_prime_poly test_memory; do
   "$CXX" -std=c++20 -O2 -pthread "${INC[@]}" -include "$TMP/include/immintrin.h" \
-    "tests/$t.cpp" -o "$TMP/$t"
+    "$TEST_SOURCE/$t.cpp" -o "$TMP/$t"
   printf '\n== AVX-512 portable model | %s ==\n' "$t"
   "$TMP/$t"
 done
