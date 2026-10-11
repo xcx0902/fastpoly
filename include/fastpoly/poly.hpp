@@ -44,9 +44,10 @@ class Poly : public std::vector<M> {
   Poly operator*(const base& b) const { return poly::conv(*this, b); }
   Poly operator*(M c) const { return poly::mul_scalar(*this, c); }
   Poly operator<<(size_t k) const { return poly::shift(*this, k); }
-  Poly& operator+=(const base& b) { return *this = poly::add(*this, b); }
-  Poly& operator-=(const base& b) { return *this = poly::sub(*this, b); }
+  Poly& operator+=(const base& b) { poly::detail::add_assign<false>(*this, b); return *this; }
+  Poly& operator-=(const base& b) { poly::detail::add_assign<true>(*this, b); return *this; }
   Poly& operator*=(const base& b) { return *this = poly::conv(*this, b); }
+  Poly& operator*=(M c) { poly::detail::scale_inplace(*this, c); return *this; }
 
   /// Truncated product (mod x^n).
   Poly mul(const base& b, size_t n) const { return poly::conv(*this, b, n); }

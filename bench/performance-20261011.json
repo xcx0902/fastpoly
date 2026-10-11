@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-11",
+  "timezone": "Asia/Shanghai",
+  "baseline_commit": "d6187a5a1874372bc6ad3650437ac15bff292a68",
+  "architecture": "arm64",
+  "os": "macOS-26.7-arm64-arm-64bit",
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)",
+  "flags": [
+    "-std=c++20",
+    "-O2"
+  ],
+  "thread_count": 1,
+  "before_headers_sha256": "652615d01f24478e22604dec7741f03aabd288956917ba7491b4e2d273f74a83",
+  "after_headers_sha256": "1f6388532a283aa02f0fa618f0af07afc317d954da2ae1a3c993635cb713c083",
+  "benchmark_sha256": "678480cd64025f9be09d5bfc5d8094a21e7db5dab0f807c9749e1435e2b4360a",
+  "timing": "Median of repetition medians, alternating before/after process order each run. Inputs deterministic; every output checksum compared. Setup, checksum and destruction outside timer.",
+  "native_backend": "NEON",
+  "avx2_backend": "x86_64 -mavx2 under Rosetta; not native hardware timing",
+  "avx512": "SIMDe 0.8.2 correctness model and native syntax compilation; no hardware timings",
+  "files": {
+    "performance-20261011-neon.csv": "998244353; 1024..262144; 5 runs, 21 reps, 10 warmups",
+    "performance-20261011-large.csv": "998244353; 524288..1048576; 3 runs, 9 reps, 4 warmups",
+    "performance-20261011-crt.csv": "1000000007; 256..65536; 5 runs, 17 reps, 7 warmups",
+    "performance-20261011-crt-one.csv": "3; 256..65536; 3 runs, 13 reps, 5 warmups",
+    "performance-20261011-crt-two.csv": "100003; 256..65536; 3 runs, 13 reps, 5 warmups",
+    "performance-20261011-avx2.csv": "998244353; 1024..65536; 3 runs, 11 reps, 5 warmups",
+    "performance-20261011-recheck-small.csv": "998244353; pow(8192); 9 runs, 51 reps, 15 warmups",
+    "performance-20261011-recheck-large.csv": "998244353; skinny/square(262144); 9 runs, 31 reps, 10 warmups"
+  },
+  "validation": {
+    "cmake": "5/5 test executables passed; no compiler warnings",
+    "maintenance_headers": [
+      "NEON",
+      "NEON -march=native",
+      "ASan + UBSan",
+      "AVX2 under Rosetta",
+      "scalar x86_64 under Rosetta",
+      "AVX-512 SIMDe 0.8.2"
+    ],
+    "single_header": "Same complete six-configuration matrix passed",
+    "tests_per_configuration": 81,
+    "amalgamation": "10 regression tests passed and --check clean",
+    "additional": [
+      "AVX-512 native syntax compilation",
+      "CRT with scratch cache disabled"
+    ],
+    "total_matrix_passes": 972
+  },
+  "row_counts": {
+    "performance-20261011-neon.csv": 153,
+    "performance-20261011-large.csv": 24,
+    "performance-20261011-crt.csv": 81,
+    "performance-20261011-crt-one.csv": 27,
+    "performance-20261011-crt-two.csv": 27,
+    "performance-20261011-avx2.csv": 98,
+    "performance-20261011-recheck-small.csv": 1,
+    "performance-20261011-recheck-large.csv": 2
+  },
+  "paired_rows": 413,
+  "binary_bytes": {
+    "before_neon": 262784,
+    "after_neon": 350112
+  }
+}

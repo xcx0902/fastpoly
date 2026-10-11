@@ -1,0 +1,2 @@
+backend,operation,size,before_ms,after_ms,speedup,checksum,runs,reps,warmup
+neon,pow,8192,0.456125000,0.435416000,1.047561,0b4299689db9e805,9,51,15

@@ -58,6 +58,7 @@ void usage() {
       "                 inv-short (1/(1-x)), pow-short ((1+x)^64),\n"
       "                 pow-linear ((1+x)^1000003), div-small (degree-40 divisor), plan\n"
       "                 inv-series (1/i table), scale, inv-linear (1/(1-7*x))\n"
+      "                 conv-trunc, conv-tail, div, mod, divmod, add-assign, eval\n"
       "                 plan requires --warmup 0, measures one cold build\n"
       "  --reps R       Timed repetitions (default 5 for NTT, 3 otherwise)\n"
       "  --warmup W     Untimed repetitions (default 1)\n"
@@ -82,9 +83,11 @@ bool selected(const Options& opt, std::string_view op) {
                      op == "inv-short" || op == "pow-short" || op == "pow-linear" ||
                      op == "div-small" || op == "plan" || op == "inv-series" ||
                      op == "scale" || op == "inv-linear";
-  return (opt.op == "all" && !extra) || opt.op == op ||
+  const bool extended = op == "conv-trunc" || op == "conv-tail" || op == "div" ||
+                        op == "mod" || op == "divmod" || op == "add-assign" || op == "eval";
+  return (opt.op == "all" && !extra && !extended) || opt.op == op ||
          (opt.op == "ntt" && op.starts_with("ntt-")) ||
-         (opt.op == "series" && !extra && op != "conv" && !op.starts_with("ntt-"));
+         (opt.op == "series" && !extra && !extended && op != "conv" && !op.starts_with("ntt-"));
 }
 
 Options parse(int argc, char** argv) {
@@ -120,7 +123,8 @@ Options parse(int argc, char** argv) {
   const std::string_view ops[] = {"all", "ntt", "ntt-forward", "ntt-inverse", "conv",
                                   "series", "inv", "log", "exp", "sqrt", "pow",
                                   "square", "skinny", "exp-linear", "inv-short", "pow-short",
-                                  "pow-linear", "div-small", "plan", "inv-series", "scale", "inv-linear"};
+                                  "pow-linear", "div-small", "plan", "inv-series", "scale", "inv-linear",
+                                  "conv-trunc", "conv-tail", "div", "mod", "divmod", "add-assign", "eval"};
   if (std::find(std::begin(ops), std::end(ops), opt.op) == std::end(ops))
     throw std::invalid_argument("unknown operation: " + std::string(opt.op));
   if (!power_of_two(opt.min_n)) throw std::invalid_argument("min-size must be a power of two >= 2");
@@ -131,12 +135,11 @@ Options parse(int argc, char** argv) {
     throw std::invalid_argument("NTT size must be a power of two >= 2");
   if (opt.exact_n != 0) opt.min_n = opt.max_n = opt.exact_n;
   if (opt.max_n < opt.min_n) throw std::invalid_argument("max-size is below min-size");
-  const size_t limit = (opt.op == "plan" || opt.op.starts_with("ntt")) ? fpx::ntt_max_size<M>()
-                      : opt.op == "skinny" ? fpx::ntt_max_size<M>() - 39
+  const size_t limit = (opt.op == "all" || opt.op == "plan" || opt.op.starts_with("ntt")) ? fpx::ntt_max_size<M>()
                       : opt.op == "inv-series" ? M::mod - 1
-                      : opt.op == "exp-linear" ? M::mod
-                      : fpx::ntt_max_size<M>() / 2;
-  if (opt.max_n > limit) throw std::invalid_argument("size exceeds the selected operation's NTT limit");
+                      : (opt.op == "exp-linear" || opt.op == "log" || opt.op == "exp" || opt.op == "series") ? M::mod
+                      : SIZE_MAX / (4*sizeof(M));
+  if (opt.max_n > limit) throw std::invalid_argument("size exceeds the selected operation's algebraic or storage limit");
   return opt;
 }
 
@@ -240,6 +243,42 @@ void bench_poly(const Options& opt, const char* op, size_t n, F&& f) {
 }
 
 void bench_size(const Options& opt, size_t n) {
+  if (opt.op == "conv-trunc" || opt.op == "conv-tail") {
+    std::mt19937_64 rng(2+n);
+    const size_t count = opt.op == "conv-tail" ? n+1 : n;
+    const vec a = rnd(count, rng), b = rnd(count, rng);
+    bench_poly(opt, opt.op.data(), n, [&] {
+      return fpx::poly::conv(a, b, opt.op == "conv-tail" ? SIZE_MAX : n);
+    });
+    return;
+  }
+  if (opt.op == "div" || opt.op == "mod" || opt.op == "divmod") {
+    std::mt19937_64 rng(4+n);
+    const vec a = rnd(n, rng), b = rnd(std::max<size_t>(1, n/2), rng);
+    vec q, r;
+    report(opt, opt.op.data(), n, measure(opt, 3, [&] { vec().swap(q); vec().swap(r); }, [&] {
+      if (opt.op == "div") q = fpx::poly::div(a, b);
+      else if (opt.op == "mod") r = fpx::poly::mod(a, b);
+      else { auto qr = fpx::poly::divmod(a, b); q = std::move(qr.first); r = std::move(qr.second); }
+    }, [&] { return checksum(q) ^ std::rotl(checksum(r), 17); }));
+    return;
+  }
+  if (opt.op == "add-assign") {
+    std::mt19937_64 rng(4+n);
+    const fpx::Poly<M> a(rnd(n, rng)), b(rnd(n, rng));
+    fpx::Poly<M> result;
+    report(opt, "add-assign", n, measure(opt, 3, [&] { result = a; }, [&] { result += b; },
+        [&] { return checksum(result); }));
+    return;
+  }
+  if (opt.op == "eval") {
+    std::mt19937_64 rng(4+n);
+    const vec a = rnd(n, rng);
+    M result;
+    report(opt, "eval", n, measure(opt, 3, [] {}, [&] { result = fpx::poly::eval(a, M(7)); },
+        [&] { return uint64_t(result.raw_val()); }));
+    return;
+  }
   if (opt.op == "inv-series") {
     bench_poly(opt, "inv-series", n, [&] { return fpx::poly::inv_series<M>(n); });
     return;

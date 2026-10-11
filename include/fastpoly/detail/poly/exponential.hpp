@@ -164,10 +164,7 @@ vec<M> exp(const vec<M>& a, size_t n) {
     if (c.size() < hlen)
       detail::extend_inverse(b, c, hlen, work, inverse_spectrum);
     if (m > ntt_max_size<M>()/2) {
-      auto product = conv_limbs(aprime, b, m2-1);
-      vec<M> residual(hlen);
-      for (size_t i = 0; i < hlen && m-1+i < product.size(); ++i)
-        residual[i] = product[m-1+i];
+      auto residual = detail::crt_middle_product(aprime, b, m, hlen, m-1);
       auto correction = conv_limbs(residual, c, hlen);
       correction.resize(hlen);
       for (size_t i = 0; i < hlen; ++i) correction[i] *= denominators[m+i];
@@ -184,24 +181,22 @@ vec<M> exp(const vec<M>& a, size_t n) {
     auto* pb = spectrum.data();
     auto* pc = inverse_spectrum.data();
     auto* pt = work.data();
-    plan.forward_lazy(pb);
-    plan.forward_lazy(pt);
+    plan.forward_prefix(pb, b.size());
+    plan.forward_prefix(pt, std::min(aprime.size(), m2-1));
     pointwise_mul<M>(pt, pb, N);
     plan.inverse(pt);
     // a' b - b' is zero below degree m-1.  The wanted high range is
     // untouched by cyclic wraparound: deg(a'b) <= 3m-3.
     std::memmove(pt, pt + m - 1, hlen * sizeof(uint32_t));
-    std::memset(pt + hlen, 0, (N - hlen) * sizeof(uint32_t));
-    plan.forward_lazy(pt);
-    plan.forward_lazy(pc);
+    plan.forward_prefix(pt, hlen);
+    plan.forward_prefix(pc, c.size());
     pointwise_mul<M>(pt, pc, N);
-    plan.inverse(pt);
+    plan.inverse_prefix(pt, hlen);
     // Integrate the shifted high differential residual.
     pointwise_mul<M>(pt, reinterpret_cast<const uint32_t*>(denominators.data()) + m, hlen);
-    std::memset(pt + hlen, 0, (N - hlen) * sizeof(uint32_t));
-    plan.forward_lazy(pt);
+    plan.forward_prefix(pt, hlen);
     pointwise_mul<M>(pt, pb, N);
-    plan.inverse(pt);
+    plan.inverse_prefix(pt, hlen);
     b.resize(m2);
     std::memcpy(b.data() + m, pt, hlen * sizeof(uint32_t));
   }

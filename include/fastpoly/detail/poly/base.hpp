@@ -49,15 +49,13 @@ uint32_t series_scratch_size(size_t n, size_t seed) {
   return N;
 }
 
-// A transform overwrites every limb. Copy the live coefficients first and
-// initialize only its zero padding; recycled scratch needs no value objects.
+// forward_prefix initializes any needed padding as part of the first stage.
 template <class M>
 void prepare_scratch(const vec<M>& src, size_t cnt,
                      fpx::detail::ScratchBuffer& dst, size_t n) {
   static_assert(sizeof(M) == sizeof(uint32_t), "Mont must be a single 32-bit limb");
   dst.resize_uninitialized(n);
   if (cnt != 0) std::memcpy(dst.data(), src.data(), cnt * sizeof(uint32_t));
-  std::memset(dst.data() + cnt, 0, (n - cnt) * sizeof(uint32_t));
 }
 
 template <class M>

@@ -95,26 +95,42 @@ vec<M> conv_limbs(const vec<M>& a, const vec<M>& b, size_t lim) {
     return r;
   }
 
-  if (full > ntt_max_size<M>()) return detail::crt_convolution(a, b, out);
-  const uint32_t N = next_pow2(full);
+  // A few coefficients over a power-of-two boundary must not double all
+  // three transforms. Recover the short high tail directly, then remove its
+  // cyclic wraparound from the low prefix. This also covers native root limits.
+  const size_t floor = std::bit_floor(full), tail = full-floor;
+  const bool repair_tail = tail != 0 && tail <= naive_threshold &&
+                           la <= floor && lb <= floor && floor <= ntt_max_size<M>();
+  if (!repair_tail && full > ntt_max_size<M>()) return detail::crt_convolution(a, b, out);
+  const uint32_t N = repair_tail ? static_cast<uint32_t>(floor) : next_pow2(full);
+  std::array<M, naive_threshold> high;
+  if (repair_tail) {
+    for (size_t i = 0; i < tail; ++i)
+      for (size_t j = floor+i-(lb-1); j < la; ++j)
+        high[i] += a[j]*b[floor+i-j];
+  }
   const auto& plan = NttPlan<M>::get_ref(N);
   vec<M> fa;
-  fa.reserve(N);
+  fa.reserve(std::max<size_t>(N, out));
   fa.insert(fa.end(), a.data(), a.data() + la);
   fa.resize(N);  // Only the padding is initialized, after copying the prefix.
   uint32_t* pa = reinterpret_cast<uint32_t*>(fa.data());
-  plan.forward_lazy(pa);
+  plan.forward_prefix(pa, la);
   if (a.data() == b.data() && la == lb) {
     pointwise_mul<M>(pa, pa, N);
   } else {
     fpx::detail::ScratchBuffer fb;
     detail::prepare_scratch(b, lb, fb, N);
     auto* pb = fb.data();
-    plan.forward_lazy(pb);
+    plan.forward_prefix(pb, lb);
     pointwise_mul<M>(pa, pb, N);
   }
-  plan.inverse(pa);
+  plan.inverse_prefix(pa, std::min<size_t>(out, N));
   fa.resize(out);
+  if (repair_tail) {
+    for (size_t i = 0; i < std::min(out, tail); ++i) fa[i] -= high[i];
+    for (size_t i = N; i < out; ++i) fa[i] = high[i-N];
+  }
   return fa;
 }
 

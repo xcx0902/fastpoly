@@ -69,11 +69,11 @@ vec<M> sqrt(const vec<M>& a, size_t n) {
       if (c.size() < hlen)
         detail::extend_inverse(b, c, hlen, work, inverse_spectrum);
       if (m > ntt_max_size<M>()/2) {
-        const auto square = conv_limbs(b, b, m2);
+        const auto square = detail::crt_middle_product(b, b, m, hlen);
         vec<M> residual(hlen);
         for (size_t i = 0; i < hlen; ++i) {
           residual[i] = m+i < a.size()-v ? a[v+m+i] : M();
-          if (m+i < square.size()) residual[i] -= square[m+i];
+          residual[i] -= square[i];
         }
         auto correction = conv_limbs(residual, c, hlen);
         correction.resize(hlen);
@@ -87,16 +87,15 @@ vec<M> sqrt(const vec<M>& a, size_t n) {
       detail::prepare_scratch(c, c.size(), inverse_spectrum, N);
       auto* pt = work.data();
       auto* pc = inverse_spectrum.data();
-      plan.forward_lazy(pt);
+      plan.forward_prefix(pt, b.size());
       pointwise_mul<M>(pt, pt, N);
-      plan.inverse(pt);
+      plan.inverse_highhalf(pt);
       for (size_t i = 0; i < hlen; ++i)
         pt[i] = (((m+i < a.size()-v) ? a[v+m+i] : M()) - M::raw(pt[m+i])).raw_val();
-      std::memset(pt + hlen, 0, (N - hlen) * sizeof(uint32_t));
-      plan.forward_lazy(pt);
-      plan.forward_lazy(pc);
+      plan.forward_prefix(pt, hlen);
+      plan.forward_prefix(pc, c.size());
       pointwise_mul<M>(pt, pc, N);
-      plan.inverse(pt);
+      plan.inverse_prefix(pt, hlen);
       b.resize(m2);
       auto* dst = reinterpret_cast<uint32_t*>(b.data() + m);
       detail::scale_limbs(dst, pt, hlen, half_inv);

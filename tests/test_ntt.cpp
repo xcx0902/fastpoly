@@ -284,6 +284,50 @@ FP_TEST(ntt_lazy_contract_all_moduli) {
   lazy_forward_contract<Mont<2013265921u, 31>>();
 }
 
+namespace {
+template <class M>
+void prefix_transforms() {
+  constexpr uint32_t sentinel = 0xfefefefe;
+  for (uint32_t n : {2u, 4u, 8u, 16u, 32u, 64u, 128u, 256u, 2048u, 4096u, 8192u}) {
+    const auto& plan = NttPlan<M>::get_ref(n);
+    for (size_t count : {size_t(0), size_t(1), size_t(n/4), size_t(n/4+1),
+                         size_t(n/2), size_t(n/2+1), size_t(n-1), size_t(n)}) {
+      std::vector<uint32_t> a(n+2, sentinel), want(n), original(n);
+      for (size_t i = 0; i < count; ++i) {
+        original[i] = static_cast<uint32_t>(rng()%M::mod);
+        a[i+1] = want[i] = original[i];
+      }
+      plan.forward_prefix(a.data()+1, count);
+      plan.forward(want.data());
+      CHECK_EQ(a.front(), sentinel); CHECK_EQ(a.back(), sentinel);
+      for (size_t i = 0; i < n; ++i) {
+        CHECK(a[i+1] < simd::rmod<M::mod>);
+        CHECK_EQ(a[i+1]%M::mod, want[i]);
+      }
+      plan.inverse(a.data()+1);
+      for (size_t i = 0; i < n; ++i) CHECK_EQ(a[i+1], original[i]);
+      // Arbitrary full spectra keep every inverse branch live, even when
+      // the requested coefficient prefix is very short.
+      auto full = want;
+      plan.inverse(full.data());
+      plan.inverse_prefix(want.data(), count);
+      for (size_t i = 0; i < count; ++i) CHECK_EQ(want[i], full[i]);
+      plan.forward(a.data()+1);
+      plan.inverse_highhalf(a.data()+1);
+      for (size_t i = n/2; i < n; ++i) CHECK_EQ(a[i+1], full[i]);
+    }
+  }
+}
+}
+
+FP_TEST(ntt_prefix_and_middle_outputs) {
+  prefix_transforms<mod998244353>();
+  prefix_transforms<mod167772161>();
+  prefix_transforms<mod754974721>();
+  prefix_transforms<mod1224736769>();
+  prefix_transforms<Mont<2013265921u, 31>>();
+}
+
 FP_TEST(ntt_concurrent_cold_plans) {
   // 3^5 is another primitive root because gcd(5, 998244352) == 1. This
   // distinct template instantiation gives the test a genuinely cold cache.

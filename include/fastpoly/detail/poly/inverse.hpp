@@ -32,10 +32,8 @@ void extend_inverse(const vec<M>& a, vec<M>& c, size_t wanted,
     return;
   }
   if (k > ntt_max_size<M>()/2) {
-    vec<M> product = conv_limbs(a, c, wanted);
-    vec<M> error(hlen);
-    for (size_t i = 0; i < hlen && k+i < product.size(); ++i)
-      error[i] = -product[k+i];
+    vec<M> error = crt_middle_product(a, c, k, hlen);
+    for (auto& x : error) x = -x;
     auto correction = conv_limbs(error, c, hlen);
     correction.resize(hlen);
     c.insert(c.end(), correction.begin(), correction.end());
@@ -47,19 +45,18 @@ void extend_inverse(const vec<M>& a, vec<M>& c, size_t wanted,
   prepare_scratch(c, c.size(), spectrum, N);
   auto* pt = scratch.data();
   auto* pc = spectrum.data();
-  plan.forward_lazy(pt);
-  plan.forward_lazy(pc);
+  plan.forward_prefix(pt, std::min(a.size(), wanted));
+  plan.forward_prefix(pc, c.size());
   pointwise_mul<M>(pt, pc, N);
-  plan.inverse(pt);
+  plan.inverse_highhalf(pt);
   size_t i = 0;
   const auto zero = simd::set1(0);
   for (; i + simd::lane <= hlen; i += simd::lane)
     simd::store(pt + i, simd::sub(zero, simd::load(pt + k + i), M::mod));
   for (; i < hlen; ++i) pt[i] = pt[k+i] == 0 ? 0 : M::mod - pt[k+i];
-  std::memset(pt + hlen, 0, (N - hlen) * sizeof(uint32_t));
-  plan.forward_lazy(pt);
+  plan.forward_prefix(pt, hlen);
   pointwise_mul<M>(pt, pc, N);
-  plan.inverse(pt);
+  plan.inverse_prefix(pt, hlen);
   c.resize(wanted);
   std::memcpy(c.data() + k, pt, hlen * sizeof(uint32_t));
 }

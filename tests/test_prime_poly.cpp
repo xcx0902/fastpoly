@@ -116,6 +116,9 @@ void convolutions() {
     CHECK(poly::conv(extremes, extremes) == product(extremes, extremes));
     CHECK((poly::detail::crt_convolution<M, 64>(extremes, extremes, 2*len-1)
            == product(extremes, extremes)));
+    const V<M> raw_extremes(len, M::raw(M::mod-1));
+    CHECK(poly::detail::crt_convolution(raw_extremes, raw_extremes, 2*len-1)
+          == product(raw_extremes, raw_extremes));
   }
   CHECK(poly::conv(V<M>{}, V<M>{1}).empty());
 }
@@ -203,9 +206,92 @@ FP_TEST(prime_convolution) {
   convolutions<ModInt<2>>();
   convolutions<ModInt<3>>();
   convolutions<ModInt<193>>(); // native NTT below 64, CRT beyond it
+  convolutions<ModInt<100003>>(); // two auxiliary fields
   convolutions<mod1000000007>();
   convolutions<ModInt<2147483647>>();
   convolutions<mod998244353>(); // existing path plus forced block coverage
+}
+
+namespace {
+template <class M>
+void middle_products() {
+  std::mt19937_64 rng(412);
+  for (size_t m : {size_t(32), size_t(64), size_t(128), size_t(256)}) {
+    for (size_t na : {size_t(7), m, 2*m}) {
+      const auto a = random_poly<M>(na, rng), b = random_poly<M>(m, rng);
+      for (size_t count : {size_t(1), size_t(9), m/2+1, m}) {
+        for (size_t offset : {m-1, m}) {
+          const auto got = poly::detail::crt_middle_product(a, b, m, count, offset);
+          auto want = product(a, b, offset+count);
+          want.resize(offset+count);
+          CHECK(V<M>(want.begin()+static_cast<std::ptrdiff_t>(offset), want.end()) == got);
+        }
+      }
+    }
+  }
+}
+}
+
+FP_TEST(prime_adaptive_crt_and_middle_products) {
+  CHECK_EQ(poly::detail::crt_prime_count<ModInt<3>>(size_t(1)<<23), size_t(1));
+  CHECK_EQ(poly::detail::crt_prime_count<ModInt<100003>>(64), size_t(2));
+  CHECK_EQ(poly::detail::crt_prime_count<mod1000000007>(64), size_t(3));
+  middle_products<ModInt<3>>();
+  middle_products<ModInt<100003>>();
+  middle_products<mod1000000007>();
+  middle_products<ModInt<2147483647>>();
+  using Small = ModInt<641>;
+  CHECK_EQ(poly::detail::crt_prime_count<Small>(409), size_t(1));
+  CHECK_EQ(poly::detail::crt_prime_count<Small>(410), size_t(2));
+  for (size_t n : {size_t(409), size_t(410)}) {
+    const V<Small> a(n, Small::raw(Small::mod-1));
+    CHECK(poly::conv(a,a) == product(a,a));
+  }
+  using Large = mod167772161;
+  CHECK_EQ(poly::detail::crt_prime_count<Large>(2), size_t(2));
+  CHECK_EQ(poly::detail::crt_prime_count<Large>(3), size_t(3));
+  for (size_t n : {size_t(2), size_t(3), size_t(40), size_t(41)}) {
+    const V<Large> a(n, Large::raw(Large::mod-1));
+    CHECK(poly::detail::crt_convolution(a,a,2*n-1) == product(a,a));
+  }
+}
+
+namespace {
+template <class M>
+void cyclic_tail_products() {
+  std::mt19937_64 rng(444);
+  for (size_t base : {size_t(128), size_t(256), size_t(512)}) {
+    for (size_t tail : {size_t(1), size_t(2), size_t(39), size_t(40), size_t(41)}) {
+      const auto a = random_poly<M>(base/2+1, rng), b = random_poly<M>(base/2+tail, rng);
+      for (size_t out : {base/2, base, base+1, base+tail}) {
+        CHECK(poly::conv(a,b,out) == product(a,b,out));
+        CHECK(poly::conv(b,a,out) == product(a,b,out));
+        CHECK(poly::conv(b,b,out) == product(b,b,out));
+      }
+    }
+  }
+}
+}
+
+FP_TEST(prime_cyclic_tail_at_native_root_limit) {
+  cyclic_tail_products<mod998244353>();
+  cyclic_tail_products<mod1224736769>();
+  cyclic_tail_products<ModInt<257>>();
+}
+
+FP_TEST(prime_crt_scratch_warm_reuse) {
+  std::mt19937_64 rng(983);
+  const auto a = random_poly<mod1000000007>(513, rng);
+  const auto b = random_poly<mod1000000007>(517, rng);
+  release_scratch_memory();
+  const auto want = poly::conv(a,b);
+  const auto before = scratch_memory_stats();
+  CHECK(poly::conv(a,b) == want);
+  const auto after = scratch_memory_stats();
+  if constexpr (FASTPOLY_SCRATCH_CACHE_BYTES >= 4*(2048*sizeof(uint32_t)+64)) {
+    CHECK_EQ(before.system_allocations, after.system_allocations);
+    CHECK(after.cache_hits > before.cache_hits);
+  }
 }
 
 FP_TEST(prime_series) {

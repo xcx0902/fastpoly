@@ -660,4 +660,68 @@ FP_TEST(poly_inverse_tables_and_linear_series) {
   inverse_table_and_linear_series<Mont<2013265921u, 31>>();
 }
 
+FP_TEST(poly_inplace_arithmetic_aliases) {
+  for (size_t n : {size_t(0), size_t(1), size_t(7), size_t(64), size_t(257)}) {
+    const Poly<M> a(rnd(n));
+    auto b = a;
+    const auto* allocation = b.data();
+    b += b;
+    CHECK(b == poly::mul_scalar(a, M(2)));
+    CHECK(b.data() == allocation);
+    b -= b;
+    CHECK(b.is_zero()); CHECK_EQ(b.size(), n);
+    CHECK(b.data() == allocation);
+    b = a; b *= M(17);
+    CHECK(b == poly::mul_scalar(a, M(17)));
+    const Poly<M> longer(rnd(n+19));
+    b = a; b += longer;
+    CHECK(b == poly::add(a, longer));
+    b -= longer; b.resize(n);
+    CHECK(b == a);
+  }
+}
+
+FP_TEST(poly_division_dispatch_boundaries) {
+  for (size_t bn : {size_t(2), size_t(15), size_t(16), size_t(17), size_t(40), size_t(257)}) {
+    for (size_t qn : {size_t(1), size_t(31), size_t(32), size_t(33), size_t(257)}) {
+      auto b = rnd(bn), q = rnd(qn), r = rnd(bn-1);
+      b.back() = 1; q.back() = 1;
+      auto a = naive_conv(b, q, bn+qn-1);
+      for (size_t i = 0; i < r.size(); ++i) a[i] += r[i];
+      poly::trim(r);
+      a.resize(a.size()+3); b.resize(b.size()+3);
+      CHECK(poly::div(a,b) == q);
+      CHECK(poly::mod(a,b) == r);
+      CHECK(poly::divmod(a,b) == std::make_pair(q,r));
+    }
+  }
+}
+
+namespace {
+template <class Field>
+void blocked_evaluation() {
+  for (size_t n : {size_t(0), size_t(1), size_t(15), size_t(63), size_t(64), size_t(65),
+                   size_t(127), size_t(128), size_t(129), size_t(257), size_t(4097)}) {
+    std::vector<Field> a(n);
+    for (auto& x : a) x = Field::from_int(rng()%Field::mod);
+    for (uint32_t x : {0u, 1u, 7u, Field::mod-1}) {
+      uint64_t power = 1, sum = 0;
+      for (const auto c : a) {
+        sum = (sum+c.val()*power)%Field::mod;
+        power = power*x%Field::mod;
+      }
+      CHECK_EQ(poly::eval(a, Field::from_int(x)).val(), sum);
+    }
+  }
+}
+}
+
+FP_TEST(poly_blocked_evaluation_all_moduli) {
+  blocked_evaluation<ModInt<2>>();
+  blocked_evaluation<ModInt<3>>();
+  blocked_evaluation<mod998244353>();
+  blocked_evaluation<mod1224736769>();
+  blocked_evaluation<ModInt<2147483647>>();
+}
+
 FP_TEST_MAIN()

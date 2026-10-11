@@ -140,9 +140,52 @@ class NttPlan {
   /// residues are identical to forward(), without its terminal reduction.
   void forward_lazy(uint32_t* a) const { forward_impl<false>(a); }
 
+  /// Transform a live prefix, treating [count,n) as zero without reading it.
+  /// Output uses the same lazy convention as forward_lazy().
+  void forward_prefix(uint32_t* a, size_t count) const {
+    if (count > n_) throw ntt_size_error("NTT input prefix exceeds plan size");
+    if (n_ < 64 || count > n_/2) {
+      std::memset(a+count, 0, (n_-count)*sizeof(uint32_t));
+      forward_lazy(a);
+      return;
+    }
+    const uint32_t padding = count <= n_/4 ? n_/4 : n_/2;
+    std::memset(a+count, 0, (padding-count)*sizeof(uint32_t));
+    if constexpr (X86_SHOUP) {
+      if (n_ <= SHOUP_BLOCK) {
+        if (padding == n_/4) radix4_prefix<1, true>(a);
+        else radix4_prefix<2, true>(a);
+      } else {
+        if (padding == n_/4) radix4_prefix<1, false>(a);
+        else radix4_prefix<2, false>(a);
+      }
+    } else {
+      if (padding == n_/4) radix4_prefix<1, false>(a);
+      else radix4_prefix<2, false>(a);
+    }
+    forward_impl<false>(a, 1);
+  }
+
   /// Inverse DIT transform, normalized by 1/n, in place. Output in [0, Mod).
   /// Normalization is fused into the final butterfly and its pre-scaled twiddles.
-  void inverse(uint32_t* a) const {
+  void inverse(uint32_t* a) const { inverse_impl<15>(a); }
+
+  /// Only [0,count) is needed by the caller; omit unused final-stage outputs.
+  /// The other limbs remain scratch and must not be used as coefficients.
+  void inverse_prefix(uint32_t* a, size_t count) const {
+    if (count > n_) throw ntt_size_error("NTT output prefix exceeds plan size");
+    if (count <= n_/4) inverse_impl<1>(a);
+    else if (count <= n_/2) inverse_impl<3>(a);
+    else if (count <= 3*(n_/4)) inverse_impl<7>(a);
+    else inverse(a);
+  }
+
+  /// Only the high half is normalized and materialized (Newton middle product).
+  void inverse_highhalf(uint32_t* a) const { inverse_impl<12>(a); }
+
+ private:
+  template <unsigned Output>
+  void inverse_impl(uint32_t* a) const {
     if (n_ == 2) {
       const uint32_t x = a[0], y = a[1];
       a[0] = M::reduce(uint64_t(detail::s_add(x, y, R)) * inv_n_);
@@ -156,17 +199,16 @@ class NttPlan {
       uint32_t* p = a + base;
       if ((logn_ & 1) && !FUSE_RADIX2) radix2_fwd<false>(p, block);
       for (size_t s = stage_count_; s-- > split;) {
-        if (s == 0) radix4_stage_inv<true>(p, lens_[s], s, block);
+        if (s == 0) radix4_stage_inv<true, Output>(p, lens_[s], s, block);
         else radix4_stage_inv<false>(p, lens_[s], s, block);
       }
     }
     for (size_t s = split; s-- > 0;) {
-      if (s == 0) radix4_stage_inv<true>(a, lens_[s], s, n_);
+      if (s == 0) radix4_stage_inv<true, Output>(a, lens_[s], s, n_);
       else radix4_stage_inv<false>(a, lens_[s], s, n_);
     }
   }
 
- private:
   static const std::shared_ptr<const NttPlan>& cached_plan(uint32_t n) {
     if (n < 2 || (n & (n - 1)) != 0)
       throw ntt_size_error("NTT size must be a power of two");
@@ -201,10 +243,10 @@ class NttPlan {
   static constexpr uint32_t CACHE_BLOCK = X86_SHOUP ? SHOUP_BLOCK : 4096;
 
   template <bool CANON>
-  void forward_impl(uint32_t* a) const {
+  void forward_impl(uint32_t* a, size_t first_stage = 0) const {
     // Upper stages span the whole input. Once subtransforms fit in L1, finish
     // every remaining stage while each consecutive block is still resident.
-    size_t split = 0;
+    size_t split = first_stage;
     while (split < stage_count_ && lens_[split] > CACHE_BLOCK) {
       radix4_stage<false>(a, lens_[split], split, n_);
       ++split;
@@ -456,7 +498,7 @@ class NttPlan {
   }
 
   /// Same routing for the inverse direction.
-  template <bool LAST>
+  template <bool LAST, unsigned Output = 15>
   void radix4_stage_inv(uint32_t* a, uint32_t len, size_t s, uint32_t count) const {
     const uint32_t m = len >> 2;
     if (m == 1) {
@@ -482,9 +524,38 @@ class NttPlan {
       }
     }
     if constexpr (X86_SHOUP) {
-      if (len <= SHOUP_BLOCK) { radix4_inv<LAST, true>(a, len, s, count); return; }
+      if (len <= SHOUP_BLOCK) { radix4_inv<LAST, true, Output>(a, len, s, count); return; }
     }
-    radix4_inv<LAST, false>(a, len, s, count);
+    radix4_inv<LAST, false, Output>(a, len, s, count);
+  }
+
+  // First DIF stage when only one or two quarters contain coefficients.
+  // The zero quarters are never initialized or loaded. Every output is written.
+  template <unsigned Quarters, bool SHOUP>
+  void radix4_prefix(uint32_t* a) const {
+    const uint32_t m = n_/4;
+    const auto* A = fwd_.data();
+    const auto* B = A+m;
+    const auto* C = B+m;
+    const auto vm = tw_fourth<false>();
+    for (uint32_t k = 0; k < m; k += simd::lane) {
+      const auto x0 = simd::load(a+k);
+      const auto wa = tw_load<SHOUP>(A+k, 3*m);
+      const auto wb = tw_load<SHOUP>(B+k, 3*m), wc = tw_load<SHOUP>(C+k, 3*m);
+      if constexpr (Quarters == 1) {
+        // Forward Q31 tables use nearest quotients, so use the signed
+        // difference kernel even for a single positive input.
+        simd::store(a+k+m, submul(x0, simd::zero(), wb));
+        simd::store(a+k+2*m, submul(x0, simd::zero(), wa));
+        simd::store(a+k+3*m, submul(x0, simd::zero(), wc));
+      } else {
+        const auto x1 = simd::load(a+k+m), t3 = submul(x1, simd::zero(), vm);
+        simd::store(a+k, simd::add(x0, x1, R));
+        simd::store(a+k+m, submul(x0, x1, wb));
+        simd::store(a+k+2*m, addmul(x0, t3, wa));
+        simd::store(a+k+3*m, submul(x0, t3, wc));
+      }
+    }
   }
 
   // Eight-point blocks occupy 8*lane consecutive limbs. Separate their k=0
@@ -789,7 +860,7 @@ class NttPlan {
   }
 
   /// One radix-4 DIT butterfly stage (inverse of radix4_fwd at the same `len`).
-  template <bool LAST, bool SHOUP>
+  template <bool LAST, bool SHOUP, unsigned Output = 15>
   void radix4_inv(uint32_t* a, uint32_t len, size_t s, uint32_t count) const {
     const uint32_t m = len >> 2;
     const uint32_t* IA = inv_.data() + off_[s];
@@ -815,8 +886,10 @@ class NttPlan {
           y0 = simd::reduce_full(y0, MOD); y1 = simd::reduce_full(y1, MOD);
           y2 = simd::reduce_full(y2, MOD); y3 = simd::reduce_full(y3, MOD);
         }
-        simd::store(p + k, y0); simd::store(p + k + m, y1);
-        simd::store(p + k + 2 * m, y2); simd::store(p + k + 3 * m, y3);
+        if constexpr (Output & 1) simd::store(p + k, y0);
+        if constexpr (Output & 2) simd::store(p + k + m, y1);
+        if constexpr (Output & 4) simd::store(p + k + 2 * m, y2);
+        if constexpr (Output & 8) simd::store(p + k + 3 * m, y3);
       };
       uint32_t k = 0;
       if constexpr (simd::lane > 1 && !(SHOUP && simd::lane == 8)) {
@@ -841,8 +914,10 @@ class NttPlan {
           y0 = y0 >= MOD ? y0 - MOD : y0; y1 = y1 >= MOD ? y1 - MOD : y1;
           y2 = y2 >= MOD ? y2 - MOD : y2; y3 = y3 >= MOD ? y3 - MOD : y3;
         }
-        p[k] = y0; p[k + m] = y1;
-        p[k + 2 * m] = y2; p[k + 3 * m] = y3;
+        if constexpr (Output & 1) p[k] = y0;
+        if constexpr (Output & 2) p[k + m] = y1;
+        if constexpr (Output & 4) p[k + 2 * m] = y2;
+        if constexpr (Output & 8) p[k + 3 * m] = y3;
       }
     }
   }

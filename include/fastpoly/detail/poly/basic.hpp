@@ -16,25 +16,54 @@ void trim(vec<M>& a) {
   while (!a.empty() && a.back().is_zero()) a.pop_back();
 }
 
+namespace detail {
+
+template <bool Subtract, class M>
+void add_assign(vec<M>& a, const vec<M>& b) {
+  a.resize(std::max(a.size(), b.size()));
+  auto* dst = reinterpret_cast<uint32_t*>(a.data());
+  const auto* src = reinterpret_cast<const uint32_t*>(b.data());
+  size_t i = 0;
+  for (; i + simd::lane <= b.size(); i += simd::lane) {
+    const auto x = simd::load(dst+i), y = simd::load(src+i);
+    if constexpr (Subtract) simd::store(dst+i, simd::sub(x, y, M::mod));
+    else simd::store(dst+i, simd::add(x, y, M::mod));
+  }
+  for (; i < b.size(); ++i) {
+    if constexpr (Subtract) a[i] -= b[i];
+    else a[i] += b[i];
+  }
+}
+
+}  // namespace detail
+
+template <class M>
+vec<M> add(vec<M>&& a, const vec<M>& b) {
+  detail::add_assign<false>(a, b);
+  return std::move(a);
+}
+
+template <class M>
+vec<M> sub(vec<M>&& a, const vec<M>& b) {
+  detail::add_assign<true>(a, b);
+  return std::move(a);
+}
+
 template <class M>
 vec<M> add(const vec<M>& a, const vec<M>& b) {
-  vec<M> r(std::max(a.size(), b.size()));
-  for (size_t i = 0; i < r.size(); ++i) {
-    M x = i < a.size() ? a[i] : M();
-    M y = i < b.size() ? b[i] : M();
-    r[i] = x + y;
-  }
+  // Copy the longer operand once; growing a copy of the shorter operand would
+  // allocate twice and copy its coefficients again.
+  vec<M> r = a.size() >= b.size() ? a : b;
+  detail::add_assign<false>(r, a.size() >= b.size() ? b : a);
   return r;
 }
 
 template <class M>
 vec<M> sub(const vec<M>& a, const vec<M>& b) {
-  vec<M> r(std::max(a.size(), b.size()));
-  for (size_t i = 0; i < r.size(); ++i) {
-    M x = i < a.size() ? a[i] : M();
-    M y = i < b.size() ? b[i] : M();
-    r[i] = x - y;
-  }
+  vec<M> r;
+  r.reserve(std::max(a.size(), b.size()));
+  r.insert(r.end(), a.begin(), a.end());
+  detail::add_assign<true>(r, b);
   return r;
 }
 
@@ -63,9 +92,36 @@ vec<M> shift(const vec<M>& a, size_t k, size_t n = SIZE_MAX) {
   return r;
 }
 
-/// Horner evaluation at a point.
+/// Blocked Horner: independent SIMD chains evaluate residue classes modulo
+/// 4*lane, then a short scalar Horner pass joins their values.
 template <class M>
 M eval(const vec<M>& a, M x) {
+  if (a.empty()) return M();
+  if (x.is_zero()) return a[0];
+  constexpr size_t W = simd::lane, block = 4*W;
+  if constexpr (M::mod != 2) {
+    if (a.size() >= 4*block) {
+      alignas(64) uint32_t seed[block]{};
+      size_t i = a.size()/block*block;
+      std::memcpy(seed, a.data()+i, (a.size()-i)*sizeof(uint32_t));
+      auto v0 = simd::load(seed), v1 = simd::load(seed+W);
+      auto v2 = simd::load(seed+2*W), v3 = simd::load(seed+3*W);
+      const auto step = simd::fixed_twiddle<M::mod, M::ninv>(x.pow(block).raw_val());
+      const auto* src = reinterpret_cast<const uint32_t*>(a.data());
+      for (; i != 0;) {
+        i -= block;
+        v0 = simd::add(simd::mul_twiddle_full<M::mod, M::ninv>(v0, step), simd::load(src+i), M::mod);
+        v1 = simd::add(simd::mul_twiddle_full<M::mod, M::ninv>(v1, step), simd::load(src+i+W), M::mod);
+        v2 = simd::add(simd::mul_twiddle_full<M::mod, M::ninv>(v2, step), simd::load(src+i+2*W), M::mod);
+        v3 = simd::add(simd::mul_twiddle_full<M::mod, M::ninv>(v3, step), simd::load(src+i+3*W), M::mod);
+      }
+      simd::store(seed, v0); simd::store(seed+W, v1);
+      simd::store(seed+2*W, v2); simd::store(seed+3*W, v3);
+      M r;
+      for (size_t j = block; j-- > 0;) r = r*x+M::raw(seed[j]);
+      return r;
+    }
+  }
   M r = M();
   for (size_t i = a.size(); i-- > 0;) r = r * x + a[i];
   return r;
