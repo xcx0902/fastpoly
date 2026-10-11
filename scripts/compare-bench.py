@@ -3,7 +3,9 @@
 
 import argparse
 import csv
+import hashlib
 import io
+import json
 from pathlib import Path
 import statistics
 import subprocess
@@ -27,18 +29,31 @@ def main():
     parser.add_argument("--runs", type=int, default=3)
     parser.add_argument("--reps", type=int, default=7)
     parser.add_argument("--warmup", type=int, default=2)
-    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True, help="CSV; raw per-run samples go to a JSON sidecar")
     args = parser.parse_args()
     if args.runs < 1 or args.reps < 1 or args.warmup < 0:
         parser.error("runs/reps must be positive; warmup must be nonnegative")
+    metadata = {
+        "binaries": [{"path": str(binary.resolve()),
+                      "sha256": hashlib.sha256(binary.read_bytes()).hexdigest()}
+                     for binary in (args.before, args.after)],
+        "min_size": args.min_size, "max_size": args.max_size, "ops": args.ops,
+        "runs": args.runs, "reps": args.reps, "warmup": args.warmup,
+        "samples": [],
+    }
     samples = [{}, {}]
     for run in range(args.runs):
         for op in args.ops.split(","):
             for index in (0, 1) if run % 2 == 0 else (1, 0):
                 binary = (args.before, args.after)[index].resolve()
-                for key, row in measure(binary, args, op).items():
+                measured = measure(binary, args, op)
+                metadata["samples"].append({"run": run + 1, "version": index,
+                                            "op": op, "rows": list(measured.values())})
+                for key, row in measured.items():
                     samples[index].setdefault(key, []).append(row)
             print(f"paired run {run + 1}/{args.runs}: {op}", file=sys.stderr, flush=True)
+    # Preserve the individual runs, including outliers, before comparing them.
+    args.output.with_suffix(".json").write_text(json.dumps(metadata, indent=2) + "\n")
     if samples[0].keys() != samples[1].keys():
         raise RuntimeError("benchmark operations/sizes differ")
     output = []

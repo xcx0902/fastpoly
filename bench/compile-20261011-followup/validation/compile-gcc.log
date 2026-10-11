@@ -1,0 +1,79 @@
+paired compile 1/3: include
+paired compile 1/3: ntt
+paired compile 1/3: conv
+paired compile 1/3: series
+paired compile 1/3: test_ntt
+paired compile 1/3: test_poly
+In file included from /Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/power.hpp:5,
+                 from /Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/poly.hpp:7,
+                 from /Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/fastpoly.hpp:16,
+                 from /Users/xcx0902/Documents/Github/fastpoly/tests/test_prime_poly.cpp:4:
+/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/exponential.hpp: In function 'fpx::poly::vec<M> fpx::poly::exp(vec<M>&, size_t) [with M = fpx::Mont<1000000007>]':
+/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/exponential.hpp:190:17: warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]
+  190 |     std::memmove(pt, pt + m - 1, hlen * sizeof(uint32_t));
+      |     ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/exponential.hpp:201:16: warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]
+  201 |     std::memcpy(b.data() + m, pt, hlen * sizeof(uint32_t));
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/exponential.hpp: In function 'fpx::poly::vec<M> fpx::poly::exp(vec<M>&, size_t) [with M = fpx::Mont<2147483647, 0>]':
+/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/exponential.hpp:190:17: warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]
+  190 |     std::memmove(pt, pt + m - 1, hlen * sizeof(uint32_t));
+      |     ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/exponential.hpp:201:16: warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]
+  201 |     std::memcpy(b.data() + m, pt, hlen * sizeof(uint32_t));
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+paired compile 1/3: test_prime_poly
+paired compile 1/3: bench
+paired compile 2/3: include
+paired compile 2/3: ntt
+paired compile 2/3: conv
+paired compile 2/3: series
+paired compile 2/3: test_ntt
+paired compile 2/3: test_poly
+In file included from /Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/power.hpp:5,
+                 from /Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/poly.hpp:7,
+                 from /Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/fastpoly.hpp:16,
+                 from /Users/xcx0902/Documents/Github/fastpoly/tests/test_prime_poly.cpp:4:
+/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/exponential.hpp: In function 'fpx::poly::vec<M> fpx::poly::exp(vec<M>&, size_t) [with M = fpx::Mont<1000000007>]':
+/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/exponential.hpp:190:17: warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]
+  190 |     std::memmove(pt, pt + m - 1, hlen * sizeof(uint32_t));
+      |     ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/exponential.hpp:201:16: warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]
+  201 |     std::memcpy(b.data() + m, pt, hlen * sizeof(uint32_t));
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/exponential.hpp: In function 'fpx::poly::vec<M> fpx::poly::exp(vec<M>&, size_t) [with M = fpx::Mont<2147483647, 0>]':
+/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/exponential.hpp:190:17: warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]
+  190 |     std::memmove(pt, pt + m - 1, hlen * sizeof(uint32_t));
+      |     ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/exponential.hpp:201:16: warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]
+  201 |     std::memcpy(b.data() + m, pt, hlen * sizeof(uint32_t));
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+paired compile 2/3: test_prime_poly
+paired compile 2/3: bench
+paired compile 3/3: include
+paired compile 3/3: ntt
+paired compile 3/3: conv
+paired compile 3/3: series
+paired compile 3/3: test_ntt
+paired compile 3/3: test_poly
+In file included from /Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/power.hpp:5,
+                 from /Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/poly.hpp:7,
+                 from /Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/fastpoly.hpp:16,
+                 from /Users/xcx0902/Documents/Github/fastpoly/tests/test_prime_poly.cpp:4:
+/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/exponential.hpp: In function 'fpx::poly::vec<M> fpx::poly::exp(vec<M>&, size_t) [with M = fpx::Mont<1000000007>]':
+/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/exponential.hpp:190:17: warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]
+  190 |     std::memmove(pt, pt + m - 1, hlen * sizeof(uint32_t));
+      |     ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/exponential.hpp:201:16: warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]
+  201 |     std::memcpy(b.data() + m, pt, hlen * sizeof(uint32_t));
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/exponential.hpp: In function 'fpx::poly::vec<M> fpx::poly::exp(vec<M>&, size_t) [with M = fpx::Mont<2147483647, 0>]':
+/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/exponential.hpp:190:17: warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]
+  190 |     std::memmove(pt, pt + m - 1, hlen * sizeof(uint32_t));
+      |     ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include/fastpoly/detail/poly/exponential.hpp:201:16: warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]
+  201 |     std::memcpy(b.data() + m, pt, hlen * sizeof(uint32_t));
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+paired compile 3/3: test_prime_poly
+paired compile 3/3: bench
+8 cases: wrote /Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/compile-gcc.csv

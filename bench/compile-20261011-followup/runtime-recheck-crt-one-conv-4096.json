@@ -1,0 +1,326 @@
+{
+  "binaries": [
+    {
+      "path": "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-baseline-crt-one",
+      "sha256": "a946959ab2db2658a875230392fddba37eaf026c78616fc131ecc13fe2ca009b"
+    },
+    {
+      "path": "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-final-crt-one",
+      "sha256": "128ae21986ab6bfb6ae06422742c21d944ab10d93f9b215bb7b597a7977c3e99"
+    }
+  ],
+  "min_size": 4096,
+  "max_size": 4096,
+  "ops": "conv",
+  "runs": 9,
+  "reps": 101,
+  "warmup": 20,
+  "samples": [
+    {
+      "run": 1,
+      "version": 0,
+      "op": "conv",
+      "rows": [
+        {
+          "backend": "neon",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "101",
+          "best_ms": "0.034583000",
+          "median_ms": "0.034875000",
+          "ns_per_elem_log2": "0.703593",
+          "checksum": "3965440c06fdd1d7"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "op": "conv",
+      "rows": [
+        {
+          "backend": "neon",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "101",
+          "best_ms": "0.034375000",
+          "median_ms": "0.035125000",
+          "ns_per_elem_log2": "0.699361",
+          "checksum": "3965440c06fdd1d7"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "op": "conv",
+      "rows": [
+        {
+          "backend": "neon",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "101",
+          "best_ms": "0.034375000",
+          "median_ms": "0.034708000",
+          "ns_per_elem_log2": "0.699361",
+          "checksum": "3965440c06fdd1d7"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "op": "conv",
+      "rows": [
+        {
+          "backend": "neon",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "101",
+          "best_ms": "0.034291000",
+          "median_ms": "0.034625000",
+          "ns_per_elem_log2": "0.697652",
+          "checksum": "3965440c06fdd1d7"
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "op": "conv",
+      "rows": [
+        {
+          "backend": "neon",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "101",
+          "best_ms": "0.034417000",
+          "median_ms": "0.034708000",
+          "ns_per_elem_log2": "0.700216",
+          "checksum": "3965440c06fdd1d7"
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "op": "conv",
+      "rows": [
+        {
+          "backend": "neon",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "101",
+          "best_ms": "0.034458000",
+          "median_ms": "0.034708000",
+          "ns_per_elem_log2": "0.701050",
+          "checksum": "3965440c06fdd1d7"
+        }
+      ]
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "op": "conv",
+      "rows": [
+        {
+          "backend": "neon",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "101",
+          "best_ms": "0.034333000",
+          "median_ms": "0.034625000",
+          "ns_per_elem_log2": "0.698507",
+          "checksum": "3965440c06fdd1d7"
+        }
+      ]
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "op": "conv",
+      "rows": [
+        {
+          "backend": "neon",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "101",
+          "best_ms": "0.034458000",
+          "median_ms": "0.034708000",
+          "ns_per_elem_log2": "0.701050",
+          "checksum": "3965440c06fdd1d7"
+        }
+      ]
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "op": "conv",
+      "rows": [
+        {
+          "backend": "neon",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "101",
+          "best_ms": "0.034541000",
+          "median_ms": "0.035000000",
+          "ns_per_elem_log2": "0.702738",
+          "checksum": "3965440c06fdd1d7"
+        }
+      ]
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "op": "conv",
+      "rows": [
+        {
+          "backend": "neon",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "101",
+          "best_ms": "0.034375000",
+          "median_ms": "0.034625000",
+          "ns_per_elem_log2": "0.699361",
+          "checksum": "3965440c06fdd1d7"
+        }
+      ]
+    },
+    {
+      "run": 6,
+      "version": 1,
+      "op": "conv",
+      "rows": [
+        {
+          "backend": "neon",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "101",
+          "best_ms": "0.034333000",
+          "median_ms": "0.034667000",
+          "ns_per_elem_log2": "0.698507",
+          "checksum": "3965440c06fdd1d7"
+        }
+      ]
+    },
+    {
+      "run": 6,
+      "version": 0,
+      "op": "conv",
+      "rows": [
+        {
+          "backend": "neon",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "101",
+          "best_ms": "0.034458000",
+          "median_ms": "0.037916000",
+          "ns_per_elem_log2": "0.701050",
+          "checksum": "3965440c06fdd1d7"
+        }
+      ]
+    },
+    {
+      "run": 7,
+      "version": 0,
+      "op": "conv",
+      "rows": [
+        {
+          "backend": "neon",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "101",
+          "best_ms": "0.035666000",
+          "median_ms": "0.037000000",
+          "ns_per_elem_log2": "0.725627",
+          "checksum": "3965440c06fdd1d7"
+        }
+      ]
+    },
+    {
+      "run": 7,
+      "version": 1,
+      "op": "conv",
+      "rows": [
+        {
+          "backend": "neon",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "101",
+          "best_ms": "0.034417000",
+          "median_ms": "0.034708000",
+          "ns_per_elem_log2": "0.700216",
+          "checksum": "3965440c06fdd1d7"
+        }
+      ]
+    },
+    {
+      "run": 8,
+      "version": 1,
+      "op": "conv",
+      "rows": [
+        {
+          "backend": "neon",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "101",
+          "best_ms": "0.034417000",
+          "median_ms": "0.034875000",
+          "ns_per_elem_log2": "0.700216",
+          "checksum": "3965440c06fdd1d7"
+        }
+      ]
+    },
+    {
+      "run": 8,
+      "version": 0,
+      "op": "conv",
+      "rows": [
+        {
+          "backend": "neon",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "101",
+          "best_ms": "0.035917000",
+          "median_ms": "0.037042000",
+          "ns_per_elem_log2": "0.730733",
+          "checksum": "3965440c06fdd1d7"
+        }
+      ]
+    },
+    {
+      "run": 9,
+      "version": 0,
+      "op": "conv",
+      "rows": [
+        {
+          "backend": "neon",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "101",
+          "best_ms": "0.034416000",
+          "median_ms": "0.034750000",
+          "ns_per_elem_log2": "0.700195",
+          "checksum": "3965440c06fdd1d7"
+        }
+      ]
+    },
+    {
+      "run": 9,
+      "version": 1,
+      "op": "conv",
+      "rows": [
+        {
+          "backend": "neon",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "101",
+          "best_ms": "0.034458000",
+          "median_ms": "0.034709000",
+          "ns_per_elem_log2": "0.701050",
+          "checksum": "3965440c06fdd1d7"
+        }
+      ]
+    }
+  ]
+}

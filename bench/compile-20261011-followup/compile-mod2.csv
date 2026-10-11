@@ -1,0 +1,3 @@
+case,before_s,after_s,speedup,before_bytes,after_bytes,runs,before_cpu_s,after_cpu_s,cpu_speedup
+conv,1.477959,0.793074,1.863583,128376,45448,3,1.450000,0.790000,1.835443
+series,1.686377,0.964405,1.748619,151992,65336,3,1.670000,0.960000,1.739583

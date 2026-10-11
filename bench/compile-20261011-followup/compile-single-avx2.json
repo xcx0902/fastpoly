@@ -1,0 +1,201 @@
+{
+  "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "flags": [
+    "-std=c++20",
+    "-O2",
+    "-DNDEBUG",
+    "-pthread",
+    "-arch",
+    "x86_64",
+    "-mavx2"
+  ],
+  "header": "fastpoly-x86.hpp",
+  "probe_modulus": 998244353,
+  "probe_root": 3,
+  "directories": [
+    "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline",
+    "/Users/xcx0902/Documents/Github/fastpoly"
+  ],
+  "header_sha256": [
+    "7f3d78b771b5de1e671d19d419e6146bf884a108d239421a7e4c806855ea1e8e",
+    "9ed91d86944395c6ff26370a72d5e2d6d34f448ff2a0e4d8621520a51d722f74"
+  ],
+  "sources": {
+    "include": {
+      "sha256": "50da3919c1161adeeb5ef39609bbaafe5b3ff15f3a9492556ca1a2b7f7e8d581",
+      "probe": "#include \"fastpoly-x86.hpp\"\nusing M = fpx::Mont<998244353u, 3u>;\nusing V = std::vector<M>;\n\n"
+    },
+    "conv": {
+      "sha256": "f2c215b323fc88bd3767a94fa4a64053d46c747019c7fe2b88324002402974b9",
+      "probe": "#include \"fastpoly-x86.hpp\"\nusing M = fpx::Mont<998244353u, 3u>;\nusing V = std::vector<M>;\nV product(const V& a, const V& b, size_t n) { return fpx::poly::conv(a, b, n); }\n"
+    },
+    "series": {
+      "sha256": "adf7fc097be046771f33dfd8576bd21591ef5a2aec8f50b9257f85505dc348a7",
+      "probe": "#include \"fastpoly-x86.hpp\"\nusing M = fpx::Mont<998244353u, 3u>;\nusing V = std::vector<M>;\n\nV reciprocal(const V& a, size_t n) { return fpx::poly::inv(a, n); }\nV logarithm(const V& a, size_t n) { return fpx::poly::log(a, n); }\nV exponential(const V& a, size_t n) { return fpx::poly::exp(a, n); }\nV square_root(const V& a, size_t n) { return fpx::poly::sqrt(a, n); }\nV power(const V& a, uint64_t k, size_t n) { return fpx::poly::pow(a, k, n); }\n\n"
+    }
+  },
+  "samples": [
+    {
+      "case": "include",
+      "run": 1,
+      "version": 0,
+      "seconds": 0.5714134169998033,
+      "cpu_seconds": 0.5499999999999999,
+      "object_bytes": 208,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/include.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/include-0.o"
+    },
+    {
+      "case": "include",
+      "run": 1,
+      "version": 1,
+      "seconds": 0.5175941249999596,
+      "cpu_seconds": 0.5100000000000001,
+      "object_bytes": 208,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/include.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/include-1.o"
+    },
+    {
+      "case": "conv",
+      "run": 1,
+      "version": 0,
+      "seconds": 2.5271474169999237,
+      "cpu_seconds": 2.47,
+      "object_bytes": 269400,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/conv.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/conv-0.o"
+    },
+    {
+      "case": "conv",
+      "run": 1,
+      "version": 1,
+      "seconds": 2.305670208000265,
+      "cpu_seconds": 2.289999999999999,
+      "object_bytes": 250504,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/conv.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/conv-1.o"
+    },
+    {
+      "case": "series",
+      "run": 1,
+      "version": 0,
+      "seconds": 2.777775417000157,
+      "cpu_seconds": 2.7600000000000007,
+      "object_bytes": 313992,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/series.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/series-0.o"
+    },
+    {
+      "case": "series",
+      "run": 1,
+      "version": 1,
+      "seconds": 2.5670626250002897,
+      "cpu_seconds": 2.560000000000001,
+      "object_bytes": 295592,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/series.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/series-1.o"
+    },
+    {
+      "case": "include",
+      "run": 2,
+      "version": 1,
+      "seconds": 0.518944625000131,
+      "cpu_seconds": 0.4999999999999989,
+      "object_bytes": 208,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/include.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/include-1.o"
+    },
+    {
+      "case": "include",
+      "run": 2,
+      "version": 0,
+      "seconds": 0.5172884580001664,
+      "cpu_seconds": 0.5200000000000009,
+      "object_bytes": 208,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/include.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/include-0.o"
+    },
+    {
+      "case": "conv",
+      "run": 2,
+      "version": 1,
+      "seconds": 2.290220583000064,
+      "cpu_seconds": 2.2699999999999996,
+      "object_bytes": 250504,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/conv.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/conv-1.o"
+    },
+    {
+      "case": "conv",
+      "run": 2,
+      "version": 0,
+      "seconds": 2.5140976669999873,
+      "cpu_seconds": 2.4800000000000004,
+      "object_bytes": 269400,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/conv.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/conv-0.o"
+    },
+    {
+      "case": "series",
+      "run": 2,
+      "version": 1,
+      "seconds": 2.588234000000284,
+      "cpu_seconds": 2.559999999999997,
+      "object_bytes": 295592,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/series.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/series-1.o"
+    },
+    {
+      "case": "series",
+      "run": 2,
+      "version": 0,
+      "seconds": 2.7472592910003186,
+      "cpu_seconds": 2.7400000000000024,
+      "object_bytes": 313992,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/series.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/series-0.o"
+    },
+    {
+      "case": "include",
+      "run": 3,
+      "version": 0,
+      "seconds": 0.5149188750001485,
+      "cpu_seconds": 0.5000000000000001,
+      "object_bytes": 208,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/include.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/include-0.o"
+    },
+    {
+      "case": "include",
+      "run": 3,
+      "version": 1,
+      "seconds": 0.5100436669999908,
+      "cpu_seconds": 0.5100000000000025,
+      "object_bytes": 208,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/include.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/include-1.o"
+    },
+    {
+      "case": "conv",
+      "run": 3,
+      "version": 0,
+      "seconds": 2.436146665999786,
+      "cpu_seconds": 2.410000000000002,
+      "object_bytes": 269400,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/conv.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/conv-0.o"
+    },
+    {
+      "case": "conv",
+      "run": 3,
+      "version": 1,
+      "seconds": 2.2811006659999293,
+      "cpu_seconds": 2.26,
+      "object_bytes": 250504,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/conv.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/conv-1.o"
+    },
+    {
+      "case": "series",
+      "run": 3,
+      "version": 0,
+      "seconds": 2.761214624999866,
+      "cpu_seconds": 2.75,
+      "object_bytes": 313992,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/series.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/series-0.o"
+    },
+    {
+      "case": "series",
+      "run": 3,
+      "version": 1,
+      "seconds": 2.5633208329995796,
+      "cpu_seconds": 2.549999999999997,
+      "object_bytes": 295592,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/series.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-zi6mcmpq/series-1.o"
+    }
+  ]
+}

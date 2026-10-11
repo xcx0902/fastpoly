@@ -1,0 +1,39 @@
+-- The CXX compiler identification is AppleClang 21.0.0.21000334
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Configuring done (1.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: /Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/cmake
+[1/12] Building CXX object CMakeFiles/test_modint.dir/tests/test_modint.cpp.o
+[2/12] Linking CXX executable test_modint
+[3/12] Building CXX object CMakeFiles/test_ntt.dir/tests/test_ntt.cpp.o
+[4/12] Linking CXX executable test_ntt
+[5/12] Building CXX object CMakeFiles/test_poly.dir/tests/test_poly.cpp.o
+[6/12] Linking CXX executable test_poly
+[7/12] Building CXX object CMakeFiles/test_prime_poly.dir/tests/test_prime_poly.cpp.o
+[8/12] Linking CXX executable test_prime_poly
+[9/12] Building CXX object CMakeFiles/test_memory.dir/tests/test_memory.cpp.o
+[10/12] Linking CXX executable test_memory
+[11/12] Building CXX object CMakeFiles/fastpoly_bench.dir/bench/bench.cpp.o
+[12/12] Linking CXX executable fastpoly_bench
+Test project /Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/cmake
+    Start 1: test_modint
+1/5 Test #1: test_modint ......................   Passed    0.39 sec
+    Start 2: test_ntt
+2/5 Test #2: test_ntt .........................   Passed    0.80 sec
+    Start 3: test_poly
+3/5 Test #3: test_poly ........................   Passed    0.63 sec
+    Start 4: test_prime_poly
+4/5 Test #4: test_prime_poly ..................   Passed    0.60 sec
+    Start 5: test_memory
+5/5 Test #5: test_memory ......................   Passed    0.46 sec
+
+100% tests passed, 0 tests failed out of 5
+
+Total Test time (real) =   2.89 sec

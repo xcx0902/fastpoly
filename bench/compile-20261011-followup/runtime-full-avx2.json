@@ -1,0 +1,6128 @@
+{
+  "binaries": [
+    {
+      "path": "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-baseline-full-avx2",
+      "sha256": "efe1c0cbcfb89a32475a2a5ab0153363be604662d4913673370cbb4055354646"
+    },
+    {
+      "path": "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-final-full-avx2",
+      "sha256": "5e2d4a17b15fb9c5273b0af02e76d5a07c5b42df71b4d2b283222742b7e0163f"
+    }
+  ],
+  "min_size": 256,
+  "max_size": 65536,
+  "ops": "all,square,conv-trunc,conv-tail",
+  "runs": 3,
+  "reps": 21,
+  "warmup": 10,
+  "samples": [
+    {
+      "run": 1,
+      "version": 0,
+      "op": "all",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.002166000",
+          "median_ms": "0.002209000",
+          "ns_per_elem_log2": "1.057617",
+          "checksum": "427802b00e63a0f8"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.002500000",
+          "median_ms": "0.002542000",
+          "ns_per_elem_log2": "1.220703",
+          "checksum": "1636f14f041d012a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.016625000",
+          "median_ms": "0.016791000",
+          "ns_per_elem_log2": "8.117676",
+          "checksum": "08088fb67d752779"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.022458000",
+          "median_ms": "0.022834000",
+          "ns_per_elem_log2": "10.965820",
+          "checksum": "91a4ba95b44a3579"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.040333000",
+          "median_ms": "0.041750000",
+          "ns_per_elem_log2": "19.693848",
+          "checksum": "19b77cf120e84210"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.047375000",
+          "median_ms": "0.047792000",
+          "ns_per_elem_log2": "23.132324",
+          "checksum": "98628d6708681d8a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.034584000",
+          "median_ms": "0.034875000",
+          "ns_per_elem_log2": "16.886719",
+          "checksum": "9ab0219a4dacce7c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.088542000",
+          "median_ms": "0.088792000",
+          "ns_per_elem_log2": "43.233398",
+          "checksum": "18833145c7a21563"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.004625000",
+          "median_ms": "0.004708000",
+          "ns_per_elem_log2": "1.003689",
+          "checksum": "58e0e584836e7c70"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.005208000",
+          "median_ms": "0.005333000",
+          "ns_per_elem_log2": "1.130208",
+          "checksum": "7e9c150dcc3e979f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.034291000",
+          "median_ms": "0.036041000",
+          "ns_per_elem_log2": "7.441623",
+          "checksum": "56d82834d88a9dee"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.050708000",
+          "median_ms": "0.052375000",
+          "ns_per_elem_log2": "11.004340",
+          "checksum": "29fe80907cc9ba4c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.086375000",
+          "median_ms": "0.086833000",
+          "ns_per_elem_log2": "18.744575",
+          "checksum": "153a666173a2ca17"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.105166000",
+          "median_ms": "0.105917000",
+          "ns_per_elem_log2": "22.822483",
+          "checksum": "15bc796ba879e161"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.075708000",
+          "median_ms": "0.076208000",
+          "ns_per_elem_log2": "16.429688",
+          "checksum": "a7beb7bd29214b1f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.192500000",
+          "median_ms": "0.193417000",
+          "ns_per_elem_log2": "41.775174",
+          "checksum": "4c255ebf738371cf"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.009875000",
+          "median_ms": "0.010042000",
+          "ns_per_elem_log2": "0.964355",
+          "checksum": "b0dbc1f4cc17fa9f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.011167000",
+          "median_ms": "0.011334000",
+          "ns_per_elem_log2": "1.090527",
+          "checksum": "d1504f9dd9f12cc7"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.074042000",
+          "median_ms": "0.074875000",
+          "ns_per_elem_log2": "7.230664",
+          "checksum": "bbb2e39c3b7c70f5"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.106709000",
+          "median_ms": "0.109041000",
+          "ns_per_elem_log2": "10.420801",
+          "checksum": "5fb671fbe146a1c6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.185125000",
+          "median_ms": "0.186375000",
+          "ns_per_elem_log2": "18.078613",
+          "checksum": "ba1948170a533220"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.225500000",
+          "median_ms": "0.226958000",
+          "ns_per_elem_log2": "22.021484",
+          "checksum": "0a333a734bd49783"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.162000000",
+          "median_ms": "0.164458000",
+          "ns_per_elem_log2": "15.820312",
+          "checksum": "d5c9e257e0cfb872"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.413250000",
+          "median_ms": "0.415167000",
+          "ns_per_elem_log2": "40.356445",
+          "checksum": "da260c3abadbc7a3"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.021750000",
+          "median_ms": "0.022000000",
+          "ns_per_elem_log2": "0.965465",
+          "checksum": "b3ec3f8c3ff03ca1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.024083000",
+          "median_ms": "0.024417000",
+          "ns_per_elem_log2": "1.069025",
+          "checksum": "f8130f81a40bc7d6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.158000000",
+          "median_ms": "0.160000000",
+          "ns_per_elem_log2": "7.013494",
+          "checksum": "1db07c7b9753746f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.234250000",
+          "median_ms": "0.235416000",
+          "ns_per_elem_log2": "10.398171",
+          "checksum": "aa56207b0fe200f0"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.389625000",
+          "median_ms": "0.407041000",
+          "ns_per_elem_log2": "17.295144",
+          "checksum": "d98703e4c135515a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.486041000",
+          "median_ms": "0.488708000",
+          "ns_per_elem_log2": "21.574973",
+          "checksum": "8e1b339a1dd65930"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.345666000",
+          "median_ms": "0.356834000",
+          "ns_per_elem_log2": "15.343839",
+          "checksum": "b1aa4569da04289c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.888875000",
+          "median_ms": "0.897584000",
+          "ns_per_elem_log2": "39.456454",
+          "checksum": "7206c29eceb95d60"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.049459000",
+          "median_ms": "0.050541000",
+          "ns_per_elem_log2": "1.006246",
+          "checksum": "22dd79c6d391d7e6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.053084000",
+          "median_ms": "0.054291000",
+          "ns_per_elem_log2": "1.079997",
+          "checksum": "bc9e78945da28b79"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.338792000",
+          "median_ms": "0.341583000",
+          "ns_per_elem_log2": "6.892741",
+          "checksum": "11efbf6cd19f0e78"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.499917000",
+          "median_ms": "0.512708000",
+          "ns_per_elem_log2": "10.170837",
+          "checksum": "028695eec04840f1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.859834000",
+          "median_ms": "0.881500000",
+          "ns_per_elem_log2": "17.493368",
+          "checksum": "060775562a39b27e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "1.048459000",
+          "median_ms": "1.103125000",
+          "ns_per_elem_log2": "21.330953",
+          "checksum": "75ec321c9e06bf9e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.744958000",
+          "median_ms": "0.747666000",
+          "ns_per_elem_log2": "15.156209",
+          "checksum": "296a4988976fe0dd"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "1.916583000",
+          "median_ms": "1.977791000",
+          "ns_per_elem_log2": "38.992981",
+          "checksum": "0a27df01274cad10"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.107292000",
+          "median_ms": "0.108292000",
+          "ns_per_elem_log2": "1.007474",
+          "checksum": "5e17d5e69dee130b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.114042000",
+          "median_ms": "0.115667000",
+          "ns_per_elem_log2": "1.070857",
+          "checksum": "69c55b16be485720"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.752000000",
+          "median_ms": "0.783250000",
+          "ns_per_elem_log2": "7.061298",
+          "checksum": "f07b344a22759237"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "1.076875000",
+          "median_ms": "1.116167000",
+          "ns_per_elem_log2": "10.111882",
+          "checksum": "0528cb2aaaffd176"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "1.917000000",
+          "median_ms": "1.958416000",
+          "ns_per_elem_log2": "18.000676",
+          "checksum": "75c47e0233b7155a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "2.258750000",
+          "median_ms": "2.373583000",
+          "ns_per_elem_log2": "21.209717",
+          "checksum": "3a2b6849548771dd"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "1.595042000",
+          "median_ms": "1.640125000",
+          "ns_per_elem_log2": "14.977483",
+          "checksum": "566d71b727e0491f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "4.134667000",
+          "median_ms": "4.279334000",
+          "ns_per_elem_log2": "38.824623",
+          "checksum": "4d2d02a3a82f9fb6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "0.236834000",
+          "median_ms": "0.244375000",
+          "ns_per_elem_log2": "1.032514",
+          "checksum": "01751168270fbfa5"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "0.252375000",
+          "median_ms": "0.261208000",
+          "ns_per_elem_log2": "1.100268",
+          "checksum": "5d0b84c3cc080810"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.593084000",
+          "median_ms": "1.635542000",
+          "ns_per_elem_log2": "6.945295",
+          "checksum": "c45849bf053ce28d"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "2.370625000",
+          "median_ms": "2.466334000",
+          "ns_per_elem_log2": "10.335105",
+          "checksum": "5caf0a57c9fceb0e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "4.063958000",
+          "median_ms": "4.215417000",
+          "ns_per_elem_log2": "17.717451",
+          "checksum": "1644f8147cfb7837"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "4.994333000",
+          "median_ms": "5.191125000",
+          "ns_per_elem_log2": "21.773564",
+          "checksum": "c7984f937a4ded27"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "3.482584000",
+          "median_ms": "3.599083000",
+          "ns_per_elem_log2": "15.182861",
+          "checksum": "cd23b1a4d93dbed3"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "9.112000000",
+          "median_ms": "9.328459000",
+          "ns_per_elem_log2": "39.725167",
+          "checksum": "9bd3252b54e75d2b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "0.524916000",
+          "median_ms": "0.567375000",
+          "ns_per_elem_log2": "1.067944",
+          "checksum": "635b8c8c6757c4bc"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "0.547667000",
+          "median_ms": "0.555416000",
+          "ns_per_elem_log2": "1.114231",
+          "checksum": "c76b378fcdd462af"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "3.556375000",
+          "median_ms": "3.633750000",
+          "ns_per_elem_log2": "7.235463",
+          "checksum": "1ef7b0fc2ec138f2"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "5.153042000",
+          "median_ms": "5.247291000",
+          "ns_per_elem_log2": "10.483891",
+          "checksum": "6dd08346e257d6cc"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "8.898292000",
+          "median_ms": "9.035167000",
+          "ns_per_elem_log2": "18.103621",
+          "checksum": "094e89b9710ca307"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "10.705375000",
+          "median_ms": "10.923833000",
+          "ns_per_elem_log2": "21.780141",
+          "checksum": "5590d4c594764d77"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "7.750833000",
+          "median_ms": "7.971542000",
+          "ns_per_elem_log2": "15.769110",
+          "checksum": "492a6742384caa00"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "20.082375000",
+          "median_ms": "20.360416000",
+          "ns_per_elem_log2": "40.857697",
+          "checksum": "44ef6a004d8dca96"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "1.164000000",
+          "median_ms": "1.211167000",
+          "ns_per_elem_log2": "1.110077",
+          "checksum": "d1a226b0b34eeadb"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "1.222083000",
+          "median_ms": "1.344667000",
+          "ns_per_elem_log2": "1.165469",
+          "checksum": "6f5982dd703653e1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "7.465167000",
+          "median_ms": "7.694708000",
+          "ns_per_elem_log2": "7.119338",
+          "checksum": "877f626bf17ee06c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "11.128292000",
+          "median_ms": "11.366750000",
+          "ns_per_elem_log2": "10.612766",
+          "checksum": "625477117379e41c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "19.081042000",
+          "median_ms": "19.346167000",
+          "ns_per_elem_log2": "18.197100",
+          "checksum": "176e5dfa8df6066b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "23.229334000",
+          "median_ms": "23.795458000",
+          "ns_per_elem_log2": "22.153219",
+          "checksum": "f89eb4016e021b24"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "16.434458000",
+          "median_ms": "16.853292000",
+          "ns_per_elem_log2": "15.673120",
+          "checksum": "66f44be4a7cf1c66"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "42.740958000",
+          "median_ms": "43.623708000",
+          "ns_per_elem_log2": "40.760954",
+          "checksum": "2a89267f180503f8"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "op": "all",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.002166000",
+          "median_ms": "0.002292000",
+          "ns_per_elem_log2": "1.057617",
+          "checksum": "427802b00e63a0f8"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.002375000",
+          "median_ms": "0.002417000",
+          "ns_per_elem_log2": "1.159668",
+          "checksum": "1636f14f041d012a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.016500000",
+          "median_ms": "0.016708000",
+          "ns_per_elem_log2": "8.056641",
+          "checksum": "08088fb67d752779"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.022333000",
+          "median_ms": "0.022541000",
+          "ns_per_elem_log2": "10.904785",
+          "checksum": "91a4ba95b44a3579"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.040167000",
+          "median_ms": "0.040542000",
+          "ns_per_elem_log2": "19.612793",
+          "checksum": "19b77cf120e84210"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.047208000",
+          "median_ms": "0.048041000",
+          "ns_per_elem_log2": "23.050781",
+          "checksum": "98628d6708681d8a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.035000000",
+          "median_ms": "0.035292000",
+          "ns_per_elem_log2": "17.089844",
+          "checksum": "9ab0219a4dacce7c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.089625000",
+          "median_ms": "0.089875000",
+          "ns_per_elem_log2": "43.762207",
+          "checksum": "18833145c7a21563"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.004666000",
+          "median_ms": "0.004750000",
+          "ns_per_elem_log2": "1.012587",
+          "checksum": "58e0e584836e7c70"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.005208000",
+          "median_ms": "0.005375000",
+          "ns_per_elem_log2": "1.130208",
+          "checksum": "7e9c150dcc3e979f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.034458000",
+          "median_ms": "0.035208000",
+          "ns_per_elem_log2": "7.477865",
+          "checksum": "56d82834d88a9dee"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.050375000",
+          "median_ms": "0.050834000",
+          "ns_per_elem_log2": "10.932075",
+          "checksum": "29fe80907cc9ba4c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.087667000",
+          "median_ms": "0.088125000",
+          "ns_per_elem_log2": "19.024957",
+          "checksum": "153a666173a2ca17"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.106500000",
+          "median_ms": "0.106625000",
+          "ns_per_elem_log2": "23.111979",
+          "checksum": "15bc796ba879e161"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.075459000",
+          "median_ms": "0.077000000",
+          "ns_per_elem_log2": "16.375651",
+          "checksum": "a7beb7bd29214b1f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.192458000",
+          "median_ms": "0.193167000",
+          "ns_per_elem_log2": "41.766059",
+          "checksum": "4c255ebf738371cf"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.010000000",
+          "median_ms": "0.010166000",
+          "ns_per_elem_log2": "0.976562",
+          "checksum": "b0dbc1f4cc17fa9f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.011000000",
+          "median_ms": "0.011209000",
+          "ns_per_elem_log2": "1.074219",
+          "checksum": "d1504f9dd9f12cc7"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.074042000",
+          "median_ms": "0.075375000",
+          "ns_per_elem_log2": "7.230664",
+          "checksum": "bbb2e39c3b7c70f5"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.107791000",
+          "median_ms": "0.108750000",
+          "ns_per_elem_log2": "10.526465",
+          "checksum": "5fb671fbe146a1c6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.187750000",
+          "median_ms": "0.188791000",
+          "ns_per_elem_log2": "18.334961",
+          "checksum": "ba1948170a533220"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.225667000",
+          "median_ms": "0.230125000",
+          "ns_per_elem_log2": "22.037793",
+          "checksum": "0a333a734bd49783"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.161875000",
+          "median_ms": "0.164292000",
+          "ns_per_elem_log2": "15.808105",
+          "checksum": "d5c9e257e0cfb872"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.413500000",
+          "median_ms": "0.418542000",
+          "ns_per_elem_log2": "40.380859",
+          "checksum": "da260c3abadbc7a3"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.021667000",
+          "median_ms": "0.022000000",
+          "ns_per_elem_log2": "0.961781",
+          "checksum": "b3ec3f8c3ff03ca1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.024125000",
+          "median_ms": "0.024625000",
+          "ns_per_elem_log2": "1.070890",
+          "checksum": "f8130f81a40bc7d6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.158666000",
+          "median_ms": "0.161417000",
+          "ns_per_elem_log2": "7.043058",
+          "checksum": "1db07c7b9753746f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.230458000",
+          "median_ms": "0.232750000",
+          "ns_per_elem_log2": "10.229847",
+          "checksum": "aa56207b0fe200f0"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.401042000",
+          "median_ms": "0.406875000",
+          "ns_per_elem_log2": "17.801935",
+          "checksum": "d98703e4c135515a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.486542000",
+          "median_ms": "0.495334000",
+          "ns_per_elem_log2": "21.597212",
+          "checksum": "8e1b339a1dd65930"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.347459000",
+          "median_ms": "0.352292000",
+          "ns_per_elem_log2": "15.423429",
+          "checksum": "b1aa4569da04289c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.887834000",
+          "median_ms": "0.901125000",
+          "ns_per_elem_log2": "39.410245",
+          "checksum": "7206c29eceb95d60"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.050667000",
+          "median_ms": "0.051208000",
+          "ns_per_elem_log2": "1.030823",
+          "checksum": "22dd79c6d391d7e6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.053750000",
+          "median_ms": "0.055125000",
+          "ns_per_elem_log2": "1.093547",
+          "checksum": "bc9e78945da28b79"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.338625000",
+          "median_ms": "0.344084000",
+          "ns_per_elem_log2": "6.889343",
+          "checksum": "11efbf6cd19f0e78"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.499750000",
+          "median_ms": "0.511833000",
+          "ns_per_elem_log2": "10.167440",
+          "checksum": "028695eec04840f1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.857250000",
+          "median_ms": "0.874542000",
+          "ns_per_elem_log2": "17.440796",
+          "checksum": "060775562a39b27e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "1.049500000",
+          "median_ms": "1.083125000",
+          "ns_per_elem_log2": "21.352132",
+          "checksum": "75ec321c9e06bf9e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.745209000",
+          "median_ms": "0.759709000",
+          "ns_per_elem_log2": "15.161316",
+          "checksum": "296a4988976fe0dd"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "1.910542000",
+          "median_ms": "1.967542000",
+          "ns_per_elem_log2": "38.870076",
+          "checksum": "0a27df01274cad10"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.107666000",
+          "median_ms": "0.108542000",
+          "ns_per_elem_log2": "1.010986",
+          "checksum": "5e17d5e69dee130b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.114709000",
+          "median_ms": "0.116917000",
+          "ns_per_elem_log2": "1.077120",
+          "checksum": "69c55b16be485720"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.759208000",
+          "median_ms": "0.775625000",
+          "ns_per_elem_log2": "7.128981",
+          "checksum": "f07b344a22759237"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "1.078583000",
+          "median_ms": "1.116833000",
+          "ns_per_elem_log2": "10.127920",
+          "checksum": "0528cb2aaaffd176"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "1.864500000",
+          "median_ms": "1.911125000",
+          "ns_per_elem_log2": "17.507700",
+          "checksum": "75c47e0233b7155a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "2.280500000",
+          "median_ms": "2.331208000",
+          "ns_per_elem_log2": "21.413950",
+          "checksum": "3a2b6849548771dd"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "1.601709000",
+          "median_ms": "1.647625000",
+          "ns_per_elem_log2": "15.040086",
+          "checksum": "566d71b727e0491f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "4.126917000",
+          "median_ms": "4.236375000",
+          "ns_per_elem_log2": "38.751850",
+          "checksum": "4d2d02a3a82f9fb6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "0.242583000",
+          "median_ms": "0.243917000",
+          "ns_per_elem_log2": "1.057578",
+          "checksum": "01751168270fbfa5"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "0.260667000",
+          "median_ms": "0.267417000",
+          "ns_per_elem_log2": "1.136418",
+          "checksum": "5d0b84c3cc080810"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.594667000",
+          "median_ms": "1.630625000",
+          "ns_per_elem_log2": "6.952196",
+          "checksum": "c45849bf053ce28d"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "2.344625000",
+          "median_ms": "2.390375000",
+          "ns_per_elem_log2": "10.221754",
+          "checksum": "5caf0a57c9fceb0e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "4.022042000",
+          "median_ms": "4.144417000",
+          "ns_per_elem_log2": "17.534712",
+          "checksum": "1644f8147cfb7837"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "4.903125000",
+          "median_ms": "5.034417000",
+          "ns_per_elem_log2": "21.375929",
+          "checksum": "c7984f937a4ded27"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "3.488750000",
+          "median_ms": "3.562625000",
+          "ns_per_elem_log2": "15.209743",
+          "checksum": "cd23b1a4d93dbed3"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "9.073375000",
+          "median_ms": "9.268500000",
+          "ns_per_elem_log2": "39.556776",
+          "checksum": "9bd3252b54e75d2b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "0.522417000",
+          "median_ms": "0.530458000",
+          "ns_per_elem_log2": "1.062860",
+          "checksum": "635b8c8c6757c4bc"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "0.547500000",
+          "median_ms": "0.568000000",
+          "ns_per_elem_log2": "1.113892",
+          "checksum": "c76b378fcdd462af"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "3.552250000",
+          "median_ms": "3.626833000",
+          "ns_per_elem_log2": "7.227071",
+          "checksum": "1ef7b0fc2ec138f2"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "5.071375000",
+          "median_ms": "5.192125000",
+          "ns_per_elem_log2": "10.317739",
+          "checksum": "6dd08346e257d6cc"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "8.856125000",
+          "median_ms": "9.118875000",
+          "ns_per_elem_log2": "18.017832",
+          "checksum": "094e89b9710ca307"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "10.768125000",
+          "median_ms": "10.985708000",
+          "ns_per_elem_log2": "21.907806",
+          "checksum": "5590d4c594764d77"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "7.599125000",
+          "median_ms": "7.829833000",
+          "ns_per_elem_log2": "15.460459",
+          "checksum": "492a6742384caa00"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "19.770917000",
+          "median_ms": "20.256333000",
+          "ns_per_elem_log2": "40.224034",
+          "checksum": "44ef6a004d8dca96"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "1.124375000",
+          "median_ms": "1.173541000",
+          "ns_per_elem_log2": "1.072288",
+          "checksum": "d1a226b0b34eeadb"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "1.232000000",
+          "median_ms": "1.261167000",
+          "ns_per_elem_log2": "1.174927",
+          "checksum": "6f5982dd703653e1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "7.456250000",
+          "median_ms": "7.617917000",
+          "ns_per_elem_log2": "7.110834",
+          "checksum": "877f626bf17ee06c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "11.207208000",
+          "median_ms": "11.330083000",
+          "ns_per_elem_log2": "10.688026",
+          "checksum": "625477117379e41c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "18.922583000",
+          "median_ms": "19.243750000",
+          "ns_per_elem_log2": "18.045981",
+          "checksum": "176e5dfa8df6066b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "23.421625000",
+          "median_ms": "23.634959000",
+          "ns_per_elem_log2": "22.336602",
+          "checksum": "f89eb4016e021b24"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "16.502709000",
+          "median_ms": "16.731875000",
+          "ns_per_elem_log2": "15.738210",
+          "checksum": "66f44be4a7cf1c66"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "42.222000000",
+          "median_ms": "42.883542000",
+          "ns_per_elem_log2": "40.266037",
+          "checksum": "2a89267f180503f8"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "op": "square",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.011417000",
+          "median_ms": "0.011542000",
+          "ns_per_elem_log2": "5.574707",
+          "checksum": "b6f9c046bb7afb73"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.023750000",
+          "median_ms": "0.024000000",
+          "ns_per_elem_log2": "5.154080",
+          "checksum": "8c3068053b7c2d8d"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.051208000",
+          "median_ms": "0.051833000",
+          "ns_per_elem_log2": "5.000781",
+          "checksum": "0880fe76ff22f4a6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.109666000",
+          "median_ms": "0.111375000",
+          "ns_per_elem_log2": "4.867987",
+          "checksum": "37ee4926f19dc3a7"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.232292000",
+          "median_ms": "0.235833000",
+          "ns_per_elem_log2": "4.725993",
+          "checksum": "9e59a478a8331ec1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.515792000",
+          "median_ms": "0.520959000",
+          "ns_per_elem_log2": "4.843299",
+          "checksum": "03ea1ca4dd178e8d"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.101500000",
+          "median_ms": "1.137708000",
+          "ns_per_elem_log2": "4.802159",
+          "checksum": "c898485a5e1263e0"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "2.428542000",
+          "median_ms": "2.543708000",
+          "ns_per_elem_log2": "4.940881",
+          "checksum": "06af24e3eb465b43"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "5.126541000",
+          "median_ms": "5.271083000",
+          "ns_per_elem_log2": "4.889050",
+          "checksum": "e4d5a723e9b7d113"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "op": "square",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.011000000",
+          "median_ms": "0.011208000",
+          "ns_per_elem_log2": "5.371094",
+          "checksum": "b6f9c046bb7afb73"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.023041000",
+          "median_ms": "0.023208000",
+          "ns_per_elem_log2": "5.000217",
+          "checksum": "8c3068053b7c2d8d"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.051250000",
+          "median_ms": "0.052542000",
+          "ns_per_elem_log2": "5.004883",
+          "checksum": "0880fe76ff22f4a6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.109625000",
+          "median_ms": "0.111125000",
+          "ns_per_elem_log2": "4.866167",
+          "checksum": "37ee4926f19dc3a7"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.228583000",
+          "median_ms": "0.235333000",
+          "ns_per_elem_log2": "4.650533",
+          "checksum": "9e59a478a8331ec1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.514291000",
+          "median_ms": "0.519792000",
+          "ns_per_elem_log2": "4.829205",
+          "checksum": "03ea1ca4dd178e8d"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.092792000",
+          "median_ms": "1.133625000",
+          "ns_per_elem_log2": "4.764195",
+          "checksum": "c898485a5e1263e0"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "2.442042000",
+          "median_ms": "2.541458000",
+          "ns_per_elem_log2": "4.968347",
+          "checksum": "06af24e3eb465b43"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "5.052041000",
+          "median_ms": "5.208375000",
+          "ns_per_elem_log2": "4.818002",
+          "checksum": "e4d5a723e9b7d113"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "op": "conv-trunc",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.016250000",
+          "median_ms": "0.016459000",
+          "ns_per_elem_log2": "7.934570",
+          "checksum": "c2f16d71fd2be665"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.033750000",
+          "median_ms": "0.034125000",
+          "ns_per_elem_log2": "7.324219",
+          "checksum": "3028fb2d7d1700bc"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.071375000",
+          "median_ms": "0.073833000",
+          "ns_per_elem_log2": "6.970215",
+          "checksum": "c94f60f705d20f75"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.157666000",
+          "median_ms": "0.159334000",
+          "ns_per_elem_log2": "6.998668",
+          "checksum": "f41f3649160ae683"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.335292000",
+          "median_ms": "0.338250000",
+          "ns_per_elem_log2": "6.821533",
+          "checksum": "0758d8d2304d5b90"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.745167000",
+          "median_ms": "0.753833000",
+          "ns_per_elem_log2": "6.997136",
+          "checksum": "bd2518b65f0ff491"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.593125000",
+          "median_ms": "1.658292000",
+          "ns_per_elem_log2": "6.945474",
+          "checksum": "cef49e36b6dff0d3"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "3.543167000",
+          "median_ms": "3.660791000",
+          "ns_per_elem_log2": "7.208592",
+          "checksum": "b7479ec41fc32042"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "7.450291000",
+          "median_ms": "7.817667000",
+          "ns_per_elem_log2": "7.105151",
+          "checksum": "be2479fd6162537c"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "op": "conv-trunc",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.016958000",
+          "median_ms": "0.017125000",
+          "ns_per_elem_log2": "8.280273",
+          "checksum": "c2f16d71fd2be665"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.033000000",
+          "median_ms": "0.035333000",
+          "ns_per_elem_log2": "7.161458",
+          "checksum": "3028fb2d7d1700bc"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.071750000",
+          "median_ms": "0.073791000",
+          "ns_per_elem_log2": "7.006836",
+          "checksum": "c94f60f705d20f75"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.158291000",
+          "median_ms": "0.161959000",
+          "ns_per_elem_log2": "7.026412",
+          "checksum": "f41f3649160ae683"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.327542000",
+          "median_ms": "0.338834000",
+          "ns_per_elem_log2": "6.663859",
+          "checksum": "0758d8d2304d5b90"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.747416000",
+          "median_ms": "0.757500000",
+          "ns_per_elem_log2": "7.018254",
+          "checksum": "bd2518b65f0ff491"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.587500000",
+          "median_ms": "1.664916000",
+          "ns_per_elem_log2": "6.920951",
+          "checksum": "cef49e36b6dff0d3"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "3.519250000",
+          "median_ms": "3.660333000",
+          "ns_per_elem_log2": "7.159932",
+          "checksum": "b7479ec41fc32042"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "7.424000000",
+          "median_ms": "7.613333000",
+          "ns_per_elem_log2": "7.080078",
+          "checksum": "be2479fd6162537c"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "op": "conv-tail",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.016000000",
+          "median_ms": "0.016208000",
+          "ns_per_elem_log2": "7.812500",
+          "checksum": "f73dc5cd9300ca30"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.033500000",
+          "median_ms": "0.033959000",
+          "ns_per_elem_log2": "7.269965",
+          "checksum": "6070f3345b40ad2a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.073708000",
+          "median_ms": "0.074709000",
+          "ns_per_elem_log2": "7.198047",
+          "checksum": "e9aacc642b1b4a8f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.162208000",
+          "median_ms": "0.169416000",
+          "ns_per_elem_log2": "7.200284",
+          "checksum": "d8df8ee806e7481b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.348833000",
+          "median_ms": "0.357209000",
+          "ns_per_elem_log2": "7.097026",
+          "checksum": "e81e5902e3cae83e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.768958000",
+          "median_ms": "0.773917000",
+          "ns_per_elem_log2": "7.220534",
+          "checksum": "531401ab13667d7e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.636917000",
+          "median_ms": "1.691125000",
+          "ns_per_elem_log2": "7.136392",
+          "checksum": "a41884b18a14e531"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "3.622750000",
+          "median_ms": "3.765750000",
+          "ns_per_elem_log2": "7.370504",
+          "checksum": "ee3c080e4cbc1c6c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "7.708250000",
+          "median_ms": "7.831333000",
+          "ns_per_elem_log2": "7.351160",
+          "checksum": "306eb6420e8a18f9"
+        }
+      ]
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "op": "conv-tail",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.016500000",
+          "median_ms": "0.016917000",
+          "ns_per_elem_log2": "8.056641",
+          "checksum": "f73dc5cd9300ca30"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.033916000",
+          "median_ms": "0.034709000",
+          "ns_per_elem_log2": "7.360243",
+          "checksum": "6070f3345b40ad2a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.073417000",
+          "median_ms": "0.078000000",
+          "ns_per_elem_log2": "7.169629",
+          "checksum": "e9aacc642b1b4a8f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.162292000",
+          "median_ms": "0.163708000",
+          "ns_per_elem_log2": "7.204013",
+          "checksum": "d8df8ee806e7481b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.346667000",
+          "median_ms": "0.348750000",
+          "ns_per_elem_log2": "7.052958",
+          "checksum": "e81e5902e3cae83e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.760625000",
+          "median_ms": "0.774958000",
+          "ns_per_elem_log2": "7.142287",
+          "checksum": "531401ab13667d7e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.642042000",
+          "median_ms": "1.677000000",
+          "ns_per_elem_log2": "7.158735",
+          "checksum": "a41884b18a14e531"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "3.625542000",
+          "median_ms": "3.687666000",
+          "ns_per_elem_log2": "7.376184",
+          "checksum": "ee3c080e4cbc1c6c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "7.657125000",
+          "median_ms": "7.807250000",
+          "ns_per_elem_log2": "7.302403",
+          "checksum": "306eb6420e8a18f9"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "op": "all",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.002125000",
+          "median_ms": "0.002208000",
+          "ns_per_elem_log2": "1.037598",
+          "checksum": "427802b00e63a0f8"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.002375000",
+          "median_ms": "0.002458000",
+          "ns_per_elem_log2": "1.159668",
+          "checksum": "1636f14f041d012a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.016500000",
+          "median_ms": "0.016667000",
+          "ns_per_elem_log2": "8.056641",
+          "checksum": "08088fb67d752779"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.021667000",
+          "median_ms": "0.021833000",
+          "ns_per_elem_log2": "10.579590",
+          "checksum": "91a4ba95b44a3579"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.039292000",
+          "median_ms": "0.040542000",
+          "ns_per_elem_log2": "19.185547",
+          "checksum": "19b77cf120e84210"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.047042000",
+          "median_ms": "0.047333000",
+          "ns_per_elem_log2": "22.969727",
+          "checksum": "98628d6708681d8a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.034458000",
+          "median_ms": "0.034667000",
+          "ns_per_elem_log2": "16.825195",
+          "checksum": "9ab0219a4dacce7c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.088625000",
+          "median_ms": "0.092084000",
+          "ns_per_elem_log2": "43.273926",
+          "checksum": "18833145c7a21563"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.004583000",
+          "median_ms": "0.004708000",
+          "ns_per_elem_log2": "0.994575",
+          "checksum": "58e0e584836e7c70"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.005166000",
+          "median_ms": "0.005292000",
+          "ns_per_elem_log2": "1.121094",
+          "checksum": "7e9c150dcc3e979f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.034333000",
+          "median_ms": "0.034916000",
+          "ns_per_elem_log2": "7.450738",
+          "checksum": "56d82834d88a9dee"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.049708000",
+          "median_ms": "0.050708000",
+          "ns_per_elem_log2": "10.787326",
+          "checksum": "29fe80907cc9ba4c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.084416000",
+          "median_ms": "0.085208000",
+          "ns_per_elem_log2": "18.319444",
+          "checksum": "153a666173a2ca17"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.104667000",
+          "median_ms": "0.105125000",
+          "ns_per_elem_log2": "22.714193",
+          "checksum": "15bc796ba879e161"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.075417000",
+          "median_ms": "0.076000000",
+          "ns_per_elem_log2": "16.366536",
+          "checksum": "a7beb7bd29214b1f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.192333000",
+          "median_ms": "0.193125000",
+          "ns_per_elem_log2": "41.738932",
+          "checksum": "4c255ebf738371cf"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.009833000",
+          "median_ms": "0.010167000",
+          "ns_per_elem_log2": "0.960254",
+          "checksum": "b0dbc1f4cc17fa9f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.011125000",
+          "median_ms": "0.011416000",
+          "ns_per_elem_log2": "1.086426",
+          "checksum": "d1504f9dd9f12cc7"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.074666000",
+          "median_ms": "0.075208000",
+          "ns_per_elem_log2": "7.291602",
+          "checksum": "bbb2e39c3b7c70f5"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.106459000",
+          "median_ms": "0.107250000",
+          "ns_per_elem_log2": "10.396387",
+          "checksum": "5fb671fbe146a1c6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.184750000",
+          "median_ms": "0.186125000",
+          "ns_per_elem_log2": "18.041992",
+          "checksum": "ba1948170a533220"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.225750000",
+          "median_ms": "0.226458000",
+          "ns_per_elem_log2": "22.045898",
+          "checksum": "0a333a734bd49783"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.156875000",
+          "median_ms": "0.161750000",
+          "ns_per_elem_log2": "15.319824",
+          "checksum": "d5c9e257e0cfb872"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.412250000",
+          "median_ms": "0.421208000",
+          "ns_per_elem_log2": "40.258789",
+          "checksum": "da260c3abadbc7a3"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.021750000",
+          "median_ms": "0.021875000",
+          "ns_per_elem_log2": "0.965465",
+          "checksum": "b3ec3f8c3ff03ca1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.024083000",
+          "median_ms": "0.024708000",
+          "ns_per_elem_log2": "1.069025",
+          "checksum": "f8130f81a40bc7d6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.158375000",
+          "median_ms": "0.160375000",
+          "ns_per_elem_log2": "7.030140",
+          "checksum": "1db07c7b9753746f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.230458000",
+          "median_ms": "0.247500000",
+          "ns_per_elem_log2": "10.229847",
+          "checksum": "aa56207b0fe200f0"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.398125000",
+          "median_ms": "0.403042000",
+          "ns_per_elem_log2": "17.672452",
+          "checksum": "d98703e4c135515a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.485875000",
+          "median_ms": "0.493334000",
+          "ns_per_elem_log2": "21.567605",
+          "checksum": "8e1b339a1dd65930"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.344250000",
+          "median_ms": "0.362833000",
+          "ns_per_elem_log2": "15.280984",
+          "checksum": "b1aa4569da04289c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.892708000",
+          "median_ms": "0.919167000",
+          "ns_per_elem_log2": "39.626598",
+          "checksum": "7206c29eceb95d60"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.049875000",
+          "median_ms": "0.050500000",
+          "ns_per_elem_log2": "1.014709",
+          "checksum": "22dd79c6d391d7e6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.053416000",
+          "median_ms": "0.054667000",
+          "ns_per_elem_log2": "1.086751",
+          "checksum": "bc9e78945da28b79"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.339625000",
+          "median_ms": "0.344833000",
+          "ns_per_elem_log2": "6.909688",
+          "checksum": "11efbf6cd19f0e78"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.500584000",
+          "median_ms": "0.517833000",
+          "ns_per_elem_log2": "10.184408",
+          "checksum": "028695eec04840f1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.844375000",
+          "median_ms": "0.873708000",
+          "ns_per_elem_log2": "17.178853",
+          "checksum": "060775562a39b27e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "1.048875000",
+          "median_ms": "1.068792000",
+          "ns_per_elem_log2": "21.339417",
+          "checksum": "75ec321c9e06bf9e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.742958000",
+          "median_ms": "0.763500000",
+          "ns_per_elem_log2": "15.115519",
+          "checksum": "296a4988976fe0dd"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "1.914541000",
+          "median_ms": "1.979834000",
+          "ns_per_elem_log2": "38.951436",
+          "checksum": "0a27df01274cad10"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.107666000",
+          "median_ms": "0.109000000",
+          "ns_per_elem_log2": "1.010986",
+          "checksum": "5e17d5e69dee130b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.114459000",
+          "median_ms": "0.116041000",
+          "ns_per_elem_log2": "1.074773",
+          "checksum": "69c55b16be485720"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.752750000",
+          "median_ms": "0.769042000",
+          "ns_per_elem_log2": "7.068341",
+          "checksum": "f07b344a22759237"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "1.064042000",
+          "median_ms": "1.124042000",
+          "ns_per_elem_log2": "9.991380",
+          "checksum": "0528cb2aaaffd176"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "1.889292000",
+          "median_ms": "2.028584000",
+          "ns_per_elem_log2": "17.740497",
+          "checksum": "75c47e0233b7155a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "2.264625000",
+          "median_ms": "2.342792000",
+          "ns_per_elem_log2": "21.264883",
+          "checksum": "3a2b6849548771dd"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "1.584875000",
+          "median_ms": "1.645333000",
+          "ns_per_elem_log2": "14.882014",
+          "checksum": "566d71b727e0491f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "4.160500000",
+          "median_ms": "4.262125000",
+          "ns_per_elem_log2": "39.067195",
+          "checksum": "4d2d02a3a82f9fb6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "0.242375000",
+          "median_ms": "0.244500000",
+          "ns_per_elem_log2": "1.056671",
+          "checksum": "01751168270fbfa5"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "0.258042000",
+          "median_ms": "0.271000000",
+          "ns_per_elem_log2": "1.124974",
+          "checksum": "5d0b84c3cc080810"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.603542000",
+          "median_ms": "1.664417000",
+          "ns_per_elem_log2": "6.990888",
+          "checksum": "c45849bf053ce28d"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "2.344708000",
+          "median_ms": "2.463000000",
+          "ns_per_elem_log2": "10.222116",
+          "checksum": "5caf0a57c9fceb0e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "4.099708000",
+          "median_ms": "4.239500000",
+          "ns_per_elem_log2": "17.873308",
+          "checksum": "1644f8147cfb7837"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "4.955875000",
+          "median_ms": "5.032750000",
+          "ns_per_elem_log2": "21.605900",
+          "checksum": "c7984f937a4ded27"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "3.464833000",
+          "median_ms": "3.567458000",
+          "ns_per_elem_log2": "15.105473",
+          "checksum": "cd23b1a4d93dbed3"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "9.072334000",
+          "median_ms": "9.233875000",
+          "ns_per_elem_log2": "39.552237",
+          "checksum": "9bd3252b54e75d2b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "0.524958000",
+          "median_ms": "0.539125000",
+          "ns_per_elem_log2": "1.068030",
+          "checksum": "635b8c8c6757c4bc"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "0.549292000",
+          "median_ms": "0.558750000",
+          "ns_per_elem_log2": "1.117537",
+          "checksum": "c76b378fcdd462af"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "3.556708000",
+          "median_ms": "3.639542000",
+          "ns_per_elem_log2": "7.236141",
+          "checksum": "1ef7b0fc2ec138f2"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "5.098708000",
+          "median_ms": "5.263083000",
+          "ns_per_elem_log2": "10.373348",
+          "checksum": "6dd08346e257d6cc"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "8.844459000",
+          "median_ms": "9.002709000",
+          "ns_per_elem_log2": "17.994098",
+          "checksum": "094e89b9710ca307"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "10.731125000",
+          "median_ms": "10.837125000",
+          "ns_per_elem_log2": "21.832530",
+          "checksum": "5590d4c594764d77"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "7.578958000",
+          "median_ms": "7.666584000",
+          "ns_per_elem_log2": "15.419430",
+          "checksum": "492a6742384caa00"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "20.643667000",
+          "median_ms": "21.870250000",
+          "ns_per_elem_log2": "41.999648",
+          "checksum": "44ef6a004d8dca96"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "1.167666000",
+          "median_ms": "1.217250000",
+          "ns_per_elem_log2": "1.113573",
+          "checksum": "d1a226b0b34eeadb"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "1.229833000",
+          "median_ms": "1.277958000",
+          "ns_per_elem_log2": "1.172860",
+          "checksum": "6f5982dd703653e1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "7.437208000",
+          "median_ms": "7.623500000",
+          "ns_per_elem_log2": "7.092674",
+          "checksum": "877f626bf17ee06c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "11.066250000",
+          "median_ms": "11.239333000",
+          "ns_per_elem_log2": "10.553598",
+          "checksum": "625477117379e41c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "18.919833000",
+          "median_ms": "19.263375000",
+          "ns_per_elem_log2": "18.043359",
+          "checksum": "176e5dfa8df6066b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "23.312750000",
+          "median_ms": "23.603542000",
+          "ns_per_elem_log2": "22.232771",
+          "checksum": "f89eb4016e021b24"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "16.529917000",
+          "median_ms": "16.702792000",
+          "ns_per_elem_log2": "15.764157",
+          "checksum": "66f44be4a7cf1c66"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "42.554458000",
+          "median_ms": "43.215125000",
+          "ns_per_elem_log2": "40.583094",
+          "checksum": "2a89267f180503f8"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "op": "all",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.002125000",
+          "median_ms": "0.002167000",
+          "ns_per_elem_log2": "1.037598",
+          "checksum": "427802b00e63a0f8"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.002375000",
+          "median_ms": "0.002458000",
+          "ns_per_elem_log2": "1.159668",
+          "checksum": "1636f14f041d012a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.016833000",
+          "median_ms": "0.017000000",
+          "ns_per_elem_log2": "8.219238",
+          "checksum": "08088fb67d752779"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.022667000",
+          "median_ms": "0.022833000",
+          "ns_per_elem_log2": "11.067871",
+          "checksum": "91a4ba95b44a3579"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.041208000",
+          "median_ms": "0.042417000",
+          "ns_per_elem_log2": "20.121094",
+          "checksum": "19b77cf120e84210"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.047875000",
+          "median_ms": "0.048375000",
+          "ns_per_elem_log2": "23.376465",
+          "checksum": "98628d6708681d8a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.035000000",
+          "median_ms": "0.035209000",
+          "ns_per_elem_log2": "17.089844",
+          "checksum": "9ab0219a4dacce7c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.088375000",
+          "median_ms": "0.089792000",
+          "ns_per_elem_log2": "43.151855",
+          "checksum": "18833145c7a21563"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.004625000",
+          "median_ms": "0.004708000",
+          "ns_per_elem_log2": "1.003689",
+          "checksum": "58e0e584836e7c70"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.005208000",
+          "median_ms": "0.005334000",
+          "ns_per_elem_log2": "1.130208",
+          "checksum": "7e9c150dcc3e979f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.034209000",
+          "median_ms": "0.034750000",
+          "ns_per_elem_log2": "7.423828",
+          "checksum": "56d82834d88a9dee"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.049625000",
+          "median_ms": "0.050375000",
+          "ns_per_elem_log2": "10.769314",
+          "checksum": "29fe80907cc9ba4c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.087334000",
+          "median_ms": "0.088000000",
+          "ns_per_elem_log2": "18.952691",
+          "checksum": "153a666173a2ca17"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.106584000",
+          "median_ms": "0.107042000",
+          "ns_per_elem_log2": "23.130208",
+          "checksum": "15bc796ba879e161"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.076625000",
+          "median_ms": "0.077125000",
+          "ns_per_elem_log2": "16.628689",
+          "checksum": "a7beb7bd29214b1f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.192542000",
+          "median_ms": "0.195667000",
+          "ns_per_elem_log2": "41.784288",
+          "checksum": "4c255ebf738371cf"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.009916000",
+          "median_ms": "0.010125000",
+          "ns_per_elem_log2": "0.968359",
+          "checksum": "b0dbc1f4cc17fa9f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.011083000",
+          "median_ms": "0.011292000",
+          "ns_per_elem_log2": "1.082324",
+          "checksum": "d1504f9dd9f12cc7"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.074125000",
+          "median_ms": "0.075334000",
+          "ns_per_elem_log2": "7.238770",
+          "checksum": "bbb2e39c3b7c70f5"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.106292000",
+          "median_ms": "0.108334000",
+          "ns_per_elem_log2": "10.380078",
+          "checksum": "5fb671fbe146a1c6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.185500000",
+          "median_ms": "0.188666000",
+          "ns_per_elem_log2": "18.115234",
+          "checksum": "ba1948170a533220"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.224958000",
+          "median_ms": "0.226500000",
+          "ns_per_elem_log2": "21.968555",
+          "checksum": "0a333a734bd49783"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.161625000",
+          "median_ms": "0.163750000",
+          "ns_per_elem_log2": "15.783691",
+          "checksum": "d5c9e257e0cfb872"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.411833000",
+          "median_ms": "0.420250000",
+          "ns_per_elem_log2": "40.218066",
+          "checksum": "da260c3abadbc7a3"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.021584000",
+          "median_ms": "0.021916000",
+          "ns_per_elem_log2": "0.958097",
+          "checksum": "b3ec3f8c3ff03ca1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.024167000",
+          "median_ms": "0.024541000",
+          "ns_per_elem_log2": "1.072754",
+          "checksum": "f8130f81a40bc7d6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.159042000",
+          "median_ms": "0.160459000",
+          "ns_per_elem_log2": "7.059748",
+          "checksum": "1db07c7b9753746f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.231333000",
+          "median_ms": "0.239708000",
+          "ns_per_elem_log2": "10.268688",
+          "checksum": "aa56207b0fe200f0"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.400125000",
+          "median_ms": "0.421666000",
+          "ns_per_elem_log2": "17.761230",
+          "checksum": "d98703e4c135515a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.488875000",
+          "median_ms": "0.505166000",
+          "ns_per_elem_log2": "21.700772",
+          "checksum": "8e1b339a1dd65930"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.349750000",
+          "median_ms": "0.354916000",
+          "ns_per_elem_log2": "15.525124",
+          "checksum": "b1aa4569da04289c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.887750000",
+          "median_ms": "0.903917000",
+          "ns_per_elem_log2": "39.406516",
+          "checksum": "7206c29eceb95d60"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.049708000",
+          "median_ms": "0.050875000",
+          "ns_per_elem_log2": "1.011312",
+          "checksum": "22dd79c6d391d7e6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.053750000",
+          "median_ms": "0.054500000",
+          "ns_per_elem_log2": "1.093547",
+          "checksum": "bc9e78945da28b79"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.342042000",
+          "median_ms": "0.357250000",
+          "ns_per_elem_log2": "6.958862",
+          "checksum": "11efbf6cd19f0e78"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.499750000",
+          "median_ms": "0.506334000",
+          "ns_per_elem_log2": "10.167440",
+          "checksum": "028695eec04840f1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.859125000",
+          "median_ms": "0.890833000",
+          "ns_per_elem_log2": "17.478943",
+          "checksum": "060775562a39b27e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "1.053750000",
+          "median_ms": "1.074375000",
+          "ns_per_elem_log2": "21.438599",
+          "checksum": "75ec321c9e06bf9e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.745916000",
+          "median_ms": "0.757125000",
+          "ns_per_elem_log2": "15.175700",
+          "checksum": "296a4988976fe0dd"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "1.920416000",
+          "median_ms": "2.009625000",
+          "ns_per_elem_log2": "39.070964",
+          "checksum": "0a27df01274cad10"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.107542000",
+          "median_ms": "0.110125000",
+          "ns_per_elem_log2": "1.009822",
+          "checksum": "5e17d5e69dee130b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.115750000",
+          "median_ms": "0.117375000",
+          "ns_per_elem_log2": "1.086895",
+          "checksum": "69c55b16be485720"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.751750000",
+          "median_ms": "0.787167000",
+          "ns_per_elem_log2": "7.058951",
+          "checksum": "f07b344a22759237"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "1.091000000",
+          "median_ms": "1.106584000",
+          "ns_per_elem_log2": "10.244516",
+          "checksum": "0528cb2aaaffd176"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "1.895958000",
+          "median_ms": "1.940584000",
+          "ns_per_elem_log2": "17.803091",
+          "checksum": "75c47e0233b7155a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "2.259542000",
+          "median_ms": "2.313292000",
+          "ns_per_elem_log2": "21.217154",
+          "checksum": "3a2b6849548771dd"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "1.601625000",
+          "median_ms": "1.655333000",
+          "ns_per_elem_log2": "15.039297",
+          "checksum": "566d71b727e0491f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "4.162750000",
+          "median_ms": "4.321000000",
+          "ns_per_elem_log2": "39.088323",
+          "checksum": "4d2d02a3a82f9fb6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "0.237625000",
+          "median_ms": "0.246458000",
+          "ns_per_elem_log2": "1.035963",
+          "checksum": "01751168270fbfa5"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "0.259958000",
+          "median_ms": "0.274333000",
+          "ns_per_elem_log2": "1.133327",
+          "checksum": "5d0b84c3cc080810"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.594541000",
+          "median_ms": "1.639042000",
+          "ns_per_elem_log2": "6.951647",
+          "checksum": "c45849bf053ce28d"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "2.371958000",
+          "median_ms": "2.456541000",
+          "ns_per_elem_log2": "10.340916",
+          "checksum": "5caf0a57c9fceb0e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "4.067625000",
+          "median_ms": "4.164041000",
+          "ns_per_elem_log2": "17.733438",
+          "checksum": "1644f8147cfb7837"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "4.957667000",
+          "median_ms": "5.096708000",
+          "ns_per_elem_log2": "21.613713",
+          "checksum": "c7984f937a4ded27"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "3.467375000",
+          "median_ms": "3.647416000",
+          "ns_per_elem_log2": "15.116555",
+          "checksum": "cd23b1a4d93dbed3"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "9.020791000",
+          "median_ms": "9.118500000",
+          "ns_per_elem_log2": "39.327528",
+          "checksum": "9bd3252b54e75d2b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "0.505333000",
+          "median_ms": "0.527542000",
+          "ns_per_elem_log2": "1.028103",
+          "checksum": "635b8c8c6757c4bc"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "0.545625000",
+          "median_ms": "0.559750000",
+          "ns_per_elem_log2": "1.110077",
+          "checksum": "c76b378fcdd462af"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "3.499292000",
+          "median_ms": "3.561542000",
+          "ns_per_elem_log2": "7.119328",
+          "checksum": "1ef7b0fc2ec138f2"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "5.070333000",
+          "median_ms": "5.236208000",
+          "ns_per_elem_log2": "10.315619",
+          "checksum": "6dd08346e257d6cc"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "8.756666000",
+          "median_ms": "8.872083000",
+          "ns_per_elem_log2": "17.815483",
+          "checksum": "094e89b9710ca307"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "10.644250000",
+          "median_ms": "10.799542000",
+          "ns_per_elem_log2": "21.655782",
+          "checksum": "5590d4c594764d77"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "7.541292000",
+          "median_ms": "7.672583000",
+          "ns_per_elem_log2": "15.342798",
+          "checksum": "492a6742384caa00"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "19.864292000",
+          "median_ms": "20.381083000",
+          "ns_per_elem_log2": "40.414006",
+          "checksum": "44ef6a004d8dca96"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "1.157750000",
+          "median_ms": "1.183250000",
+          "ns_per_elem_log2": "1.104116",
+          "checksum": "d1a226b0b34eeadb"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "1.230667000",
+          "median_ms": "1.272250000",
+          "ns_per_elem_log2": "1.173656",
+          "checksum": "6f5982dd703653e1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "7.557459000",
+          "median_ms": "7.711084000",
+          "ns_per_elem_log2": "7.207355",
+          "checksum": "877f626bf17ee06c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "11.105458000",
+          "median_ms": "11.254500000",
+          "ns_per_elem_log2": "10.590990",
+          "checksum": "625477117379e41c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "18.957917000",
+          "median_ms": "19.248666000",
+          "ns_per_elem_log2": "18.079679",
+          "checksum": "176e5dfa8df6066b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "23.326000000",
+          "median_ms": "23.832625000",
+          "ns_per_elem_log2": "22.245407",
+          "checksum": "f89eb4016e021b24"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "16.502417000",
+          "median_ms": "16.918792000",
+          "ns_per_elem_log2": "15.737931",
+          "checksum": "66f44be4a7cf1c66"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "42.032875000",
+          "median_ms": "43.162000000",
+          "ns_per_elem_log2": "40.085673",
+          "checksum": "2a89267f180503f8"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "op": "square",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.011417000",
+          "median_ms": "0.011542000",
+          "ns_per_elem_log2": "5.574707",
+          "checksum": "b6f9c046bb7afb73"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.023708000",
+          "median_ms": "0.023875000",
+          "ns_per_elem_log2": "5.144965",
+          "checksum": "8c3068053b7c2d8d"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.050208000",
+          "median_ms": "0.055125000",
+          "ns_per_elem_log2": "4.903125",
+          "checksum": "0880fe76ff22f4a6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.110584000",
+          "median_ms": "0.114750000",
+          "ns_per_elem_log2": "4.908736",
+          "checksum": "37ee4926f19dc3a7"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.228708000",
+          "median_ms": "0.236708000",
+          "ns_per_elem_log2": "4.653076",
+          "checksum": "9e59a478a8331ec1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.515084000",
+          "median_ms": "0.536875000",
+          "ns_per_elem_log2": "4.836651",
+          "checksum": "03ea1ca4dd178e8d"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.088500000",
+          "median_ms": "1.124541000",
+          "ns_per_elem_log2": "4.745483",
+          "checksum": "c898485a5e1263e0"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "2.445667000",
+          "median_ms": "2.537417000",
+          "ns_per_elem_log2": "4.975722",
+          "checksum": "06af24e3eb465b43"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "5.077333000",
+          "median_ms": "5.242208000",
+          "ns_per_elem_log2": "4.842122",
+          "checksum": "e4d5a723e9b7d113"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "op": "square",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.011125000",
+          "median_ms": "0.011250000",
+          "ns_per_elem_log2": "5.432129",
+          "checksum": "b6f9c046bb7afb73"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.023125000",
+          "median_ms": "0.026083000",
+          "ns_per_elem_log2": "5.018446",
+          "checksum": "8c3068053b7c2d8d"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.051125000",
+          "median_ms": "0.052167000",
+          "ns_per_elem_log2": "4.992676",
+          "checksum": "0880fe76ff22f4a6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.107875000",
+          "median_ms": "0.114625000",
+          "ns_per_elem_log2": "4.788485",
+          "checksum": "37ee4926f19dc3a7"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.229334000",
+          "median_ms": "0.240875000",
+          "ns_per_elem_log2": "4.665812",
+          "checksum": "9e59a478a8331ec1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.516625000",
+          "median_ms": "0.522625000",
+          "ns_per_elem_log2": "4.851121",
+          "checksum": "03ea1ca4dd178e8d"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.074667000",
+          "median_ms": "1.128292000",
+          "ns_per_elem_log2": "4.685176",
+          "checksum": "c898485a5e1263e0"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "2.464834000",
+          "median_ms": "2.551333000",
+          "ns_per_elem_log2": "5.014718",
+          "checksum": "06af24e3eb465b43"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "5.170625000",
+          "median_ms": "5.316583000",
+          "ns_per_elem_log2": "4.931092",
+          "checksum": "e4d5a723e9b7d113"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "op": "conv-trunc",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.016541000",
+          "median_ms": "0.016750000",
+          "ns_per_elem_log2": "8.076660",
+          "checksum": "c2f16d71fd2be665"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.034333000",
+          "median_ms": "0.034583000",
+          "ns_per_elem_log2": "7.450738",
+          "checksum": "3028fb2d7d1700bc"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.070959000",
+          "median_ms": "0.076750000",
+          "ns_per_elem_log2": "6.929590",
+          "checksum": "c94f60f705d20f75"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.157250000",
+          "median_ms": "0.158583000",
+          "ns_per_elem_log2": "6.980202",
+          "checksum": "f41f3649160ae683"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.335791000",
+          "median_ms": "0.343041000",
+          "ns_per_elem_log2": "6.831685",
+          "checksum": "0758d8d2304d5b90"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.745333000",
+          "median_ms": "0.752208000",
+          "ns_per_elem_log2": "6.998695",
+          "checksum": "bd2518b65f0ff491"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.585542000",
+          "median_ms": "1.631375000",
+          "ns_per_elem_log2": "6.912415",
+          "checksum": "cef49e36b6dff0d3"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "3.503708000",
+          "median_ms": "3.666708000",
+          "ns_per_elem_log2": "7.128312",
+          "checksum": "b7479ec41fc32042"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "7.470375000",
+          "median_ms": "7.612917000",
+          "ns_per_elem_log2": "7.124305",
+          "checksum": "be2479fd6162537c"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "op": "conv-trunc",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.015834000",
+          "median_ms": "0.016000000",
+          "ns_per_elem_log2": "7.731445",
+          "checksum": "c2f16d71fd2be665"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.033000000",
+          "median_ms": "0.034000000",
+          "ns_per_elem_log2": "7.161458",
+          "checksum": "3028fb2d7d1700bc"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.073125000",
+          "median_ms": "0.074042000",
+          "ns_per_elem_log2": "7.141113",
+          "checksum": "c94f60f705d20f75"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.157666000",
+          "median_ms": "0.159125000",
+          "ns_per_elem_log2": "6.998668",
+          "checksum": "f41f3649160ae683"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.336334000",
+          "median_ms": "0.345000000",
+          "ns_per_elem_log2": "6.842733",
+          "checksum": "0758d8d2304d5b90"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.746625000",
+          "median_ms": "0.756708000",
+          "ns_per_elem_log2": "7.010827",
+          "checksum": "bd2518b65f0ff491"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.586750000",
+          "median_ms": "1.615458000",
+          "ns_per_elem_log2": "6.917681",
+          "checksum": "cef49e36b6dff0d3"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "3.506459000",
+          "median_ms": "3.628750000",
+          "ns_per_elem_log2": "7.133909",
+          "checksum": "b7479ec41fc32042"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "7.425917000",
+          "median_ms": "7.578792000",
+          "ns_per_elem_log2": "7.081906",
+          "checksum": "be2479fd6162537c"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "op": "conv-tail",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.016542000",
+          "median_ms": "0.017042000",
+          "ns_per_elem_log2": "8.077148",
+          "checksum": "f73dc5cd9300ca30"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.033833000",
+          "median_ms": "0.035292000",
+          "ns_per_elem_log2": "7.342231",
+          "checksum": "6070f3345b40ad2a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.073292000",
+          "median_ms": "0.074875000",
+          "ns_per_elem_log2": "7.157422",
+          "checksum": "e9aacc642b1b4a8f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.158667000",
+          "median_ms": "0.166167000",
+          "ns_per_elem_log2": "7.043102",
+          "checksum": "d8df8ee806e7481b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.339541000",
+          "median_ms": "0.349750000",
+          "ns_per_elem_log2": "6.907979",
+          "checksum": "e81e5902e3cae83e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.770458000",
+          "median_ms": "0.783375000",
+          "ns_per_elem_log2": "7.234619",
+          "checksum": "531401ab13667d7e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.633625000",
+          "median_ms": "1.688125000",
+          "ns_per_elem_log2": "7.122040",
+          "checksum": "a41884b18a14e531"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "3.617833000",
+          "median_ms": "3.747125000",
+          "ns_per_elem_log2": "7.360500",
+          "checksum": "ee3c080e4cbc1c6c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "7.552167000",
+          "median_ms": "7.810083000",
+          "ns_per_elem_log2": "7.202308",
+          "checksum": "306eb6420e8a18f9"
+        }
+      ]
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "op": "conv-tail",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.016375000",
+          "median_ms": "0.016500000",
+          "ns_per_elem_log2": "7.995605",
+          "checksum": "f73dc5cd9300ca30"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.033875000",
+          "median_ms": "0.034542000",
+          "ns_per_elem_log2": "7.351345",
+          "checksum": "6070f3345b40ad2a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.073166000",
+          "median_ms": "0.074625000",
+          "ns_per_elem_log2": "7.145117",
+          "checksum": "e9aacc642b1b4a8f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.162458000",
+          "median_ms": "0.164042000",
+          "ns_per_elem_log2": "7.211381",
+          "checksum": "d8df8ee806e7481b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.346375000",
+          "median_ms": "0.364583000",
+          "ns_per_elem_log2": "7.047017",
+          "checksum": "e81e5902e3cae83e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.769833000",
+          "median_ms": "0.813667000",
+          "ns_per_elem_log2": "7.228750",
+          "checksum": "531401ab13667d7e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.637084000",
+          "median_ms": "1.660375000",
+          "ns_per_elem_log2": "7.137120",
+          "checksum": "a41884b18a14e531"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "3.602459000",
+          "median_ms": "3.687959000",
+          "ns_per_elem_log2": "7.329222",
+          "checksum": "ee3c080e4cbc1c6c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "7.624417000",
+          "median_ms": "7.887583000",
+          "ns_per_elem_log2": "7.271211",
+          "checksum": "306eb6420e8a18f9"
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "op": "all",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.002166000",
+          "median_ms": "0.002208000",
+          "ns_per_elem_log2": "1.057617",
+          "checksum": "427802b00e63a0f8"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.002375000",
+          "median_ms": "0.002416000",
+          "ns_per_elem_log2": "1.159668",
+          "checksum": "1636f14f041d012a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.016792000",
+          "median_ms": "0.016958000",
+          "ns_per_elem_log2": "8.199219",
+          "checksum": "08088fb67d752779"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.022375000",
+          "median_ms": "0.022833000",
+          "ns_per_elem_log2": "10.925293",
+          "checksum": "91a4ba95b44a3579"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.040292000",
+          "median_ms": "0.041000000",
+          "ns_per_elem_log2": "19.673828",
+          "checksum": "19b77cf120e84210"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.045917000",
+          "median_ms": "0.046125000",
+          "ns_per_elem_log2": "22.420410",
+          "checksum": "98628d6708681d8a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.033541000",
+          "median_ms": "0.033833000",
+          "ns_per_elem_log2": "16.377441",
+          "checksum": "9ab0219a4dacce7c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.088209000",
+          "median_ms": "0.088500000",
+          "ns_per_elem_log2": "43.070801",
+          "checksum": "18833145c7a21563"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.004583000",
+          "median_ms": "0.004667000",
+          "ns_per_elem_log2": "0.994575",
+          "checksum": "58e0e584836e7c70"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.005250000",
+          "median_ms": "0.005333000",
+          "ns_per_elem_log2": "1.139323",
+          "checksum": "7e9c150dcc3e979f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.034208000",
+          "median_ms": "0.034584000",
+          "ns_per_elem_log2": "7.423611",
+          "checksum": "56d82834d88a9dee"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.048250000",
+          "median_ms": "0.048833000",
+          "ns_per_elem_log2": "10.470920",
+          "checksum": "29fe80907cc9ba4c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.086334000",
+          "median_ms": "0.086834000",
+          "ns_per_elem_log2": "18.735677",
+          "checksum": "153a666173a2ca17"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.104750000",
+          "median_ms": "0.107584000",
+          "ns_per_elem_log2": "22.732205",
+          "checksum": "15bc796ba879e161"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.075666000",
+          "median_ms": "0.077125000",
+          "ns_per_elem_log2": "16.420573",
+          "checksum": "a7beb7bd29214b1f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.187583000",
+          "median_ms": "0.193333000",
+          "ns_per_elem_log2": "40.708116",
+          "checksum": "4c255ebf738371cf"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.009958000",
+          "median_ms": "0.010084000",
+          "ns_per_elem_log2": "0.972461",
+          "checksum": "b0dbc1f4cc17fa9f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.010917000",
+          "median_ms": "0.011333000",
+          "ns_per_elem_log2": "1.066113",
+          "checksum": "d1504f9dd9f12cc7"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.074166000",
+          "median_ms": "0.075459000",
+          "ns_per_elem_log2": "7.242773",
+          "checksum": "bbb2e39c3b7c70f5"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.106250000",
+          "median_ms": "0.107125000",
+          "ns_per_elem_log2": "10.375977",
+          "checksum": "5fb671fbe146a1c6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.179958000",
+          "median_ms": "0.186916000",
+          "ns_per_elem_log2": "17.574023",
+          "checksum": "ba1948170a533220"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.221208000",
+          "median_ms": "0.236458000",
+          "ns_per_elem_log2": "21.602344",
+          "checksum": "0a333a734bd49783"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.161334000",
+          "median_ms": "0.164000000",
+          "ns_per_elem_log2": "15.755273",
+          "checksum": "d5c9e257e0cfb872"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.413667000",
+          "median_ms": "0.423292000",
+          "ns_per_elem_log2": "40.397168",
+          "checksum": "da260c3abadbc7a3"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.021625000",
+          "median_ms": "0.021834000",
+          "ns_per_elem_log2": "0.959917",
+          "checksum": "b3ec3f8c3ff03ca1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.024042000",
+          "median_ms": "0.024500000",
+          "ns_per_elem_log2": "1.067205",
+          "checksum": "f8130f81a40bc7d6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.158166000",
+          "median_ms": "0.163375000",
+          "ns_per_elem_log2": "7.020863",
+          "checksum": "1db07c7b9753746f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.225792000",
+          "median_ms": "0.233708000",
+          "ns_per_elem_log2": "10.022727",
+          "checksum": "aa56207b0fe200f0"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.395334000",
+          "median_ms": "0.422416000",
+          "ns_per_elem_log2": "17.548562",
+          "checksum": "d98703e4c135515a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.487042000",
+          "median_ms": "0.496459000",
+          "ns_per_elem_log2": "21.619407",
+          "checksum": "8e1b339a1dd65930"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.343250000",
+          "median_ms": "0.367875000",
+          "ns_per_elem_log2": "15.236594",
+          "checksum": "b1aa4569da04289c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.889000000",
+          "median_ms": "0.914958000",
+          "ns_per_elem_log2": "39.462003",
+          "checksum": "7206c29eceb95d60"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.050083000",
+          "median_ms": "0.050833000",
+          "ns_per_elem_log2": "1.018941",
+          "checksum": "22dd79c6d391d7e6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.053459000",
+          "median_ms": "0.056625000",
+          "ns_per_elem_log2": "1.087626",
+          "checksum": "bc9e78945da28b79"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.339417000",
+          "median_ms": "0.354417000",
+          "ns_per_elem_log2": "6.905457",
+          "checksum": "11efbf6cd19f0e78"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.501833000",
+          "median_ms": "0.517166000",
+          "ns_per_elem_log2": "10.209819",
+          "checksum": "028695eec04840f1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.861708000",
+          "median_ms": "0.881000000",
+          "ns_per_elem_log2": "17.531494",
+          "checksum": "060775562a39b27e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "1.050917000",
+          "median_ms": "1.067125000",
+          "ns_per_elem_log2": "21.380961",
+          "checksum": "75ec321c9e06bf9e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.748625000",
+          "median_ms": "0.766333000",
+          "ns_per_elem_log2": "15.230815",
+          "checksum": "296a4988976fe0dd"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "1.908125000",
+          "median_ms": "2.002708000",
+          "ns_per_elem_log2": "38.820903",
+          "checksum": "0a27df01274cad10"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.108125000",
+          "median_ms": "0.108792000",
+          "ns_per_elem_log2": "1.015296",
+          "checksum": "5e17d5e69dee130b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.111750000",
+          "median_ms": "0.115375000",
+          "ns_per_elem_log2": "1.049335",
+          "checksum": "69c55b16be485720"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.755667000",
+          "median_ms": "0.792750000",
+          "ns_per_elem_log2": "7.095731",
+          "checksum": "f07b344a22759237"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "1.078125000",
+          "median_ms": "1.123417000",
+          "ns_per_elem_log2": "10.123620",
+          "checksum": "0528cb2aaaffd176"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "1.865042000",
+          "median_ms": "1.966917000",
+          "ns_per_elem_log2": "17.512789",
+          "checksum": "75c47e0233b7155a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "2.267958000",
+          "median_ms": "2.398792000",
+          "ns_per_elem_log2": "21.296180",
+          "checksum": "3a2b6849548771dd"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "1.599708000",
+          "median_ms": "1.646084000",
+          "ns_per_elem_log2": "15.021297",
+          "checksum": "566d71b727e0491f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "4.183875000",
+          "median_ms": "4.347750000",
+          "ns_per_elem_log2": "39.286687",
+          "checksum": "4d2d02a3a82f9fb6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "0.241625000",
+          "median_ms": "0.245000000",
+          "ns_per_elem_log2": "1.053401",
+          "checksum": "01751168270fbfa5"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "0.259083000",
+          "median_ms": "0.261000000",
+          "ns_per_elem_log2": "1.129512",
+          "checksum": "5d0b84c3cc080810"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.593333000",
+          "median_ms": "1.670834000",
+          "ns_per_elem_log2": "6.946381",
+          "checksum": "c45849bf053ce28d"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "2.376292000",
+          "median_ms": "2.457125000",
+          "ns_per_elem_log2": "10.359811",
+          "checksum": "5caf0a57c9fceb0e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "4.031333000",
+          "median_ms": "4.177584000",
+          "ns_per_elem_log2": "17.575217",
+          "checksum": "1644f8147cfb7837"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "4.922083000",
+          "median_ms": "5.039583000",
+          "ns_per_elem_log2": "21.458579",
+          "checksum": "c7984f937a4ded27"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "3.543291000",
+          "median_ms": "3.639292000",
+          "ns_per_elem_log2": "15.447523",
+          "checksum": "cd23b1a4d93dbed3"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "9.004000000",
+          "median_ms": "9.258125000",
+          "ns_per_elem_log2": "39.254325",
+          "checksum": "9bd3252b54e75d2b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "0.504708000",
+          "median_ms": "0.543000000",
+          "ns_per_elem_log2": "1.026831",
+          "checksum": "635b8c8c6757c4bc"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "0.547542000",
+          "median_ms": "0.571417000",
+          "ns_per_elem_log2": "1.113977",
+          "checksum": "c76b378fcdd462af"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "3.575167000",
+          "median_ms": "3.697583000",
+          "ns_per_elem_log2": "7.273696",
+          "checksum": "1ef7b0fc2ec138f2"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "5.171667000",
+          "median_ms": "5.373958000",
+          "ns_per_elem_log2": "10.521783",
+          "checksum": "6dd08346e257d6cc"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "8.874375000",
+          "median_ms": "9.108834000",
+          "ns_per_elem_log2": "18.054962",
+          "checksum": "094e89b9710ca307"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "10.806083000",
+          "median_ms": "11.002709000",
+          "ns_per_elem_log2": "21.985032",
+          "checksum": "5590d4c594764d77"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "7.561333000",
+          "median_ms": "7.667417000",
+          "ns_per_elem_log2": "15.383571",
+          "checksum": "492a6742384caa00"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "19.709791000",
+          "median_ms": "20.029292000",
+          "ns_per_elem_log2": "40.099672",
+          "checksum": "44ef6a004d8dca96"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "1.151166000",
+          "median_ms": "1.207125000",
+          "ns_per_elem_log2": "1.097837",
+          "checksum": "d1a226b0b34eeadb"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "1.211750000",
+          "median_ms": "1.248166000",
+          "ns_per_elem_log2": "1.155615",
+          "checksum": "6f5982dd703653e1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "7.430583000",
+          "median_ms": "7.579833000",
+          "ns_per_elem_log2": "7.086356",
+          "checksum": "877f626bf17ee06c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "11.090458000",
+          "median_ms": "11.364292000",
+          "ns_per_elem_log2": "10.576685",
+          "checksum": "625477117379e41c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "18.958542000",
+          "median_ms": "19.326834000",
+          "ns_per_elem_log2": "18.080275",
+          "checksum": "176e5dfa8df6066b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "23.341375000",
+          "median_ms": "24.025333000",
+          "ns_per_elem_log2": "22.260070",
+          "checksum": "f89eb4016e021b24"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "16.647500000",
+          "median_ms": "16.972916000",
+          "ns_per_elem_log2": "15.876293",
+          "checksum": "66f44be4a7cf1c66"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "42.667250000",
+          "median_ms": "43.088166000",
+          "ns_per_elem_log2": "40.690660",
+          "checksum": "2a89267f180503f8"
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "op": "all",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.002125000",
+          "median_ms": "0.002167000",
+          "ns_per_elem_log2": "1.037598",
+          "checksum": "427802b00e63a0f8"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.002375000",
+          "median_ms": "0.002417000",
+          "ns_per_elem_log2": "1.159668",
+          "checksum": "1636f14f041d012a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.016541000",
+          "median_ms": "0.016708000",
+          "ns_per_elem_log2": "8.076660",
+          "checksum": "08088fb67d752779"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.022416000",
+          "median_ms": "0.022500000",
+          "ns_per_elem_log2": "10.945312",
+          "checksum": "91a4ba95b44a3579"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.040375000",
+          "median_ms": "0.040625000",
+          "ns_per_elem_log2": "19.714355",
+          "checksum": "19b77cf120e84210"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.045958000",
+          "median_ms": "0.047125000",
+          "ns_per_elem_log2": "22.440430",
+          "checksum": "98628d6708681d8a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.034625000",
+          "median_ms": "0.034792000",
+          "ns_per_elem_log2": "16.906738",
+          "checksum": "9ab0219a4dacce7c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.088333000",
+          "median_ms": "0.088625000",
+          "ns_per_elem_log2": "43.131348",
+          "checksum": "18833145c7a21563"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.004708000",
+          "median_ms": "0.004833000",
+          "ns_per_elem_log2": "1.021701",
+          "checksum": "58e0e584836e7c70"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.005208000",
+          "median_ms": "0.005334000",
+          "ns_per_elem_log2": "1.130208",
+          "checksum": "7e9c150dcc3e979f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.034916000",
+          "median_ms": "0.039250000",
+          "ns_per_elem_log2": "7.577257",
+          "checksum": "56d82834d88a9dee"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.049792000",
+          "median_ms": "0.050209000",
+          "ns_per_elem_log2": "10.805556",
+          "checksum": "29fe80907cc9ba4c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.086708000",
+          "median_ms": "0.090875000",
+          "ns_per_elem_log2": "18.816840",
+          "checksum": "153a666173a2ca17"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.105458000",
+          "median_ms": "0.105875000",
+          "ns_per_elem_log2": "22.885851",
+          "checksum": "15bc796ba879e161"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.075416000",
+          "median_ms": "0.075792000",
+          "ns_per_elem_log2": "16.366319",
+          "checksum": "a7beb7bd29214b1f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.192292000",
+          "median_ms": "0.192875000",
+          "ns_per_elem_log2": "41.730035",
+          "checksum": "4c255ebf738371cf"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.009833000",
+          "median_ms": "0.009959000",
+          "ns_per_elem_log2": "0.960254",
+          "checksum": "b0dbc1f4cc17fa9f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.011125000",
+          "median_ms": "0.011292000",
+          "ns_per_elem_log2": "1.086426",
+          "checksum": "d1504f9dd9f12cc7"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.074458000",
+          "median_ms": "0.075375000",
+          "ns_per_elem_log2": "7.271289",
+          "checksum": "bbb2e39c3b7c70f5"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.106125000",
+          "median_ms": "0.106833000",
+          "ns_per_elem_log2": "10.363770",
+          "checksum": "5fb671fbe146a1c6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.185125000",
+          "median_ms": "0.186542000",
+          "ns_per_elem_log2": "18.078613",
+          "checksum": "ba1948170a533220"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.225375000",
+          "median_ms": "0.226416000",
+          "ns_per_elem_log2": "22.009277",
+          "checksum": "0a333a734bd49783"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.161875000",
+          "median_ms": "0.167375000",
+          "ns_per_elem_log2": "15.808105",
+          "checksum": "d5c9e257e0cfb872"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.412875000",
+          "median_ms": "0.419125000",
+          "ns_per_elem_log2": "40.319824",
+          "checksum": "da260c3abadbc7a3"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.021833000",
+          "median_ms": "0.022041000",
+          "ns_per_elem_log2": "0.969150",
+          "checksum": "b3ec3f8c3ff03ca1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.024125000",
+          "median_ms": "0.024500000",
+          "ns_per_elem_log2": "1.070890",
+          "checksum": "f8130f81a40bc7d6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.157959000",
+          "median_ms": "0.162834000",
+          "ns_per_elem_log2": "7.011674",
+          "checksum": "1db07c7b9753746f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.230542000",
+          "median_ms": "0.244792000",
+          "ns_per_elem_log2": "10.233576",
+          "checksum": "aa56207b0fe200f0"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.396833000",
+          "median_ms": "0.409084000",
+          "ns_per_elem_log2": "17.615101",
+          "checksum": "d98703e4c135515a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.472208000",
+          "median_ms": "0.497125000",
+          "ns_per_elem_log2": "20.960938",
+          "checksum": "8e1b339a1dd65930"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.336750000",
+          "median_ms": "0.359584000",
+          "ns_per_elem_log2": "14.948065",
+          "checksum": "b1aa4569da04289c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.881917000",
+          "median_ms": "0.913459000",
+          "ns_per_elem_log2": "39.147594",
+          "checksum": "7206c29eceb95d60"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.049958000",
+          "median_ms": "0.050625000",
+          "ns_per_elem_log2": "1.016398",
+          "checksum": "22dd79c6d391d7e6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.052875000",
+          "median_ms": "0.054125000",
+          "ns_per_elem_log2": "1.075745",
+          "checksum": "bc9e78945da28b79"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.330459000",
+          "median_ms": "0.341834000",
+          "ns_per_elem_log2": "6.723206",
+          "checksum": "11efbf6cd19f0e78"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.500834000",
+          "median_ms": "0.507000000",
+          "ns_per_elem_log2": "10.189494",
+          "checksum": "028695eec04840f1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.857208000",
+          "median_ms": "0.872750000",
+          "ns_per_elem_log2": "17.439941",
+          "checksum": "060775562a39b27e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "1.047500000",
+          "median_ms": "1.065375000",
+          "ns_per_elem_log2": "21.311442",
+          "checksum": "75ec321c9e06bf9e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.748292000",
+          "median_ms": "0.764709000",
+          "ns_per_elem_log2": "15.224040",
+          "checksum": "296a4988976fe0dd"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "1.917459000",
+          "median_ms": "1.990208000",
+          "ns_per_elem_log2": "39.010803",
+          "checksum": "0a27df01274cad10"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.107708000",
+          "median_ms": "0.108875000",
+          "ns_per_elem_log2": "1.011381",
+          "checksum": "5e17d5e69dee130b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.114375000",
+          "median_ms": "0.115792000",
+          "ns_per_elem_log2": "1.073984",
+          "checksum": "69c55b16be485720"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.737333000",
+          "median_ms": "0.769208000",
+          "ns_per_elem_log2": "6.923575",
+          "checksum": "f07b344a22759237"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "1.076709000",
+          "median_ms": "1.097791000",
+          "ns_per_elem_log2": "10.110323",
+          "checksum": "0528cb2aaaffd176"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "1.872625000",
+          "median_ms": "1.892791000",
+          "ns_per_elem_log2": "17.583994",
+          "checksum": "75c47e0233b7155a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "2.261042000",
+          "median_ms": "2.308708000",
+          "ns_per_elem_log2": "21.231239",
+          "checksum": "3a2b6849548771dd"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "1.601000000",
+          "median_ms": "1.644417000",
+          "ns_per_elem_log2": "15.033428",
+          "checksum": "566d71b727e0491f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "4.170708000",
+          "median_ms": "4.246542000",
+          "ns_per_elem_log2": "39.163048",
+          "checksum": "4d2d02a3a82f9fb6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "0.243708000",
+          "median_ms": "0.252125000",
+          "ns_per_elem_log2": "1.062483",
+          "checksum": "01751168270fbfa5"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "0.258834000",
+          "median_ms": "0.271250000",
+          "ns_per_elem_log2": "1.128427",
+          "checksum": "5d0b84c3cc080810"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.597000000",
+          "median_ms": "1.653333000",
+          "ns_per_elem_log2": "6.962367",
+          "checksum": "c45849bf053ce28d"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "2.359125000",
+          "median_ms": "2.431459000",
+          "ns_per_elem_log2": "10.284969",
+          "checksum": "5caf0a57c9fceb0e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "4.080750000",
+          "median_ms": "4.174667000",
+          "ns_per_elem_log2": "17.790658",
+          "checksum": "1644f8147cfb7837"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "4.920958000",
+          "median_ms": "5.080417000",
+          "ns_per_elem_log2": "21.453674",
+          "checksum": "c7984f937a4ded27"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "3.485916000",
+          "median_ms": "3.579000000",
+          "ns_per_elem_log2": "15.197388",
+          "checksum": "cd23b1a4d93dbed3"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "9.101125000",
+          "median_ms": "9.245125000",
+          "ns_per_elem_log2": "39.677756",
+          "checksum": "9bd3252b54e75d2b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "0.512625000",
+          "median_ms": "0.526541000",
+          "ns_per_elem_log2": "1.042938",
+          "checksum": "635b8c8c6757c4bc"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "0.547166000",
+          "median_ms": "0.567083000",
+          "ns_per_elem_log2": "1.113212",
+          "checksum": "c76b378fcdd462af"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "3.528625000",
+          "median_ms": "3.614292000",
+          "ns_per_elem_log2": "7.179006",
+          "checksum": "1ef7b0fc2ec138f2"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "5.121375000",
+          "median_ms": "5.286917000",
+          "ns_per_elem_log2": "10.419464",
+          "checksum": "6dd08346e257d6cc"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "8.849875000",
+          "median_ms": "8.992833000",
+          "ns_per_elem_log2": "18.005117",
+          "checksum": "094e89b9710ca307"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "10.607875000",
+          "median_ms": "10.866208000",
+          "ns_per_elem_log2": "21.581777",
+          "checksum": "5590d4c594764d77"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "7.514334000",
+          "median_ms": "7.833875000",
+          "ns_per_elem_log2": "15.287952",
+          "checksum": "492a6742384caa00"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "19.777708000",
+          "median_ms": "20.122125000",
+          "ns_per_elem_log2": "40.237850",
+          "checksum": "44ef6a004d8dca96"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-forward",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "1.152833000",
+          "median_ms": "1.215625000",
+          "ns_per_elem_log2": "1.099427",
+          "checksum": "d1a226b0b34eeadb"
+        },
+        {
+          "backend": "avx2",
+          "operation": "ntt-inverse",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "1.219750000",
+          "median_ms": "1.244750000",
+          "ns_per_elem_log2": "1.163244",
+          "checksum": "6f5982dd703653e1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "7.468292000",
+          "median_ms": "7.678833000",
+          "ns_per_elem_log2": "7.122318",
+          "checksum": "877f626bf17ee06c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "inv",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "11.172791000",
+          "median_ms": "11.430875000",
+          "ns_per_elem_log2": "10.655204",
+          "checksum": "625477117379e41c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "log",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "18.832916000",
+          "median_ms": "19.312875000",
+          "ns_per_elem_log2": "17.960468",
+          "checksum": "176e5dfa8df6066b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "exp",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "23.219125000",
+          "median_ms": "23.596417000",
+          "ns_per_elem_log2": "22.143483",
+          "checksum": "f89eb4016e021b24"
+        },
+        {
+          "backend": "avx2",
+          "operation": "sqrt",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "16.581709000",
+          "median_ms": "17.221667000",
+          "ns_per_elem_log2": "15.813550",
+          "checksum": "66f44be4a7cf1c66"
+        },
+        {
+          "backend": "avx2",
+          "operation": "pow",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "42.407000000",
+          "median_ms": "43.214833000",
+          "ns_per_elem_log2": "40.442467",
+          "checksum": "2a89267f180503f8"
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "op": "square",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.011625000",
+          "median_ms": "0.011708000",
+          "ns_per_elem_log2": "5.676270",
+          "checksum": "b6f9c046bb7afb73"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.024000000",
+          "median_ms": "0.024958000",
+          "ns_per_elem_log2": "5.208333",
+          "checksum": "8c3068053b7c2d8d"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.052334000",
+          "median_ms": "0.053250000",
+          "ns_per_elem_log2": "5.110742",
+          "checksum": "0880fe76ff22f4a6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.111167000",
+          "median_ms": "0.112625000",
+          "ns_per_elem_log2": "4.934615",
+          "checksum": "37ee4926f19dc3a7"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.233709000",
+          "median_ms": "0.238125000",
+          "ns_per_elem_log2": "4.754822",
+          "checksum": "9e59a478a8331ec1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.515834000",
+          "median_ms": "0.521875000",
+          "ns_per_elem_log2": "4.843694",
+          "checksum": "03ea1ca4dd178e8d"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.093375000",
+          "median_ms": "1.139000000",
+          "ns_per_elem_log2": "4.766737",
+          "checksum": "c898485a5e1263e0"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "2.418666000",
+          "median_ms": "2.524000000",
+          "ns_per_elem_log2": "4.920789",
+          "checksum": "06af24e3eb465b43"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "5.148417000",
+          "median_ms": "5.258250000",
+          "ns_per_elem_log2": "4.909913",
+          "checksum": "e4d5a723e9b7d113"
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "op": "square",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.011417000",
+          "median_ms": "0.011542000",
+          "ns_per_elem_log2": "5.574707",
+          "checksum": "b6f9c046bb7afb73"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.023708000",
+          "median_ms": "0.023875000",
+          "ns_per_elem_log2": "5.144965",
+          "checksum": "8c3068053b7c2d8d"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.051209000",
+          "median_ms": "0.053458000",
+          "ns_per_elem_log2": "5.000879",
+          "checksum": "0880fe76ff22f4a6"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.109791000",
+          "median_ms": "0.112541000",
+          "ns_per_elem_log2": "4.873535",
+          "checksum": "37ee4926f19dc3a7"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.234042000",
+          "median_ms": "0.246084000",
+          "ns_per_elem_log2": "4.761597",
+          "checksum": "9e59a478a8331ec1"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.514167000",
+          "median_ms": "0.520125000",
+          "ns_per_elem_log2": "4.828040",
+          "checksum": "03ea1ca4dd178e8d"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.083708000",
+          "median_ms": "1.109209000",
+          "ns_per_elem_log2": "4.724592",
+          "checksum": "c898485a5e1263e0"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "2.420833000",
+          "median_ms": "2.537041000",
+          "ns_per_elem_log2": "4.925197",
+          "checksum": "06af24e3eb465b43"
+        },
+        {
+          "backend": "avx2",
+          "operation": "square",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "5.171750000",
+          "median_ms": "5.287750000",
+          "ns_per_elem_log2": "4.932165",
+          "checksum": "e4d5a723e9b7d113"
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "op": "conv-trunc",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.016250000",
+          "median_ms": "0.016375000",
+          "ns_per_elem_log2": "7.934570",
+          "checksum": "c2f16d71fd2be665"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.033583000",
+          "median_ms": "0.034125000",
+          "ns_per_elem_log2": "7.287977",
+          "checksum": "3028fb2d7d1700bc"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.073250000",
+          "median_ms": "0.074500000",
+          "ns_per_elem_log2": "7.153320",
+          "checksum": "c94f60f705d20f75"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.157583000",
+          "median_ms": "0.163125000",
+          "ns_per_elem_log2": "6.994984",
+          "checksum": "f41f3649160ae683"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.330500000",
+          "median_ms": "0.339375000",
+          "ns_per_elem_log2": "6.724040",
+          "checksum": "0758d8d2304d5b90"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.737125000",
+          "median_ms": "0.770667000",
+          "ns_per_elem_log2": "6.921621",
+          "checksum": "bd2518b65f0ff491"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.598417000",
+          "median_ms": "1.653709000",
+          "ns_per_elem_log2": "6.968545",
+          "checksum": "cef49e36b6dff0d3"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "3.536708000",
+          "median_ms": "3.638250000",
+          "ns_per_elem_log2": "7.195451",
+          "checksum": "b7479ec41fc32042"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "7.428417000",
+          "median_ms": "7.568084000",
+          "ns_per_elem_log2": "7.084291",
+          "checksum": "be2479fd6162537c"
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "op": "conv-trunc",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.015875000",
+          "median_ms": "0.016042000",
+          "ns_per_elem_log2": "7.751465",
+          "checksum": "c2f16d71fd2be665"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.033833000",
+          "median_ms": "0.034084000",
+          "ns_per_elem_log2": "7.342231",
+          "checksum": "3028fb2d7d1700bc"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.074416000",
+          "median_ms": "0.075709000",
+          "ns_per_elem_log2": "7.267188",
+          "checksum": "c94f60f705d20f75"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.153875000",
+          "median_ms": "0.158792000",
+          "ns_per_elem_log2": "6.830389",
+          "checksum": "f41f3649160ae683"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.335750000",
+          "median_ms": "0.338708000",
+          "ns_per_elem_log2": "6.830851",
+          "checksum": "0758d8d2304d5b90"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.751083000",
+          "median_ms": "0.767708000",
+          "ns_per_elem_log2": "7.052687",
+          "checksum": "bd2518b65f0ff491"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.560625000",
+          "median_ms": "1.666583000",
+          "ns_per_elem_log2": "6.803785",
+          "checksum": "cef49e36b6dff0d3"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "3.507916000",
+          "median_ms": "3.631375000",
+          "ns_per_elem_log2": "7.136873",
+          "checksum": "b7479ec41fc32042"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-trunc",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "7.455417000",
+          "median_ms": "7.685959000",
+          "ns_per_elem_log2": "7.110040",
+          "checksum": "be2479fd6162537c"
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "op": "conv-tail",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.015583000",
+          "median_ms": "0.015833000",
+          "ns_per_elem_log2": "7.608887",
+          "checksum": "f73dc5cd9300ca30"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.032625000",
+          "median_ms": "0.032917000",
+          "ns_per_elem_log2": "7.080078",
+          "checksum": "6070f3345b40ad2a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.073792000",
+          "median_ms": "0.074875000",
+          "ns_per_elem_log2": "7.206250",
+          "checksum": "e9aacc642b1b4a8f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.157916000",
+          "median_ms": "0.163667000",
+          "ns_per_elem_log2": "7.009766",
+          "checksum": "d8df8ee806e7481b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.346000000",
+          "median_ms": "0.350500000",
+          "ns_per_elem_log2": "7.039388",
+          "checksum": "e81e5902e3cae83e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.762625000",
+          "median_ms": "0.803792000",
+          "ns_per_elem_log2": "7.161067",
+          "checksum": "531401ab13667d7e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.661167000",
+          "median_ms": "1.735666000",
+          "ns_per_elem_log2": "7.242113",
+          "checksum": "a41884b18a14e531"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "3.617958000",
+          "median_ms": "3.675916000",
+          "ns_per_elem_log2": "7.360754",
+          "checksum": "ee3c080e4cbc1c6c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "7.641458000",
+          "median_ms": "7.839041000",
+          "ns_per_elem_log2": "7.287462",
+          "checksum": "306eb6420e8a18f9"
+        }
+      ]
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "op": "conv-tail",
+      "rows": [
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "256",
+          "reps": "21",
+          "best_ms": "0.016167000",
+          "median_ms": "0.016334000",
+          "ns_per_elem_log2": "7.894043",
+          "checksum": "f73dc5cd9300ca30"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "512",
+          "reps": "21",
+          "best_ms": "0.033917000",
+          "median_ms": "0.034417000",
+          "ns_per_elem_log2": "7.360460",
+          "checksum": "6070f3345b40ad2a"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "1024",
+          "reps": "21",
+          "best_ms": "0.073750000",
+          "median_ms": "0.075791000",
+          "ns_per_elem_log2": "7.202148",
+          "checksum": "e9aacc642b1b4a8f"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "2048",
+          "reps": "21",
+          "best_ms": "0.165209000",
+          "median_ms": "0.167917000",
+          "ns_per_elem_log2": "7.333496",
+          "checksum": "d8df8ee806e7481b"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "4096",
+          "reps": "21",
+          "best_ms": "0.346000000",
+          "median_ms": "0.356250000",
+          "ns_per_elem_log2": "7.039388",
+          "checksum": "e81e5902e3cae83e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "8192",
+          "reps": "21",
+          "best_ms": "0.783541000",
+          "median_ms": "0.827958000",
+          "ns_per_elem_log2": "7.357469",
+          "checksum": "531401ab13667d7e"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "16384",
+          "reps": "21",
+          "best_ms": "1.695042000",
+          "median_ms": "1.765125000",
+          "ns_per_elem_log2": "7.389797",
+          "checksum": "a41884b18a14e531"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "32768",
+          "reps": "21",
+          "best_ms": "3.670791000",
+          "median_ms": "3.861208000",
+          "ns_per_elem_log2": "7.468243",
+          "checksum": "ee3c080e4cbc1c6c"
+        },
+        {
+          "backend": "avx2",
+          "operation": "conv-tail",
+          "size": "65536",
+          "reps": "21",
+          "best_ms": "7.665667000",
+          "median_ms": "7.845333000",
+          "ns_per_elem_log2": "7.310550",
+          "checksum": "306eb6420e8a18f9"
+        }
+      ]
+    }
+  ]
+}

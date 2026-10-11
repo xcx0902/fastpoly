@@ -1,0 +1,441 @@
+{
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "flags": [
+    "-std=c++20",
+    "-O2",
+    "-DNDEBUG",
+    "-pthread",
+    "-arch",
+    "x86_64",
+    "-mavx2"
+  ],
+  "header": "fastpoly/fastpoly.hpp",
+  "directories": [
+    "/private/tmp/fastpoly-compile-20261011/before/include",
+    "/Users/xcx0902/Documents/Github/fastpoly/include"
+  ],
+  "header_sha256": [
+    "b83b4378eed2d03fb71b462387279d7ab4f553b1f0779548a50cf25a7e1212e5",
+    "2633696ac5bca85cf0cea7528f00870109486dee75608e4001c952c2def0830f"
+  ],
+  "sources": {
+    "include": {
+      "sha256": "26fba4513d1823cd14389996fb945f952a1fa1b031209c107a6eef6669825e38",
+      "probe": "#include \"fastpoly/fastpoly.hpp\"\nusing M = fpx::mod998244353;\nusing V = std::vector<M>;\n\n"
+    },
+    "ntt": {
+      "sha256": "021edee09f50218d11f5b50a465eb911eca3f3949d9ff2df442316af095c0a3b",
+      "probe": "#include \"fastpoly/fastpoly.hpp\"\nusing M = fpx::mod998244353;\nusing V = std::vector<M>;\n\nvoid transform(uint32_t* a, uint32_t n) {\n  const auto& plan = fpx::NttPlan<M>::get_ref(n);\n  plan.forward(a);\n  plan.inverse(a);\n}\n\n"
+    },
+    "conv": {
+      "sha256": "45628be73b35c701165d98a5dd46011bd4a002ab32ce03ddca629f9f479309b7",
+      "probe": "#include \"fastpoly/fastpoly.hpp\"\nusing M = fpx::mod998244353;\nusing V = std::vector<M>;\nV product(const V& a, const V& b, size_t n) { return fpx::poly::conv(a, b, n); }\n"
+    },
+    "series": {
+      "sha256": "863b282a4067b207842150562a27e162a0d878eddc35a44bf4fa5fe430ed2b39",
+      "probe": "#include \"fastpoly/fastpoly.hpp\"\nusing M = fpx::mod998244353;\nusing V = std::vector<M>;\n\nV reciprocal(const V& a, size_t n) { return fpx::poly::inv(a, n); }\nV logarithm(const V& a, size_t n) { return fpx::poly::log(a, n); }\nV exponential(const V& a, size_t n) { return fpx::poly::exp(a, n); }\nV square_root(const V& a, size_t n) { return fpx::poly::sqrt(a, n); }\nV power(const V& a, uint64_t k, size_t n) { return fpx::poly::pow(a, k, n); }\n\n"
+    },
+    "test_ntt": {
+      "sha256": "8dcf4d16f2340ca72f95d13ea317aafc83eadac0c61a2e5cf8cebf67a3e17680",
+      "path": "tests/test_ntt.cpp"
+    },
+    "test_poly": {
+      "sha256": "35fe90d21572fe0282d414f5a826e1a0d3df6d46d9a3850dea2ac9932d2dc51a",
+      "path": "tests/test_poly.cpp"
+    },
+    "test_prime_poly": {
+      "sha256": "6f1fb87646c998c774cba68b7266f6aad73c09ad5b6c13c68a6ce7e9a59cefce",
+      "path": "tests/test_prime_poly.cpp"
+    },
+    "bench": {
+      "sha256": "678480cd64025f9be09d5bfc5d8094a21e7db5dab0f807c9749e1435e2b4360a",
+      "path": "bench/bench.cpp"
+    }
+  },
+  "samples": [
+    {
+      "case": "include",
+      "run": 1,
+      "version": 0,
+      "seconds": 0.6593565830262378,
+      "object_bytes": 208,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/include.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/include-0.o"
+    },
+    {
+      "case": "include",
+      "run": 1,
+      "version": 1,
+      "seconds": 0.5729702500393614,
+      "object_bytes": 208,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/include.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/include-1.o"
+    },
+    {
+      "case": "ntt",
+      "run": 1,
+      "version": 0,
+      "seconds": 1.0791722079738975,
+      "object_bytes": 71160,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/ntt.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/ntt-0.o"
+    },
+    {
+      "case": "ntt",
+      "run": 1,
+      "version": 1,
+      "seconds": 0.9807669169967994,
+      "object_bytes": 54656,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/ntt.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/ntt-1.o"
+    },
+    {
+      "case": "conv",
+      "run": 1,
+      "version": 0,
+      "seconds": 3.3408937921049073,
+      "object_bytes": 381768,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/conv.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/conv-0.o"
+    },
+    {
+      "case": "conv",
+      "run": 1,
+      "version": 1,
+      "seconds": 2.4902952500851825,
+      "object_bytes": 274112,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/conv.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/conv-1.o"
+    },
+    {
+      "case": "series",
+      "run": 1,
+      "version": 0,
+      "seconds": 3.5233984160004184,
+      "object_bytes": 431896,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/series.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/series-0.o"
+    },
+    {
+      "case": "series",
+      "run": 1,
+      "version": 1,
+      "seconds": 2.768027334008366,
+      "object_bytes": 320344,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/series.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/series-1.o"
+    },
+    {
+      "case": "test_ntt",
+      "run": 1,
+      "version": 0,
+      "seconds": 6.545037667034194,
+      "object_bytes": 874096,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /Users/xcx0902/Documents/Github/fastpoly/tests/test_ntt.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/test_ntt-0.o"
+    },
+    {
+      "case": "test_ntt",
+      "run": 1,
+      "version": 1,
+      "seconds": 5.33756054204423,
+      "object_bytes": 654816,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /Users/xcx0902/Documents/Github/fastpoly/tests/test_ntt.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/test_ntt-1.o"
+    },
+    {
+      "case": "test_poly",
+      "run": 1,
+      "version": 0,
+      "seconds": 12.511557916994207,
+      "object_bytes": 1596912,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /Users/xcx0902/Documents/Github/fastpoly/tests/test_poly.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/test_poly-0.o"
+    },
+    {
+      "case": "test_poly",
+      "run": 1,
+      "version": 1,
+      "seconds": 11.797417292022146,
+      "object_bytes": 1240792,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /Users/xcx0902/Documents/Github/fastpoly/tests/test_poly.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/test_poly-1.o"
+    },
+    {
+      "case": "test_prime_poly",
+      "run": 1,
+      "version": 0,
+      "seconds": 12.453096374985762,
+      "object_bytes": 1582096,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /Users/xcx0902/Documents/Github/fastpoly/tests/test_prime_poly.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/test_prime_poly-0.o"
+    },
+    {
+      "case": "test_prime_poly",
+      "run": 1,
+      "version": 1,
+      "seconds": 10.403743791976012,
+      "object_bytes": 1216680,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /Users/xcx0902/Documents/Github/fastpoly/tests/test_prime_poly.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/test_prime_poly-1.o"
+    },
+    {
+      "case": "bench",
+      "run": 1,
+      "version": 0,
+      "seconds": 4.527079583960585,
+      "object_bytes": 533640,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /Users/xcx0902/Documents/Github/fastpoly/bench/bench.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/bench-0.o"
+    },
+    {
+      "case": "bench",
+      "run": 1,
+      "version": 1,
+      "seconds": 3.726402333006263,
+      "object_bytes": 418136,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /Users/xcx0902/Documents/Github/fastpoly/bench/bench.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/bench-1.o"
+    },
+    {
+      "case": "include",
+      "run": 2,
+      "version": 1,
+      "seconds": 0.5679028750164434,
+      "object_bytes": 208,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/include.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/include-1.o"
+    },
+    {
+      "case": "include",
+      "run": 2,
+      "version": 0,
+      "seconds": 0.5830199170159176,
+      "object_bytes": 208,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/include.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/include-0.o"
+    },
+    {
+      "case": "ntt",
+      "run": 2,
+      "version": 1,
+      "seconds": 0.930819374974817,
+      "object_bytes": 54656,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/ntt.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/ntt-1.o"
+    },
+    {
+      "case": "ntt",
+      "run": 2,
+      "version": 0,
+      "seconds": 1.0251280000666156,
+      "object_bytes": 71160,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/ntt.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/ntt-0.o"
+    },
+    {
+      "case": "conv",
+      "run": 2,
+      "version": 1,
+      "seconds": 2.4473098340677097,
+      "object_bytes": 274112,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/conv.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/conv-1.o"
+    },
+    {
+      "case": "conv",
+      "run": 2,
+      "version": 0,
+      "seconds": 3.0943751669256017,
+      "object_bytes": 381768,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/conv.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/conv-0.o"
+    },
+    {
+      "case": "series",
+      "run": 2,
+      "version": 1,
+      "seconds": 3.047956792055629,
+      "object_bytes": 320344,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/series.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/series-1.o"
+    },
+    {
+      "case": "series",
+      "run": 2,
+      "version": 0,
+      "seconds": 3.58703199995216,
+      "object_bytes": 431896,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/series.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/series-0.o"
+    },
+    {
+      "case": "test_ntt",
+      "run": 2,
+      "version": 1,
+      "seconds": 5.442374458070844,
+      "object_bytes": 654816,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /Users/xcx0902/Documents/Github/fastpoly/tests/test_ntt.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/test_ntt-1.o"
+    },
+    {
+      "case": "test_ntt",
+      "run": 2,
+      "version": 0,
+      "seconds": 7.770071457955055,
+      "object_bytes": 874096,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /Users/xcx0902/Documents/Github/fastpoly/tests/test_ntt.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/test_ntt-0.o"
+    },
+    {
+      "case": "test_poly",
+      "run": 2,
+      "version": 1,
+      "seconds": 11.087434708024375,
+      "object_bytes": 1240792,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /Users/xcx0902/Documents/Github/fastpoly/tests/test_poly.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/test_poly-1.o"
+    },
+    {
+      "case": "test_poly",
+      "run": 2,
+      "version": 0,
+      "seconds": 14.232203583000228,
+      "object_bytes": 1596912,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /Users/xcx0902/Documents/Github/fastpoly/tests/test_poly.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/test_poly-0.o"
+    },
+    {
+      "case": "test_prime_poly",
+      "run": 2,
+      "version": 1,
+      "seconds": 12.281761958962306,
+      "object_bytes": 1216680,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /Users/xcx0902/Documents/Github/fastpoly/tests/test_prime_poly.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/test_prime_poly-1.o"
+    },
+    {
+      "case": "test_prime_poly",
+      "run": 2,
+      "version": 0,
+      "seconds": 15.839527999982238,
+      "object_bytes": 1582096,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /Users/xcx0902/Documents/Github/fastpoly/tests/test_prime_poly.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/test_prime_poly-0.o"
+    },
+    {
+      "case": "bench",
+      "run": 2,
+      "version": 1,
+      "seconds": 3.9985413750400767,
+      "object_bytes": 418136,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /Users/xcx0902/Documents/Github/fastpoly/bench/bench.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/bench-1.o"
+    },
+    {
+      "case": "bench",
+      "run": 2,
+      "version": 0,
+      "seconds": 4.456772334058769,
+      "object_bytes": 533640,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /Users/xcx0902/Documents/Github/fastpoly/bench/bench.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/bench-0.o"
+    },
+    {
+      "case": "include",
+      "run": 3,
+      "version": 0,
+      "seconds": 0.6545292499940842,
+      "object_bytes": 208,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/include.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/include-0.o"
+    },
+    {
+      "case": "include",
+      "run": 3,
+      "version": 1,
+      "seconds": 0.5731855420162901,
+      "object_bytes": 208,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/include.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/include-1.o"
+    },
+    {
+      "case": "ntt",
+      "run": 3,
+      "version": 0,
+      "seconds": 1.0339519169647247,
+      "object_bytes": 71160,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/ntt.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/ntt-0.o"
+    },
+    {
+      "case": "ntt",
+      "run": 3,
+      "version": 1,
+      "seconds": 0.9323772090720013,
+      "object_bytes": 54656,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/ntt.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/ntt-1.o"
+    },
+    {
+      "case": "conv",
+      "run": 3,
+      "version": 0,
+      "seconds": 3.193791958037764,
+      "object_bytes": 381768,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/conv.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/conv-0.o"
+    },
+    {
+      "case": "conv",
+      "run": 3,
+      "version": 1,
+      "seconds": 2.431324708973989,
+      "object_bytes": 274112,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/conv.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/conv-1.o"
+    },
+    {
+      "case": "series",
+      "run": 3,
+      "version": 0,
+      "seconds": 3.480033416999504,
+      "object_bytes": 431896,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/series.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/series-0.o"
+    },
+    {
+      "case": "series",
+      "run": 3,
+      "version": 1,
+      "seconds": 2.863317250041291,
+      "object_bytes": 320344,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/series.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/series-1.o"
+    },
+    {
+      "case": "test_ntt",
+      "run": 3,
+      "version": 0,
+      "seconds": 7.78385916701518,
+      "object_bytes": 874096,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /Users/xcx0902/Documents/Github/fastpoly/tests/test_ntt.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/test_ntt-0.o"
+    },
+    {
+      "case": "test_ntt",
+      "run": 3,
+      "version": 1,
+      "seconds": 5.210147290956229,
+      "object_bytes": 654816,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /Users/xcx0902/Documents/Github/fastpoly/tests/test_ntt.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/test_ntt-1.o"
+    },
+    {
+      "case": "test_poly",
+      "run": 3,
+      "version": 0,
+      "seconds": 12.495135125005618,
+      "object_bytes": 1596912,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /Users/xcx0902/Documents/Github/fastpoly/tests/test_poly.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/test_poly-0.o"
+    },
+    {
+      "case": "test_poly",
+      "run": 3,
+      "version": 1,
+      "seconds": 11.00733637495432,
+      "object_bytes": 1240792,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /Users/xcx0902/Documents/Github/fastpoly/tests/test_poly.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/test_poly-1.o"
+    },
+    {
+      "case": "test_prime_poly",
+      "run": 3,
+      "version": 0,
+      "seconds": 13.571501416969113,
+      "object_bytes": 1582096,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /Users/xcx0902/Documents/Github/fastpoly/tests/test_prime_poly.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/test_prime_poly-0.o"
+    },
+    {
+      "case": "test_prime_poly",
+      "run": 3,
+      "version": 1,
+      "seconds": 10.37059433304239,
+      "object_bytes": 1216680,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /Users/xcx0902/Documents/Github/fastpoly/tests/test_prime_poly.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/test_prime_poly-1.o"
+    },
+    {
+      "case": "bench",
+      "run": 3,
+      "version": 0,
+      "seconds": 4.573354750056751,
+      "object_bytes": 533640,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/private/tmp/fastpoly-compile-20261011/before/include -c /Users/xcx0902/Documents/Github/fastpoly/bench/bench.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/bench-0.o"
+    },
+    {
+      "case": "bench",
+      "run": 3,
+      "version": 1,
+      "seconds": 3.77271995798219,
+      "object_bytes": 418136,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -arch x86_64 -mavx2 -I/Users/xcx0902/Documents/Github/fastpoly/include -c /Users/xcx0902/Documents/Github/fastpoly/bench/bench.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-qrvolo79/bench-1.o"
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+[
+  {
+    "label": "neon",
+    "command": [
+      "python3",
+      "/Users/xcx0902/Documents/Github/fastpoly/scripts/compare-compile.py",
+      "--before",
+      "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+      "--after",
+      "/Users/xcx0902/Documents/Github/fastpoly/include",
+      "--runs",
+      "3",
+      "--output",
+      "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/compile-neon.csv"
+    ]
+  },
+  {
+    "label": "avx2",
+    "command": [
+      "python3",
+      "/Users/xcx0902/Documents/Github/fastpoly/scripts/compare-compile.py",
+      "--before",
+      "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+      "--after",
+      "/Users/xcx0902/Documents/Github/fastpoly/include",
+      "--runs",
+      "3",
+      "--output",
+      "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/compile-avx2.csv",
+      "--flag=-arch",
+      "--flag=x86_64",
+      "--flag=-mavx2"
+    ]
+  },
+  {
+    "label": "gcc",
+    "command": [
+      "python3",
+      "/Users/xcx0902/Documents/Github/fastpoly/scripts/compare-compile.py",
+      "--before",
+      "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+      "--after",
+      "/Users/xcx0902/Documents/Github/fastpoly/include",
+      "--runs",
+      "3",
+      "--output",
+      "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/compile-gcc.csv",
+      "--cxx=/opt/homebrew/bin/g++-16",
+      "--cases=include,ntt,conv,series,test_ntt,test_poly,test_prime_poly,bench"
+    ]
+  },
+  {
+    "label": "mod2",
+    "command": [
+      "python3",
+      "/Users/xcx0902/Documents/Github/fastpoly/scripts/compare-compile.py",
+      "--before",
+      "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+      "--after",
+      "/Users/xcx0902/Documents/Github/fastpoly/include",
+      "--runs",
+      "3",
+      "--output",
+      "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/compile-mod2.csv",
+      "--modulus=2",
+      "--cases=conv,series"
+    ]
+  },
+  {
+    "label": "mod3",
+    "command": [
+      "python3",
+      "/Users/xcx0902/Documents/Github/fastpoly/scripts/compare-compile.py",
+      "--before",
+      "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+      "--after",
+      "/Users/xcx0902/Documents/Github/fastpoly/include",
+      "--runs",
+      "3",
+      "--output",
+      "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/compile-mod3.csv",
+      "--modulus=3",
+      "--cases=conv,series"
+    ]
+  },
+  {
+    "label": "mod100003",
+    "command": [
+      "python3",
+      "/Users/xcx0902/Documents/Github/fastpoly/scripts/compare-compile.py",
+      "--before",
+      "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+      "--after",
+      "/Users/xcx0902/Documents/Github/fastpoly/include",
+      "--runs",
+      "3",
+      "--output",
+      "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/compile-mod100003.csv",
+      "--modulus=100003",
+      "--cases=conv,series"
+    ]
+  },
+  {
+    "label": "mod1000000007",
+    "command": [
+      "python3",
+      "/Users/xcx0902/Documents/Github/fastpoly/scripts/compare-compile.py",
+      "--before",
+      "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+      "--after",
+      "/Users/xcx0902/Documents/Github/fastpoly/include",
+      "--runs",
+      "3",
+      "--output",
+      "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/compile-mod1000000007.csv",
+      "--modulus=1000000007",
+      "--cases=conv,series"
+    ]
+  },
+  {
+    "label": "single",
+    "command": [
+      "python3",
+      "/Users/xcx0902/Documents/Github/fastpoly/scripts/compare-compile.py",
+      "--before",
+      "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+      "--after",
+      "/Users/xcx0902/Documents/Github/fastpoly/include",
+      "--runs",
+      "3",
+      "--output",
+      "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/compile-single.csv",
+      "--before=/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline",
+      "--after=/Users/xcx0902/Documents/Github/fastpoly",
+      "--header=fastpoly.hpp",
+      "--cases=include,conv,series"
+    ]
+  },
+  {
+    "label": "single-avx2",
+    "command": [
+      "python3",
+      "/Users/xcx0902/Documents/Github/fastpoly/scripts/compare-compile.py",
+      "--before",
+      "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+      "--after",
+      "/Users/xcx0902/Documents/Github/fastpoly/include",
+      "--runs",
+      "3",
+      "--output",
+      "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/compile-single-avx2.csv",
+      "--before=/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline",
+      "--after=/Users/xcx0902/Documents/Github/fastpoly",
+      "--header=fastpoly-x86.hpp",
+      "--cases=include,conv,series",
+      "--flag=-arch",
+      "--flag=x86_64",
+      "--flag=-mavx2"
+    ]
+  }
+]

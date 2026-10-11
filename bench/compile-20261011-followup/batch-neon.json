@@ -1,0 +1,4015 @@
+{
+  "backend": "neon",
+  "binaries": [
+    {
+      "path": "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+      "sha256": "d5f002fa4d011f72ab44abf3a9e3a5d4ab193d99b78a7f20ca1fe5437786db90"
+    },
+    {
+      "path": "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+      "sha256": "5f416446406e9b8faf3c4fda6448078faaa6eef9111d1429ff0746beb907e8e5"
+    }
+  ],
+  "samples": [
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 4.368621826,
+      "best_ns": 4.273731232,
+      "checksum": "455ddf1b7fdebdb1"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 4.386663437,
+      "best_ns": 4.234951019,
+      "checksum": "455ddf1b7fdebdb1"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7.581233978,
+      "best_ns": 7.396299362,
+      "checksum": "7c8d932ee47356da"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7.570188522,
+      "best_ns": 7.395586014,
+      "checksum": "7c8d932ee47356da"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 15.328884125,
+      "best_ns": 14.79101181,
+      "checksum": "4ed218bfccd97ba2"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 15.203475952,
+      "best_ns": 14.882087708,
+      "checksum": "4ed218bfccd97ba2"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 18.305938721,
+      "best_ns": 17.828941345,
+      "checksum": "598f41ea83d0c9de"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 18.022853851,
+      "best_ns": 17.670314789,
+      "checksum": "598f41ea83d0c9de"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 23.251213074,
+      "best_ns": 22.491767883,
+      "checksum": "b17f9233ff846579"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 23.545898438,
+      "best_ns": 22.618293762,
+      "checksum": "b17f9233ff846579"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 23.111663818,
+      "best_ns": 22.474609375,
+      "checksum": "70be66bde046e9d2"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 23.098945618,
+      "best_ns": 22.588409424,
+      "checksum": "70be66bde046e9d2"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.367477417,
+      "best_ns": 21.66557312,
+      "checksum": "3305312d069bff1d"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.378295898,
+      "best_ns": 21.396011353,
+      "checksum": "3305312d069bff1d"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.357299805,
+      "best_ns": 22.136688232,
+      "checksum": "2de9951182e8656a"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.504165649,
+      "best_ns": 21.862030029,
+      "checksum": "2de9951182e8656a"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 30.167907715,
+      "best_ns": 28.855651855,
+      "checksum": "f2d0c59ad3af7b07"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.825836182,
+      "best_ns": 28.90524292,
+      "checksum": "f2d0c59ad3af7b07"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.287994385,
+      "best_ns": 28.603881836,
+      "checksum": "6cd0bdc1d2e992b4"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.474914551,
+      "best_ns": 29.057830811,
+      "checksum": "6cd0bdc1d2e992b4"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 51.516174316,
+      "best_ns": 50.791442871,
+      "checksum": "7542d5ae84f5f78f"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 50.509155273,
+      "best_ns": 50.48626709,
+      "checksum": "7542d5ae84f5f78f"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 54.972351074,
+      "best_ns": 53.731262207,
+      "checksum": "fa9b2b7e8859020c"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 53.598999023,
+      "best_ns": 52.86920166,
+      "checksum": "fa9b2b7e8859020c"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 96.471191406,
+      "best_ns": 96.028564453,
+      "checksum": "008d740f38a83f4f"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 97.371459961,
+      "best_ns": 96.013305664,
+      "checksum": "008d740f38a83f4f"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 108.027099609,
+      "best_ns": 104.242919922,
+      "checksum": "3ddcaf4be83598c6"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 104.700683594,
+      "best_ns": 102.767944336,
+      "checksum": "3ddcaf4be83598c6"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 220.814941406,
+      "best_ns": 215.728759766,
+      "checksum": "83ba73a9a548f3aa"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 218.892578125,
+      "best_ns": 215.505126953,
+      "checksum": "83ba73a9a548f3aa"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 236.521484375,
+      "best_ns": 232.075927734,
+      "checksum": "0ef2cec5dbc6306c"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 240.274902344,
+      "best_ns": 230.844970703,
+      "checksum": "0ef2cec5dbc6306c"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 449.421875,
+      "best_ns": 440.91796875,
+      "checksum": "397dd8ac3aec4216"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 459.411621094,
+      "best_ns": 441.080566406,
+      "checksum": "397dd8ac3aec4216"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 489.440917969,
+      "best_ns": 475.789550781,
+      "checksum": "e4cace066aadf755"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 488.443847656,
+      "best_ns": 474.833007812,
+      "checksum": "e4cace066aadf755"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1039.143554688,
+      "best_ns": 1004.638671875,
+      "checksum": "df8e922262c3d61c"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1029.296875,
+      "best_ns": 1006.91796875,
+      "checksum": "df8e922262c3d61c"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1114.583007812,
+      "best_ns": 1081.787109375,
+      "checksum": "2e5179b0f4cb6a4f"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1131.6328125,
+      "best_ns": 1062.622070312,
+      "checksum": "2e5179b0f4cb6a4f"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 4.370769501,
+      "best_ns": 4.268568039,
+      "checksum": "455ddf1b7fdebdb1"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 4.367193222,
+      "best_ns": 4.251638412,
+      "checksum": "455ddf1b7fdebdb1"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7.584095001,
+      "best_ns": 7.347980499,
+      "checksum": "7c8d932ee47356da"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7.590532303,
+      "best_ns": 7.378896713,
+      "checksum": "7c8d932ee47356da"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 15.180908203,
+      "best_ns": 14.778137207,
+      "checksum": "4ed218bfccd97ba2"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 15.540122986,
+      "best_ns": 15.031658173,
+      "checksum": "4ed218bfccd97ba2"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 18.052898407,
+      "best_ns": 17.724830627,
+      "checksum": "598f41ea83d0c9de"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 18.0271492,
+      "best_ns": 17.738658905,
+      "checksum": "598f41ea83d0c9de"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.819198608,
+      "best_ns": 22.573471069,
+      "checksum": "b17f9233ff846579"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.960662842,
+      "best_ns": 22.485733032,
+      "checksum": "b17f9233ff846579"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.756256104,
+      "best_ns": 22.414520264,
+      "checksum": "70be66bde046e9d2"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.689819336,
+      "best_ns": 22.317565918,
+      "checksum": "70be66bde046e9d2"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 21.814971924,
+      "best_ns": 21.251678467,
+      "checksum": "3305312d069bff1d"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 21.964401245,
+      "best_ns": 21.325439453,
+      "checksum": "3305312d069bff1d"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.402450562,
+      "best_ns": 22.163391113,
+      "checksum": "2de9951182e8656a"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.60017395,
+      "best_ns": 22.102355957,
+      "checksum": "2de9951182e8656a"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.847442627,
+      "best_ns": 29.421478271,
+      "checksum": "f2d0c59ad3af7b07"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.958099365,
+      "best_ns": 29.490142822,
+      "checksum": "f2d0c59ad3af7b07"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.376983643,
+      "best_ns": 29.052734375,
+      "checksum": "6cd0bdc1d2e992b4"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.263793945,
+      "best_ns": 28.900146484,
+      "checksum": "6cd0bdc1d2e992b4"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 50.94909668,
+      "best_ns": 49.527526855,
+      "checksum": "7542d5ae84f5f78f"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 51.23651123,
+      "best_ns": 50.778686523,
+      "checksum": "7542d5ae84f5f78f"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 53.367614746,
+      "best_ns": 51.658630371,
+      "checksum": "fa9b2b7e8859020c"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 54.456054688,
+      "best_ns": 53.728759766,
+      "checksum": "fa9b2b7e8859020c"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 96.633911133,
+      "best_ns": 95.550537109,
+      "checksum": "008d740f38a83f4f"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 97.076416016,
+      "best_ns": 96.003173828,
+      "checksum": "008d740f38a83f4f"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 103.124023438,
+      "best_ns": 101.567504883,
+      "checksum": "3ddcaf4be83598c6"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 104.421020508,
+      "best_ns": 103.897094727,
+      "checksum": "3ddcaf4be83598c6"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 217.224121094,
+      "best_ns": 215.474365234,
+      "checksum": "83ba73a9a548f3aa"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 217.142822266,
+      "best_ns": 211.140869141,
+      "checksum": "83ba73a9a548f3aa"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 232.625244141,
+      "best_ns": 230.794433594,
+      "checksum": "0ef2cec5dbc6306c"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 238.586425781,
+      "best_ns": 232.045654297,
+      "checksum": "0ef2cec5dbc6306c"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 447.062011719,
+      "best_ns": 432.312011719,
+      "checksum": "397dd8ac3aec4216"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 443.623535156,
+      "best_ns": 436.788085938,
+      "checksum": "397dd8ac3aec4216"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 478.820800781,
+      "best_ns": 474.588867188,
+      "checksum": "e4cace066aadf755"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 480.712890625,
+      "best_ns": 475.728515625,
+      "checksum": "e4cace066aadf755"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1015.014648438,
+      "best_ns": 1006.591796875,
+      "checksum": "df8e922262c3d61c"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1035.116210938,
+      "best_ns": 1006.184570312,
+      "checksum": "df8e922262c3d61c"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1101.278320312,
+      "best_ns": 1082.4375,
+      "checksum": "2e5179b0f4cb6a4f"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1090.413085938,
+      "best_ns": 1081.33984375,
+      "checksum": "2e5179b0f4cb6a4f"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 4.333656311,
+      "best_ns": 4.182418823,
+      "checksum": "455ddf1b7fdebdb1"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 4.349151611,
+      "best_ns": 4.257202148,
+      "checksum": "455ddf1b7fdebdb1"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7.698932648,
+      "best_ns": 7.495880127,
+      "checksum": "7c8d932ee47356da"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7.611829758,
+      "best_ns": 7.412034988,
+      "checksum": "7c8d932ee47356da"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 15.332698822,
+      "best_ns": 15.025299072,
+      "checksum": "4ed218bfccd97ba2"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 15.051204681,
+      "best_ns": 14.78036499,
+      "checksum": "4ed218bfccd97ba2"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 17.973423004,
+      "best_ns": 17.719905853,
+      "checksum": "598f41ea83d0c9de"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 17.891407013,
+      "best_ns": 17.540615082,
+      "checksum": "598f41ea83d0c9de"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 23.006118774,
+      "best_ns": 22.48891449,
+      "checksum": "b17f9233ff846579"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 23.241363525,
+      "best_ns": 22.38368988,
+      "checksum": "b17f9233ff846579"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.852897644,
+      "best_ns": 22.244132996,
+      "checksum": "70be66bde046e9d2"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 23.052536011,
+      "best_ns": 22.44758606,
+      "checksum": "70be66bde046e9d2"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.281646729,
+      "best_ns": 21.737426758,
+      "checksum": "3305312d069bff1d"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.350311279,
+      "best_ns": 21.66494751,
+      "checksum": "3305312d069bff1d"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.745773315,
+      "best_ns": 22.194549561,
+      "checksum": "2de9951182e8656a"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.757217407,
+      "best_ns": 21.998718262,
+      "checksum": "2de9951182e8656a"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 30.572265625,
+      "best_ns": 29.692352295,
+      "checksum": "f2d0c59ad3af7b07"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.767364502,
+      "best_ns": 29.415130615,
+      "checksum": "f2d0c59ad3af7b07"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.64276123,
+      "best_ns": 28.839111328,
+      "checksum": "6cd0bdc1d2e992b4"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.760986328,
+      "best_ns": 28.889984131,
+      "checksum": "6cd0bdc1d2e992b4"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 52.22064209,
+      "best_ns": 50.776123047,
+      "checksum": "7542d5ae84f5f78f"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 51.854431152,
+      "best_ns": 50.488769531,
+      "checksum": "7542d5ae84f5f78f"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 55.608093262,
+      "best_ns": 53.611755371,
+      "checksum": "fa9b2b7e8859020c"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 54.445922852,
+      "best_ns": 52.866638184,
+      "checksum": "fa9b2b7e8859020c"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 98.668457031,
+      "best_ns": 95.982910156,
+      "checksum": "008d740f38a83f4f"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 98.485351562,
+      "best_ns": 96.003173828,
+      "checksum": "008d740f38a83f4f"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 106.979370117,
+      "best_ns": 104.354858398,
+      "checksum": "3ddcaf4be83598c6"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 104.771972656,
+      "best_ns": 102.717041016,
+      "checksum": "3ddcaf4be83598c6"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 219.889404297,
+      "best_ns": 213.490722656,
+      "checksum": "83ba73a9a548f3aa"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 221.557617188,
+      "best_ns": 215.484619141,
+      "checksum": "83ba73a9a548f3aa"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 233.693359375,
+      "best_ns": 232.014892578,
+      "checksum": "0ef2cec5dbc6306c"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 231.191162109,
+      "best_ns": 227.203369141,
+      "checksum": "0ef2cec5dbc6306c"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 441.833496094,
+      "best_ns": 432.840820312,
+      "checksum": "397dd8ac3aec4216"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 441.284179688,
+      "best_ns": 441.01953125,
+      "checksum": "397dd8ac3aec4216"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 479.064941406,
+      "best_ns": 467.732910156,
+      "checksum": "e4cace066aadf755"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 480.85546875,
+      "best_ns": 474.812988281,
+      "checksum": "e4cace066aadf755"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1018.270507812,
+      "best_ns": 995.321289062,
+      "checksum": "df8e922262c3d61c"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1014.526367188,
+      "best_ns": 1002.44140625,
+      "checksum": "df8e922262c3d61c"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1104.00390625,
+      "best_ns": 1089.762695312,
+      "checksum": "2e5179b0f4cb6a4f"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1094.645507812,
+      "best_ns": 1088.215820312,
+      "checksum": "2e5179b0f4cb6a4f"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 4.315137863,
+      "best_ns": 4.201570511,
+      "checksum": "455ddf1b7fdebdb1"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 4.337945938,
+      "best_ns": 4.1359272,
+      "checksum": "455ddf1b7fdebdb1"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7.487615585,
+      "best_ns": 7.377544403,
+      "checksum": "7c8d932ee47356da"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7.53235817,
+      "best_ns": 7.354101181,
+      "checksum": "7c8d932ee47356da"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 15.159767151,
+      "best_ns": 14.764308929,
+      "checksum": "4ed218bfccd97ba2"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 15.724338531,
+      "best_ns": 15.144348145,
+      "checksum": "4ed218bfccd97ba2"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 18.36713028,
+      "best_ns": 17.710048676,
+      "checksum": "598f41ea83d0c9de"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 18.046379089,
+      "best_ns": 17.75630188,
+      "checksum": "598f41ea83d0c9de"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 23.175239563,
+      "best_ns": 22.625923157,
+      "checksum": "b17f9233ff846579"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.832237244,
+      "best_ns": 22.547721863,
+      "checksum": "b17f9233ff846579"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 23.038543701,
+      "best_ns": 22.474601746,
+      "checksum": "70be66bde046e9d2"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.749267578,
+      "best_ns": 22.350944519,
+      "checksum": "70be66bde046e9d2"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.010803223,
+      "best_ns": 21.083831787,
+      "checksum": "3305312d069bff1d"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.100448608,
+      "best_ns": 21.430969238,
+      "checksum": "3305312d069bff1d"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.422149658,
+      "best_ns": 22.050216675,
+      "checksum": "2de9951182e8656a"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.784561157,
+      "best_ns": 22.170379639,
+      "checksum": "2de9951182e8656a"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.944091797,
+      "best_ns": 29.745727539,
+      "checksum": "f2d0c59ad3af7b07"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.864013672,
+      "best_ns": 29.68850708,
+      "checksum": "f2d0c59ad3af7b07"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.478729248,
+      "best_ns": 29.064178467,
+      "checksum": "6cd0bdc1d2e992b4"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.2421875,
+      "best_ns": 28.89251709,
+      "checksum": "6cd0bdc1d2e992b4"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 51.198364258,
+      "best_ns": 50.473510742,
+      "checksum": "7542d5ae84f5f78f"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 51.513671875,
+      "best_ns": 50.773620605,
+      "checksum": "7542d5ae84f5f78f"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 53.771972656,
+      "best_ns": 52.866638184,
+      "checksum": "fa9b2b7e8859020c"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 54.433227539,
+      "best_ns": 53.321838379,
+      "checksum": "fa9b2b7e8859020c"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 97.610473633,
+      "best_ns": 95.998168945,
+      "checksum": "008d740f38a83f4f"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 97.788452148,
+      "best_ns": 95.982788086,
+      "checksum": "008d740f38a83f4f"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 104.522705078,
+      "best_ns": 102.711914062,
+      "checksum": "3ddcaf4be83598c6"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 106.521606445,
+      "best_ns": 103.942871094,
+      "checksum": "3ddcaf4be83598c6"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 221.038818359,
+      "best_ns": 215.057373047,
+      "checksum": "83ba73a9a548f3aa"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 220.987792969,
+      "best_ns": 211.802246094,
+      "checksum": "83ba73a9a548f3aa"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 238.037109375,
+      "best_ns": 230.824707031,
+      "checksum": "0ef2cec5dbc6306c"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 238.871337891,
+      "best_ns": 233.571289062,
+      "checksum": "0ef2cec5dbc6306c"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 453.247070312,
+      "best_ns": 441.040039062,
+      "checksum": "397dd8ac3aec4216"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 447.590820312,
+      "best_ns": 440.91796875,
+      "checksum": "397dd8ac3aec4216"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 484.334472656,
+      "best_ns": 474.650390625,
+      "checksum": "e4cace066aadf755"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 482.788085938,
+      "best_ns": 464.395996094,
+      "checksum": "e4cace066aadf755"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1054.19921875,
+      "best_ns": 1000.813476562,
+      "checksum": "df8e922262c3d61c"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1039.8359375,
+      "best_ns": 1002.685546875,
+      "checksum": "df8e922262c3d61c"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1099.609375,
+      "best_ns": 1080.404296875,
+      "checksum": "2e5179b0f4cb6a4f"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1108.560546875,
+      "best_ns": 1081.33984375,
+      "checksum": "2e5179b0f4cb6a4f"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 4.45000267,
+      "best_ns": 4.264354706,
+      "checksum": "455ddf1b7fdebdb1"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 4.374105453,
+      "best_ns": 4.247346878,
+      "checksum": "455ddf1b7fdebdb1"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7.608652115,
+      "best_ns": 7.392328262,
+      "checksum": "7c8d932ee47356da"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "2",
+        "524288",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 2,
+      "loops": 524288,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7.514635086,
+      "best_ns": 7.367610931,
+      "checksum": "7c8d932ee47356da"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 15.448886871,
+      "best_ns": 14.94852829,
+      "checksum": "4ed218bfccd97ba2"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 15.151180267,
+      "best_ns": 14.748889923,
+      "checksum": "4ed218bfccd97ba2"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 18.316268921,
+      "best_ns": 17.798583984,
+      "checksum": "598f41ea83d0c9de"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "4",
+        "262144",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 4,
+      "loops": 262144,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 17.960548401,
+      "best_ns": 17.592269897,
+      "checksum": "598f41ea83d0c9de"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 23.75189209,
+      "best_ns": 22.689186096,
+      "checksum": "b17f9233ff846579"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 23.480415344,
+      "best_ns": 22.728279114,
+      "checksum": "b17f9233ff846579"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 23.18636322,
+      "best_ns": 22.375106812,
+      "checksum": "70be66bde046e9d2"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "8",
+        "131072",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 8,
+      "loops": 131072,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.89931488,
+      "best_ns": 22.416748047,
+      "checksum": "70be66bde046e9d2"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 21.938964844,
+      "best_ns": 21.240234375,
+      "checksum": "3305312d069bff1d"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.019699097,
+      "best_ns": 20.862579346,
+      "checksum": "3305312d069bff1d"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.300079346,
+      "best_ns": 21.878555298,
+      "checksum": "2de9951182e8656a"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "16",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 16,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 22.340133667,
+      "best_ns": 22.160217285,
+      "checksum": "2de9951182e8656a"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.843658447,
+      "best_ns": 28.999328613,
+      "checksum": "f2d0c59ad3af7b07"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.92376709,
+      "best_ns": 29.402404785,
+      "checksum": "f2d0c59ad3af7b07"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.432922363,
+      "best_ns": 28.261810303,
+      "checksum": "6cd0bdc1d2e992b4"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "32",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 32,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.270172119,
+      "best_ns": 28.781890869,
+      "checksum": "6cd0bdc1d2e992b4"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 50.989807129,
+      "best_ns": 50.15814209,
+      "checksum": "7542d5ae84f5f78f"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 50.67956543,
+      "best_ns": 50.473510742,
+      "checksum": "7542d5ae84f5f78f"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 54.402648926,
+      "best_ns": 52.991210938,
+      "checksum": "fa9b2b7e8859020c"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "64",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 64,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 53.418457031,
+      "best_ns": 52.843688965,
+      "checksum": "fa9b2b7e8859020c"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 96.989868164,
+      "best_ns": 96.018432617,
+      "checksum": "008d740f38a83f4f"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 96.984863281,
+      "best_ns": 95.987915039,
+      "checksum": "008d740f38a83f4f"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 104.873657227,
+      "best_ns": 102.895141602,
+      "checksum": "3ddcaf4be83598c6"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "128",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 128,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 103.912353516,
+      "best_ns": 102.711914062,
+      "checksum": "3ddcaf4be83598c6"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 220.153808594,
+      "best_ns": 215.698242188,
+      "checksum": "83ba73a9a548f3aa"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 217.570068359,
+      "best_ns": 213.439941406,
+      "checksum": "83ba73a9a548f3aa"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 233.530517578,
+      "best_ns": 232.03515625,
+      "checksum": "0ef2cec5dbc6306c"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "256",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 256,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 231.648681641,
+      "best_ns": 230.804443359,
+      "checksum": "0ef2cec5dbc6306c"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 444.763183594,
+      "best_ns": 439.005371094,
+      "checksum": "397dd8ac3aec4216"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 453.674316406,
+      "best_ns": 443.664550781,
+      "checksum": "397dd8ac3aec4216"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 483.052246094,
+      "best_ns": 475.667480469,
+      "checksum": "e4cace066aadf755"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "512",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 512,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 477.498046875,
+      "best_ns": 474.589355469,
+      "checksum": "e4cace066aadf755"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "forward",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1026.65234375,
+      "best_ns": 1003.947265625,
+      "checksum": "df8e922262c3d61c"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "forward",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "forward",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1015.951171875,
+      "best_ns": 996.500976562,
+      "checksum": "df8e922262c3d61c"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon",
+        "inverse",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1102.7421875,
+      "best_ns": 1075.073242188,
+      "checksum": "2e5179b0f4cb6a4f"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon",
+        "inverse",
+        "1024",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "inverse",
+      "size": 1024,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1103.677734375,
+      "best_ns": 1074.666015625,
+      "checksum": "2e5179b0f4cb6a4f"
+    }
+  ]
+}

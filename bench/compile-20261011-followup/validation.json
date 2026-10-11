@@ -1,0 +1,179 @@
+{
+  "tests-headers.log": {
+    "sha256": "b0226737dc84f650a1648c3fbd7743c97628d27a7714eeef3e96b74edc0fc1bb",
+    "test_counts": [
+      14,
+      18,
+      22,
+      9,
+      18,
+      14,
+      18,
+      22,
+      9,
+      18,
+      14,
+      18,
+      22,
+      9,
+      18,
+      14,
+      18,
+      22,
+      9,
+      18,
+      14,
+      18,
+      22,
+      9,
+      18
+    ]
+  },
+  "tests-single.log": {
+    "sha256": "b0226737dc84f650a1648c3fbd7743c97628d27a7714eeef3e96b74edc0fc1bb",
+    "test_counts": [
+      14,
+      18,
+      22,
+      9,
+      18,
+      14,
+      18,
+      22,
+      9,
+      18,
+      14,
+      18,
+      22,
+      9,
+      18,
+      14,
+      18,
+      22,
+      9,
+      18,
+      14,
+      18,
+      22,
+      9,
+      18
+    ]
+  },
+  "tests-simde.log": {
+    "sha256": "11c89cabbabd3a78ead656e582d91637dc58061cdba900f28b331e1da3bd5c9c",
+    "test_counts": [
+      14,
+      18,
+      22,
+      9,
+      18
+    ]
+  },
+  "tests-simde-single.log": {
+    "sha256": "11c89cabbabd3a78ead656e582d91637dc58061cdba900f28b331e1da3bd5c9c",
+    "test_counts": [
+      14,
+      18,
+      22,
+      9,
+      18
+    ]
+  },
+  "tests-gcc.log": {
+    "sha256": "9693c904f803eef3304486cb00baeb61011e0188e82b5cd97c7b60fc6bd6f53a",
+    "test_counts": [
+      14,
+      18,
+      22,
+      9,
+      18
+    ]
+  },
+  "cmake.log": {
+    "sha256": "ff84e83ae321dc79071cea44e637f5d799cb49edc9fd05d8ce089a4d078f9d03",
+    "test_counts": []
+  },
+  "amalgamate-tests.log": {
+    "sha256": "4cbf079e3ad81990b79a668fcfbcb4acf9ed780c5b2a4a85cf6cb3971927fe5e",
+    "test_counts": []
+  },
+  "avx512.log": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "test_counts": []
+  },
+  "checks.log": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "test_counts": []
+  },
+  "avx512_compile": {
+    "passed": true,
+    "flags": [
+      "-std=c++20",
+      "-O2",
+      "-pthread",
+      "-arch",
+      "x86_64",
+      "-mavx512f",
+      "-mavx512vl"
+    ],
+    "source": "tests/test_ntt.cpp",
+    "hardware_timing": false
+  },
+  "simde_commit": "71fd833d9666141edcd1d3c109a80e228303d8d7",
+  "architecture": "arm64",
+  "os": "macOS-26.7.1-arm64-arm-64bit",
+  "tests_per_configuration": 81,
+  "maintenance_configurations": [
+    "NEON -O2",
+    "NEON -O2 -march=native",
+    "NEON -O1 ASan+UBSan",
+    "x86_64 -O2 AVX2 under Rosetta",
+    "x86_64 -O2 scalar under Rosetta",
+    "AVX-512 -O2 SIMDe 0.8.2 model"
+  ],
+  "single_header_configurations": [
+    "NEON -O2",
+    "NEON -O2 -march=native",
+    "NEON -O1 ASan+UBSan",
+    "x86_64 -O2 AVX2 under Rosetta",
+    "x86_64 -O2 scalar under Rosetta",
+    "AVX-512 -O2 SIMDe 0.8.2 model"
+  ],
+  "matrix_test_passes": 972,
+  "gcc": {
+    "compiler": "/opt/homebrew/bin/g++-16",
+    "flags": [
+      "-std=c++20",
+      "-O2",
+      "-pthread"
+    ],
+    "passed_tests": 81
+  },
+  "cmake": {
+    "build_type": "Release",
+    "release_flags": "-O2 -DNDEBUG",
+    "ctest_executables_passed": 5
+  },
+  "amalgamation": {
+    "generator_tests_passed": 17,
+    "fastpoly.hpp_check": true,
+    "fastpoly-x86.hpp_check": true
+  },
+  "gcc_compile_diagnostics": {
+    "before": [
+      "warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+      "warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+      "warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+      "warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+      "warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+      "warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+      "warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+      "warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+      "warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+      "warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+      "warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+      "warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]"
+    ],
+    "after": []
+  }
+}

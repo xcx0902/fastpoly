@@ -25,6 +25,7 @@ namespace fpx::poly {
 /// a logarithm, a non-residue constant term in a square root, ...).
 class domain_error : public std::runtime_error {
  public:
+  explicit domain_error(const char* s) : std::runtime_error(s) {}
   explicit domain_error(const std::string& s) : std::runtime_error(s) {}
 };
 

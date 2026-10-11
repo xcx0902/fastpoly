@@ -1,0 +1,140 @@
+{
+  "compiler": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "flags": [
+    "-std=c++20",
+    "-O2",
+    "-DNDEBUG",
+    "-pthread"
+  ],
+  "header": "fastpoly/fastpoly.hpp",
+  "probe_modulus": 2,
+  "probe_root": 0,
+  "directories": [
+    "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+    "/Users/xcx0902/Documents/Github/fastpoly/include"
+  ],
+  "header_sha256": [
+    "2633696ac5bca85cf0cea7528f00870109486dee75608e4001c952c2def0830f",
+    "a7ea40dbaac69ed6caa2e15f1c0f4298ed0b1de51bfcf5b8baa51b77b0bf1233"
+  ],
+  "sources": {
+    "conv": {
+      "sha256": "cbc7b43b3ea009f2b158d6ef044e52347ea6157bb83614123e2227d66841b0a6",
+      "probe": "#include \"fastpoly/fastpoly.hpp\"\nusing M = fpx::Mont<2u, 0u>;\nusing V = std::vector<M>;\nV product(const V& a, const V& b, size_t n) { return fpx::poly::conv(a, b, n); }\n"
+    },
+    "series": {
+      "sha256": "4af2528b1e2fa434090a78ea3ed3c0b3caa16a0e17eb7e4ed95cc6c9568d45f8",
+      "probe": "#include \"fastpoly/fastpoly.hpp\"\nusing M = fpx::Mont<2u, 0u>;\nusing V = std::vector<M>;\n\nV reciprocal(const V& a, size_t n) { return fpx::poly::inv(a, n); }\nV logarithm(const V& a, size_t n) { return fpx::poly::log(a, n); }\nV exponential(const V& a, size_t n) { return fpx::poly::exp(a, n); }\nV square_root(const V& a, size_t n) { return fpx::poly::sqrt(a, n); }\nV power(const V& a, uint64_t k, size_t n) { return fpx::poly::pow(a, k, n); }\n\n"
+    }
+  },
+  "samples": [
+    {
+      "case": "conv",
+      "run": 1,
+      "version": 0,
+      "seconds": 1.7816985419999583,
+      "cpu_seconds": 1.5799999999999998,
+      "object_bytes": 128376,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/conv.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/conv-0.o"
+    },
+    {
+      "case": "conv",
+      "run": 1,
+      "version": 1,
+      "seconds": 0.847741667000264,
+      "cpu_seconds": 0.8200000000000001,
+      "object_bytes": 45448,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -I/Users/xcx0902/Documents/Github/fastpoly/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/conv.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/conv-1.o"
+    },
+    {
+      "case": "series",
+      "run": 1,
+      "version": 0,
+      "seconds": 1.6811500000003434,
+      "cpu_seconds": 1.6600000000000006,
+      "object_bytes": 151992,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/series.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/series-0.o"
+    },
+    {
+      "case": "series",
+      "run": 1,
+      "version": 1,
+      "seconds": 0.9608317500001249,
+      "cpu_seconds": 0.9500000000000004,
+      "object_bytes": 65336,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -I/Users/xcx0902/Documents/Github/fastpoly/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/series.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/series-1.o"
+    },
+    {
+      "case": "conv",
+      "run": 2,
+      "version": 1,
+      "seconds": 0.7777205839997805,
+      "cpu_seconds": 0.7699999999999999,
+      "object_bytes": 45448,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -I/Users/xcx0902/Documents/Github/fastpoly/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/conv.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/conv-1.o"
+    },
+    {
+      "case": "conv",
+      "run": 2,
+      "version": 0,
+      "seconds": 1.455301958000291,
+      "cpu_seconds": 1.4399999999999995,
+      "object_bytes": 128376,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/conv.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/conv-0.o"
+    },
+    {
+      "case": "series",
+      "run": 2,
+      "version": 1,
+      "seconds": 0.9644052500002545,
+      "cpu_seconds": 0.96,
+      "object_bytes": 65336,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -I/Users/xcx0902/Documents/Github/fastpoly/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/series.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/series-1.o"
+    },
+    {
+      "case": "series",
+      "run": 2,
+      "version": 0,
+      "seconds": 1.686377416999676,
+      "cpu_seconds": 1.6699999999999995,
+      "object_bytes": 151992,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/series.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/series-0.o"
+    },
+    {
+      "case": "conv",
+      "run": 3,
+      "version": 0,
+      "seconds": 1.4779593339999337,
+      "cpu_seconds": 1.4499999999999988,
+      "object_bytes": 128376,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/conv.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/conv-0.o"
+    },
+    {
+      "case": "conv",
+      "run": 3,
+      "version": 1,
+      "seconds": 0.7930742090002241,
+      "cpu_seconds": 0.7900000000000007,
+      "object_bytes": 45448,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -I/Users/xcx0902/Documents/Github/fastpoly/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/conv.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/conv-1.o"
+    },
+    {
+      "case": "series",
+      "run": 3,
+      "version": 0,
+      "seconds": 1.703781041000184,
+      "cpu_seconds": 1.6799999999999997,
+      "object_bytes": 151992,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/series.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/series-0.o"
+    },
+    {
+      "case": "series",
+      "run": 3,
+      "version": 1,
+      "seconds": 0.968639040999733,
+      "cpu_seconds": 0.9600000000000007,
+      "object_bytes": 65336,
+      "command": "clang++ -std=c++20 -O2 -DNDEBUG -pthread -I/Users/xcx0902/Documents/Github/fastpoly/include -c /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/series.cpp -o /var/folders/ph/0460mf3n56v1v6c212nj_mg00000gn/T/fastpoly-compile-f5adewpa/series-1.o"
+    }
+  ]
+}

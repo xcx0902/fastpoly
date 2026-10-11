@@ -1,0 +1,435 @@
+{
+  "date": "2026-10-11",
+  "timezone": "Asia/Shanghai",
+  "baseline_commit": "9f0dad9b0e52dfcb0499e57cb44a12f4b7032466",
+  "architecture": "arm64",
+  "os": "macOS-26.7-arm64-arm-64bit",
+  "benchmark_sha256": "678480cd64025f9be09d5bfc5d8094a21e7db5dab0f807c9749e1435e2b4360a",
+  "flags": [
+    "-std=c++20",
+    "-O2",
+    "-DNDEBUG",
+    "-pthread"
+  ],
+  "compile_timing": "Alternating clean object compilations, median of three runs; includes parsing, optimization and code generation; excludes linking.",
+  "runtime_timing": "Alternating before/after processes; median of per-run repetition medians. Deterministic inputs, full-output checksums; setup, hashing and destruction untimed.",
+  "changes": [
+    "Auxiliary CRT products specialize on the auxiliary prime only, accepting raw 32-bit limbs.",
+    "Generic radix-4 stages receive power-of-two widths >= SIMD lane count, so scalar remainder loops are unreachable."
+  ],
+  "avx2": "x86_64 -mavx2 under Rosetta; no native x86 timings",
+  "avx512": "Native compile check and SIMDe 0.8.2 correctness model; no hardware timings",
+  "files": {
+    "performance-20261011-compile-neon.csv": {
+      "paired_rows": 325,
+      "geomean_speedup": 1.0225046277338137,
+      "benchmark": "neon",
+      "sizes": [
+        64,
+        262144
+      ],
+      "runs": 5,
+      "reps": 21,
+      "warmup": 10,
+      "operations": [
+        "add-assign",
+        "conv",
+        "conv-tail",
+        "conv-trunc",
+        "div",
+        "div-small",
+        "divmod",
+        "eval",
+        "exp",
+        "exp-linear",
+        "inv",
+        "inv-linear",
+        "inv-series",
+        "inv-short",
+        "log",
+        "mod",
+        "ntt-forward",
+        "ntt-inverse",
+        "pow",
+        "pow-linear",
+        "pow-short",
+        "scale",
+        "skinny",
+        "sqrt",
+        "square"
+      ]
+    },
+    "performance-20261011-compile-gcc.csv": {
+      "paired_rows": 88,
+      "geomean_speedup": 1.0031139684584482,
+      "benchmark": "gcc",
+      "sizes": [
+        1024,
+        131072
+      ],
+      "runs": 3,
+      "reps": 17,
+      "warmup": 7,
+      "operations": [
+        "conv",
+        "conv-tail",
+        "conv-trunc",
+        "exp",
+        "inv",
+        "log",
+        "ntt-forward",
+        "ntt-inverse",
+        "pow",
+        "sqrt",
+        "square"
+      ]
+    },
+    "performance-20261011-compile-avx2.csv": {
+      "paired_rows": 275,
+      "geomean_speedup": 1.0081942970754252,
+      "benchmark": "avx2",
+      "sizes": [
+        64,
+        65536
+      ],
+      "runs": 3,
+      "reps": 17,
+      "warmup": 7,
+      "operations": [
+        "add-assign",
+        "conv",
+        "conv-tail",
+        "conv-trunc",
+        "div",
+        "div-small",
+        "divmod",
+        "eval",
+        "exp",
+        "exp-linear",
+        "inv",
+        "inv-linear",
+        "inv-series",
+        "inv-short",
+        "log",
+        "mod",
+        "ntt-forward",
+        "ntt-inverse",
+        "pow",
+        "pow-linear",
+        "pow-short",
+        "scale",
+        "skinny",
+        "sqrt",
+        "square"
+      ]
+    },
+    "performance-20261011-compile-full.csv": {
+      "paired_rows": 77,
+      "geomean_speedup": 0.9943173737554947,
+      "benchmark": "full",
+      "sizes": [
+        1024,
+        65536
+      ],
+      "runs": 3,
+      "reps": 17,
+      "warmup": 7,
+      "operations": [
+        "conv",
+        "conv-tail",
+        "conv-trunc",
+        "exp",
+        "inv",
+        "log",
+        "ntt-forward",
+        "ntt-inverse",
+        "pow",
+        "sqrt",
+        "square"
+      ]
+    },
+    "performance-20261011-compile-crt.csv": {
+      "paired_rows": 81,
+      "geomean_speedup": 1.0302827597656945,
+      "benchmark": "crt",
+      "sizes": [
+        256,
+        65536
+      ],
+      "runs": 3,
+      "reps": 17,
+      "warmup": 7,
+      "operations": [
+        "conv",
+        "conv-tail",
+        "conv-trunc",
+        "exp",
+        "inv",
+        "log",
+        "pow",
+        "sqrt",
+        "square"
+      ]
+    },
+    "performance-20261011-compile-crt-one.csv": {
+      "paired_rows": 27,
+      "geomean_speedup": 1.0242889987579566,
+      "benchmark": "crt-one",
+      "sizes": [
+        256,
+        65536
+      ],
+      "runs": 3,
+      "reps": 17,
+      "warmup": 7,
+      "operations": [
+        "conv",
+        "conv-trunc",
+        "square"
+      ]
+    },
+    "performance-20261011-compile-crt-two.csv": {
+      "paired_rows": 27,
+      "geomean_speedup": 1.0390472539574018,
+      "benchmark": "crt-two",
+      "sizes": [
+        256,
+        65536
+      ],
+      "runs": 3,
+      "reps": 17,
+      "warmup": 7,
+      "operations": [
+        "conv",
+        "conv-trunc",
+        "square"
+      ]
+    },
+    "performance-20261011-compile-neon-large.csv": {
+      "paired_rows": 24,
+      "geomean_speedup": 1.0105177323084347,
+      "benchmark": "neon",
+      "sizes": [
+        524288,
+        1048576
+      ],
+      "runs": 3,
+      "reps": 9,
+      "warmup": 4,
+      "operations": [
+        "conv",
+        "conv-tail",
+        "conv-trunc",
+        "exp",
+        "inv",
+        "log",
+        "ntt-forward",
+        "ntt-inverse",
+        "pow",
+        "skinny",
+        "sqrt",
+        "square"
+      ]
+    },
+    "performance-20261011-compile-recheck-avx2-div.csv": {
+      "paired_rows": 1,
+      "purpose": "Repeat every primary-scan regression >5% with baseline >=5 us; 9 alternating runs, 101 reps, 20 warmups.",
+      "sizes": [
+        16384,
+        16384
+      ],
+      "runs": 9,
+      "reps": 101,
+      "warmup": 20,
+      "operations": [
+        "div"
+      ]
+    },
+    "performance-20261011-compile-recheck-avx2-eval.csv": {
+      "paired_rows": 1,
+      "purpose": "Repeat every primary-scan regression >5% with baseline >=5 us; 9 alternating runs, 101 reps, 20 warmups.",
+      "sizes": [
+        65536,
+        65536
+      ],
+      "runs": 9,
+      "reps": 101,
+      "warmup": 20,
+      "operations": [
+        "eval"
+      ]
+    },
+    "performance-20261011-compile-recheck-full-ntt.csv": {
+      "paired_rows": 3,
+      "purpose": "Repeat every primary-scan regression >5% with baseline >=5 us; 9 alternating runs, 101 reps, 20 warmups.",
+      "sizes": [
+        65536,
+        65536
+      ],
+      "runs": 9,
+      "reps": 101,
+      "warmup": 20,
+      "operations": [
+        "inv",
+        "ntt-forward",
+        "ntt-inverse"
+      ]
+    },
+    "performance-20261011-compile-recheck-full-series.csv": {
+      "paired_rows": 3,
+      "purpose": "Repeat every primary-scan regression >5% with baseline >=5 us; 9 alternating runs, 101 reps, 20 warmups.",
+      "sizes": [
+        32768,
+        32768
+      ],
+      "runs": 9,
+      "reps": 101,
+      "warmup": 20,
+      "operations": [
+        "exp",
+        "pow",
+        "sqrt"
+      ]
+    },
+    "performance-20261011-compile-recheck-full-tail.csv": {
+      "paired_rows": 1,
+      "purpose": "Repeat every primary-scan regression >5% with baseline >=5 us; 9 alternating runs, 101 reps, 20 warmups.",
+      "sizes": [
+        16384,
+        16384
+      ],
+      "runs": 9,
+      "reps": 101,
+      "warmup": 20,
+      "operations": [
+        "conv-tail"
+      ]
+    },
+    "performance-20261011-compile-recheck-neon.csv": {
+      "paired_rows": 2,
+      "purpose": "Repeat every primary-scan regression >5% with baseline >=5 us; 9 alternating runs, 101 reps, 20 warmups.",
+      "sizes": [
+        262144,
+        262144
+      ],
+      "runs": 9,
+      "reps": 101,
+      "warmup": 20,
+      "operations": [
+        "conv",
+        "inv-short"
+      ]
+    }
+  },
+  "paired_rows": 935,
+  "compile_data": [
+    "compile-20261011-neon.csv",
+    "compile-20261011-avx2.csv",
+    "compile-20261011-single.csv"
+  ],
+  "header_sha256": [
+    "b83b4378eed2d03fb71b462387279d7ab4f553b1f0779548a50cf25a7e1212e5",
+    "2633696ac5bca85cf0cea7528f00870109486dee75608e4001c952c2def0830f"
+  ],
+  "runtime_benchmarks": {
+    "neon": {
+      "compiler": "Apple Clang 21",
+      "mod": 998244353,
+      "root": 3,
+      "flags": []
+    },
+    "avx2": {
+      "compiler": "Apple Clang 21",
+      "mod": 998244353,
+      "root": 3,
+      "flags": [
+        "-arch",
+        "x86_64",
+        "-mavx2"
+      ]
+    },
+    "gcc": {
+      "compiler": "Homebrew GCC 16.1.0",
+      "mod": 998244353,
+      "root": 3,
+      "flags": []
+    },
+    "full": {
+      "compiler": "Apple Clang 21",
+      "mod": 1224736769,
+      "root": 3,
+      "flags": []
+    },
+    "crt": {
+      "compiler": "Apple Clang 21",
+      "mod": 1000000007,
+      "root": 0,
+      "flags": []
+    },
+    "crt-one": {
+      "compiler": "Apple Clang 21",
+      "mod": 3,
+      "root": 0,
+      "flags": []
+    },
+    "crt-two": {
+      "compiler": "Apple Clang 21",
+      "mod": 100003,
+      "root": 0,
+      "flags": []
+    }
+  },
+  "binary_bytes": {
+    "neon": {
+      "before": 350104,
+      "after": 300488
+    },
+    "avx2": {
+      "before": 483440,
+      "after": 369960
+    },
+    "gcc": {
+      "before": 376568,
+      "after": 371176
+    }
+  },
+  "validation": {
+    "maintenance_headers": [
+      "NEON",
+      "NEON -march=native",
+      "ASan + UBSan",
+      "AVX2 under Rosetta",
+      "scalar x86_64 under Rosetta",
+      "AVX-512 SIMDe 0.8.2"
+    ],
+    "single_header": "Same complete six-configuration matrix passed",
+    "tests_per_configuration": 81,
+    "matrix_passes": 972,
+    "gcc": "All 81 checks passed with GCC 16.1.0 at -O2",
+    "cmake": "Release build passed with no warnings; all five CTest executables passed",
+    "amalgamation": "17 tests passed; both distributions passed --check",
+    "avx512": "Native AVX-512F/VL object compilation passed; hardware timing unavailable",
+    "x86_distribution": "fastpoly-x86.hpp: public convolution and inverse APIs passed under Rosetta AVX2 for 998244353 and 1000000007",
+    "gcc_warnings": {
+      "before": [
+        "warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+        "warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+        "warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+        "warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]"
+      ],
+      "after": [
+        "warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+        "warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+        "warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+        "warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]"
+      ],
+      "same_messages": true
+    }
+  },
+  "runtime_result": "Every paired output hash matches. No reproducible runtime regression; all 11 primary outliers retested at speedups 0.995886..1.015547.",
+  "artifact_sha256": {
+    "fastpoly.hpp": "74182cb62f86b31862fd0b0f69be3518aba13f0d776a21f6cd21e9ee33fcae1f",
+    "fastpoly-x86.hpp": "23569620d8322bdd02b649700f89888604de3e7afb3d31a86ecb84415fc26b5c",
+    "scripts/compare-compile.py": "44b73cf4f627bdc86db4f7eebef4e9197c681f5ba3e398a29330528cf4f7ec94"
+  }
+}

@@ -1,0 +1,2 @@
+backend,operation,size,before_ms,after_ms,speedup,checksum,runs,reps,warmup
+avx2,div,16384,1.347791000,1.336500000,1.008448,67cb43c0e2cc8dfc,9,101,20

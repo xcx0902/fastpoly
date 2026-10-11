@@ -1,0 +1,206 @@
+
+== AVX-512 portable model | test_modint ==
+[ RUN  ] modint_998244353
+  field arithmetic (998244353, mod=998244353) ok
+[  OK  ] modint_998244353
+[ RUN  ] modint_1004535809
+  field arithmetic (1004535809, mod=1004535809) ok
+[  OK  ] modint_1004535809
+[ RUN  ] modint_469762049
+  field arithmetic (469762049, mod=469762049) ok
+[  OK  ] modint_469762049
+[ RUN  ] modint_167772161
+  field arithmetic (167772161, mod=167772161) ok
+[  OK  ] modint_167772161
+[ RUN  ] modint_754974721
+  field arithmetic (754974721, mod=754974721) ok
+[  OK  ] modint_754974721
+[ RUN  ] modint_1224736769
+  field arithmetic (1224736769, mod=1224736769) ok
+[  OK  ] modint_1224736769
+[ RUN  ] modint_sqrt_tes
+[  OK  ] modint_sqrt_tes
+[ RUN  ] modint_sqrt_p34
+[  OK  ] modint_sqrt_p34
+[ RUN  ] modint_sqrt_p34b
+[  OK  ] modint_sqrt_p34b
+[ RUN  ] simd_kernels
+  simd kernels (avx512, 16 lanes) ok
+[  OK  ] simd_kernels
+[ RUN  ] simd_kernels_big
+  simd kernels (avx512, 16 lanes) ok
+[  OK  ] simd_kernels_big
+[ RUN  ] fixed_simd_multipliers
+[  OK  ] fixed_simd_multipliers
+[ RUN  ] simd_chunk_layout
+[  OK  ] simd_chunk_layout
+[ RUN  ] simd_wide_fixed_inputs
+[  OK  ] simd_wide_fixed_inputs
+
+== 14 tests passed ==
+
+== AVX-512 portable model | test_ntt ==
+[ RUN  ] ntt_mod998244353
+  modulus 998244353 ok
+[  OK  ] ntt_mod998244353
+[ RUN  ] ntt_mod1004535809
+  modulus 1004535809 ok
+[  OK  ] ntt_mod1004535809
+[ RUN  ] ntt_mod469762049
+  modulus 469762049 ok
+[  OK  ] ntt_mod469762049
+[ RUN  ] ntt_mod167772161
+  modulus 167772161 ok
+[  OK  ] ntt_mod167772161
+[ RUN  ] ntt_mod754974721
+  modulus 754974721 ok
+[  OK  ] ntt_mod754974721
+[ RUN  ] ntt_mod1224736769
+  modulus 1224736769 ok
+[  OK  ] ntt_mod1224736769
+[ RUN  ] ntt_near_lazy_limit
+  modulus 1073479681 ok
+[  OK  ] ntt_near_lazy_limit
+[ RUN  ] ntt_near_signed_limit
+  modulus 2013265921 ok
+[  OK  ] ntt_near_signed_limit
+[ RUN  ] ntt_small_sizes
+[  OK  ] ntt_small_sizes
+[ RUN  ] ntt_large_small_m_kernels
+[  OK  ] ntt_large_small_m_kernels
+[ RUN  ] ntt_plan_rejects_bad_sizes
+[  OK  ] ntt_plan_rejects_bad_sizes
+[ RUN  ] ntt_plan_is_cached
+[  OK  ] ntt_plan_is_cached
+[ RUN  ] ntt_plan_value_semantics
+[  OK  ] ntt_plan_value_semantics
+[ RUN  ] ntt_constant_and_impulse
+[  OK  ] ntt_constant_and_impulse
+[ RUN  ] ntt_lazy_contract_all_moduli
+[  OK  ] ntt_lazy_contract_all_moduli
+[ RUN  ] ntt_prefix_and_middle_outputs
+[  OK  ] ntt_prefix_and_middle_outputs
+[ RUN  ] ntt_concurrent_cold_plans
+[  OK  ] ntt_concurrent_cold_plans
+[ RUN  ] ntt_next_pow2_boundaries
+[  OK  ] ntt_next_pow2_boundaries
+
+== 18 tests passed ==
+
+== AVX-512 portable model | test_poly ==
+[ RUN  ] poly_identities_mod469762049
+  series identities over 469762049 ok
+[  OK  ] poly_identities_mod469762049
+[ RUN  ] poly_identities_mod167772161
+  series identities over 167772161 ok
+[  OK  ] poly_identities_mod167772161
+[ RUN  ] poly_identities_mod754974721
+  series identities over 754974721 ok
+[  OK  ] poly_identities_mod754974721
+[ RUN  ] poly_identities_mod1224736769
+  series identities over 1224736769 ok
+[  OK  ] poly_identities_mod1224736769
+[ RUN  ] poly_identities_mod1004535809
+  series identities over 1004535809 ok
+[  OK  ] poly_identities_mod1004535809
+[ RUN  ] poly_basic_ops
+[  OK  ] poly_basic_ops
+[ RUN  ] poly_convolution
+[  OK  ] poly_convolution
+[ RUN  ] poly_inverse
+[  OK  ] poly_inverse
+[ RUN  ] poly_log_exp
+[  OK  ] poly_log_exp
+[ RUN  ] poly_exp_derivative_identity
+[  OK  ] poly_exp_derivative_identity
+[ RUN  ] poly_sqrt
+[  OK  ] poly_sqrt
+[ RUN  ] poly_pow
+[  OK  ] poly_pow
+[ RUN  ] poly_divmod
+[  OK  ] poly_divmod
+[ RUN  ] poly_class_api
+[  OK  ] poly_class_api
+[ RUN  ] poly_large_sizes
+[  OK  ] poly_large_sizes
+[ RUN  ] poly_large_series_crosscheck
+  large series cross-check ok
+[  OK  ] poly_large_series_crosscheck
+[ RUN  ] poly_optimized_boundaries_all_moduli
+[  OK  ] poly_optimized_boundaries_all_moduli
+[ RUN  ] poly_paired_convolution_boundaries
+[  OK  ] poly_paired_convolution_boundaries
+[ RUN  ] poly_inverse_tables_and_linear_series
+[  OK  ] poly_inverse_tables_and_linear_series
+[ RUN  ] poly_inplace_arithmetic_aliases
+[  OK  ] poly_inplace_arithmetic_aliases
+[ RUN  ] poly_division_dispatch_boundaries
+[  OK  ] poly_division_dispatch_boundaries
+[ RUN  ] poly_blocked_evaluation_all_moduli
+[  OK  ] poly_blocked_evaluation_all_moduli
+
+== 22 tests passed ==
+
+== AVX-512 portable model | test_prime_poly ==
+[ RUN  ] prime_modint
+[  OK  ] prime_modint
+[ RUN  ] prime_convolution
+[  OK  ] prime_convolution
+[ RUN  ] prime_adaptive_crt_and_middle_products
+[  OK  ] prime_adaptive_crt_and_middle_products
+[ RUN  ] prime_cyclic_tail_at_native_root_limit
+[  OK  ] prime_cyclic_tail_at_native_root_limit
+[ RUN  ] prime_crt_scratch_warm_reuse
+[  OK  ] prime_crt_scratch_warm_reuse
+[ RUN  ] prime_series
+[  OK  ] prime_series
+[ RUN  ] prime_large_series
+[  OK  ] prime_large_series
+[ RUN  ] prime_small_characteristic_contracts
+[  OK  ] prime_small_characteristic_contracts
+[ RUN  ] prime_poly_method_api
+[  OK  ] prime_poly_method_api
+
+== 9 tests passed ==
+
+== AVX-512 portable model | test_memory ==
+[ RUN  ] scratch_alignment_and_size_classes
+[  OK  ] scratch_alignment_and_size_classes
+[ RUN  ] persistent_aligned_storage_is_independent_of_scratch_cache
+[  OK  ] persistent_aligned_storage_is_independent_of_scratch_cache
+[ RUN  ] scratch_nested_and_moved_ownership
+[  OK  ] scratch_nested_and_moved_ownership
+[ RUN  ] scratch_overflow_has_strong_exception_guarantee
+[  OK  ] scratch_overflow_has_strong_exception_guarantee
+[ RUN  ] scratch_warm_reuse_and_cache_bounds
+[  OK  ] scratch_warm_reuse_and_cache_bounds
+[ RUN  ] scratch_purge_preserves_active_buffers
+[  OK  ] scratch_purge_preserves_active_buffers
+[ RUN  ] scratch_cross_thread_move_outlives_allocating_thread
+[  OK  ] scratch_cross_thread_move_outlives_allocating_thread
+[ RUN  ] scratch_reset_does_not_initialize_a_virgin_thread_cache
+[  OK  ] scratch_reset_does_not_initialize_a_virgin_thread_cache
+[ RUN  ] scratch_late_tls_and_static_destruction
+[  OK  ] scratch_late_tls_and_static_destruction
+[ RUN  ] scratch_thread_local_isolation
+[  OK  ] scratch_thread_local_isolation
+[ RUN  ] scratch_reused_series_padding_all_moduli
+[  OK  ] scratch_reused_series_padding_all_moduli
+[ RUN  ] poly_short_power_large_truncation
+[  OK  ] poly_short_power_large_truncation
+[ RUN  ] poly_small_divisor_large_dividend
+[  OK  ] poly_small_divisor_large_dividend
+[ RUN  ] poly_short_padded_inverse_all_moduli
+[  OK  ] poly_short_padded_inverse_all_moduli
+[ RUN  ] poly_large_linear_power_all_moduli
+[  OK  ] poly_large_linear_power_all_moduli
+[ RUN  ] poly_linear_power_characteristic_boundary
+[  OK  ] poly_linear_power_characteristic_boundary
+[ RUN  ] poly_linear_padded_exp_all_moduli
+[  OK  ] poly_linear_padded_exp_all_moduli
+[ RUN  ] poly_cold_series_scratch_allocations_are_constant
+[  OK  ] poly_cold_series_scratch_allocations_are_constant
+
+== 18 tests passed ==
+
+AVX-512 MODEL PASSED

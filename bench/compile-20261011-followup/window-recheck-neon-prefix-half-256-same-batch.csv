@@ -1,0 +1,2 @@
+backend,operation,size,before_ns,after_ns,speedup,checksum,runs,reps,warmup,loops
+neon,prefix-half,256,222.534179688,220.296875000,1.010156,568707183db25d69,9,101,30,1024

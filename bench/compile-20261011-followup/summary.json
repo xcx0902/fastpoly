@@ -1,0 +1,1049 @@
+{
+  "date": "2026-10-11",
+  "timezone": "Asia/Shanghai",
+  "baseline_commit": "9f0dad9b0e52dfcb0499e57cb44a12f4b7032466",
+  "baseline_patch": "baseline.patch",
+  "baseline_patch_sha256": "5138b0a6bc3dcce243edc10f74573e96ba9ab1c99d2825276fa1790f69fbe0b1",
+  "baseline_is_initial_optimized_working_tree": true,
+  "header_sha256": [
+    "2633696ac5bca85cf0cea7528f00870109486dee75608e4001c952c2def0830f",
+    "a7ea40dbaac69ed6caa2e15f1c0f4298ed0b1de51bfcf5b8baa51b77b0bf1233"
+  ],
+  "architecture": "arm64",
+  "os": "macOS-26.7.1-arm64-arm-64bit",
+  "compilers": {
+    "clang++": "Apple clang version 21.0.0 (clang-2100.3.34.2)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+    "/opt/homebrew/bin/g++-16": "g++-16 (Homebrew GCC 16.1.0) 16.1.0\nCopyright (C) 2026 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n"
+  },
+  "compile_method": "Serial clean -O2 object compilations, alternating order for three rounds. Medians include parsing, instantiation, optimization and code generation; no link. CPU times are recorded separately. Both sides use the same current source.",
+  "runtime_method": "Serial alternating processes, median of per-process repetition medians; full-output checksums. Input setup, hashing and destruction are not timed. Main thread uses QOS_CLASS_USER_INITIATED via benchmark-qos.hpp.",
+  "limits": [
+    "AVX2 runtime is under Rosetta on Apple Silicon, not native x86 hardware.",
+    "AVX-512 is checked by native compilation and a SIMDe 0.8.2 correctness model, not timed.",
+    "Results describe these workloads and compilers. Individual very short operations in the main benchmark are subject to clock quantization; NTT batch data is separate."
+  ],
+  "compile": {
+    "compile-avx2.csv": {
+      "cases": [
+        {
+          "case": "include",
+          "before_s": "0.545707",
+          "after_s": "0.518541",
+          "speedup": "1.052390",
+          "before_bytes": "208",
+          "after_bytes": "208",
+          "runs": "3",
+          "before_cpu_s": "0.530000",
+          "after_cpu_s": "0.510000",
+          "cpu_speedup": "1.039216"
+        },
+        {
+          "case": "ntt",
+          "before_s": "0.933519",
+          "after_s": "0.850376",
+          "speedup": "1.097772",
+          "before_bytes": "54656",
+          "after_bytes": "46152",
+          "runs": "3",
+          "before_cpu_s": "0.920000",
+          "after_cpu_s": "0.840000",
+          "cpu_speedup": "1.095238"
+        },
+        {
+          "case": "conv",
+          "before_s": "2.542633",
+          "after_s": "2.411858",
+          "speedup": "1.054222",
+          "before_bytes": "273592",
+          "after_bytes": "255176",
+          "runs": "3",
+          "before_cpu_s": "2.510000",
+          "after_cpu_s": "2.350000",
+          "cpu_speedup": "1.068085"
+        },
+        {
+          "case": "series",
+          "before_s": "2.846807",
+          "after_s": "2.630871",
+          "speedup": "1.082078",
+          "before_bytes": "318360",
+          "after_bytes": "300440",
+          "runs": "3",
+          "before_cpu_s": "2.830000",
+          "after_cpu_s": "2.600000",
+          "cpu_speedup": "1.088462"
+        },
+        {
+          "case": "test_ntt",
+          "before_s": "7.163796",
+          "after_s": "6.118326",
+          "speedup": "1.170875",
+          "before_bytes": "883720",
+          "after_bytes": "769920",
+          "runs": "3",
+          "before_cpu_s": "7.100000",
+          "after_cpu_s": "6.070000",
+          "cpu_speedup": "1.169687"
+        },
+        {
+          "case": "test_poly",
+          "before_s": "10.068413",
+          "after_s": "9.196695",
+          "speedup": "1.094786",
+          "before_bytes": "1225224",
+          "after_bytes": "1134064",
+          "runs": "3",
+          "before_cpu_s": "9.970000",
+          "after_cpu_s": "9.080000",
+          "cpu_speedup": "1.098018"
+        },
+        {
+          "case": "test_prime_poly",
+          "before_s": "12.729658",
+          "after_s": "10.603369",
+          "speedup": "1.200530",
+          "before_bytes": "1486488",
+          "after_bytes": "1283872",
+          "runs": "3",
+          "before_cpu_s": "12.550000",
+          "after_cpu_s": "10.460000",
+          "cpu_speedup": "1.199809"
+        },
+        {
+          "case": "bench",
+          "before_s": "3.920367",
+          "after_s": "3.671901",
+          "speedup": "1.067667",
+          "before_bytes": "413672",
+          "after_bytes": "392328",
+          "runs": "3",
+          "before_cpu_s": "3.810000",
+          "after_cpu_s": "3.590000",
+          "cpu_speedup": "1.061281"
+        }
+      ],
+      "test_and_bench_total": {
+        "cases": [
+          "test_ntt",
+          "test_poly",
+          "test_prime_poly",
+          "bench"
+        ],
+        "before_s": 33.882234,
+        "after_s": 29.590291,
+        "time_reduction_percent": 12.667237349225546,
+        "before_cpu_s": 33.43,
+        "after_cpu_s": 29.200000000000003,
+        "cpu_reduction_percent": 12.653305414298522
+      }
+    },
+    "compile-gcc.csv": {
+      "cases": [
+        {
+          "case": "include",
+          "before_s": "0.601633",
+          "after_s": "0.590779",
+          "speedup": "1.018373",
+          "before_bytes": "336",
+          "after_bytes": "336",
+          "runs": "3",
+          "before_cpu_s": "0.590000",
+          "after_cpu_s": "0.580000",
+          "cpu_speedup": "1.017241"
+        },
+        {
+          "case": "ntt",
+          "before_s": "1.261969",
+          "after_s": "1.188956",
+          "speedup": "1.061409",
+          "before_bytes": "38512",
+          "after_bytes": "34752",
+          "runs": "3",
+          "before_cpu_s": "1.240000",
+          "after_cpu_s": "1.180000",
+          "cpu_speedup": "1.050847"
+        },
+        {
+          "case": "conv",
+          "before_s": "4.379675",
+          "after_s": "3.537225",
+          "speedup": "1.238167",
+          "before_bytes": "191536",
+          "after_bytes": "156648",
+          "runs": "3",
+          "before_cpu_s": "4.310000",
+          "after_cpu_s": "3.500000",
+          "cpu_speedup": "1.231429"
+        },
+        {
+          "case": "series",
+          "before_s": "5.374746",
+          "after_s": "4.515279",
+          "speedup": "1.190346",
+          "before_bytes": "235800",
+          "after_bytes": "198184",
+          "runs": "3",
+          "before_cpu_s": "5.320000",
+          "after_cpu_s": "4.480000",
+          "cpu_speedup": "1.187500"
+        },
+        {
+          "case": "test_ntt",
+          "before_s": "13.169698",
+          "after_s": "11.052554",
+          "speedup": "1.191552",
+          "before_bytes": "613216",
+          "after_bytes": "511488",
+          "runs": "3",
+          "before_cpu_s": "13.060000",
+          "after_cpu_s": "10.950000",
+          "cpu_speedup": "1.192694"
+        },
+        {
+          "case": "test_poly",
+          "before_s": "20.398085",
+          "after_s": "18.299562",
+          "speedup": "1.114676",
+          "before_bytes": "944288",
+          "after_bytes": "843784",
+          "runs": "3",
+          "before_cpu_s": "20.230000",
+          "after_cpu_s": "18.110000",
+          "cpu_speedup": "1.117062"
+        },
+        {
+          "case": "test_prime_poly",
+          "before_s": "24.914956",
+          "after_s": "21.060020",
+          "speedup": "1.183045",
+          "before_bytes": "1105800",
+          "after_bytes": "922024",
+          "runs": "3",
+          "before_cpu_s": "24.660000",
+          "after_cpu_s": "20.810000",
+          "cpu_speedup": "1.185007"
+        },
+        {
+          "case": "bench",
+          "before_s": "7.251861",
+          "after_s": "6.626949",
+          "speedup": "1.094299",
+          "before_bytes": "322480",
+          "after_bytes": "289888",
+          "runs": "3",
+          "before_cpu_s": "7.170000",
+          "after_cpu_s": "6.520000",
+          "cpu_speedup": "1.099693"
+        }
+      ],
+      "test_and_bench_total": {
+        "cases": [
+          "test_ntt",
+          "test_poly",
+          "test_prime_poly",
+          "bench"
+        ],
+        "before_s": 65.7346,
+        "after_s": 57.039085,
+        "time_reduction_percent": 13.228216190560227,
+        "before_cpu_s": 65.12,
+        "after_cpu_s": 56.39,
+        "cpu_reduction_percent": 13.406019656019662
+      }
+    },
+    "compile-mod1000000007.csv": {
+      "cases": [
+        {
+          "case": "conv",
+          "before_s": "1.571123",
+          "after_s": "1.301973",
+          "speedup": "1.206725",
+          "before_bytes": "143144",
+          "after_bytes": "118296",
+          "runs": "3",
+          "before_cpu_s": "1.560000",
+          "after_cpu_s": "1.280000",
+          "cpu_speedup": "1.218750"
+        },
+        {
+          "case": "series",
+          "before_s": "1.854634",
+          "after_s": "1.568777",
+          "speedup": "1.182217",
+          "before_bytes": "180576",
+          "after_bytes": "151344",
+          "runs": "3",
+          "before_cpu_s": "1.840000",
+          "after_cpu_s": "1.550000",
+          "cpu_speedup": "1.187097"
+        }
+      ]
+    },
+    "compile-mod100003.csv": {
+      "cases": [
+        {
+          "case": "conv",
+          "before_s": "1.573480",
+          "after_s": "1.302568",
+          "speedup": "1.207983",
+          "before_bytes": "143744",
+          "after_bytes": "119008",
+          "runs": "3",
+          "before_cpu_s": "1.560000",
+          "after_cpu_s": "1.290000",
+          "cpu_speedup": "1.209302"
+        },
+        {
+          "case": "series",
+          "before_s": "1.849661",
+          "after_s": "1.589044",
+          "speedup": "1.164009",
+          "before_bytes": "180976",
+          "after_bytes": "151816",
+          "runs": "3",
+          "before_cpu_s": "1.840000",
+          "after_cpu_s": "1.570000",
+          "cpu_speedup": "1.171975"
+        }
+      ]
+    },
+    "compile-mod2.csv": {
+      "cases": [
+        {
+          "case": "conv",
+          "before_s": "1.477959",
+          "after_s": "0.793074",
+          "speedup": "1.863583",
+          "before_bytes": "128376",
+          "after_bytes": "45448",
+          "runs": "3",
+          "before_cpu_s": "1.450000",
+          "after_cpu_s": "0.790000",
+          "cpu_speedup": "1.835443"
+        },
+        {
+          "case": "series",
+          "before_s": "1.686377",
+          "after_s": "0.964405",
+          "speedup": "1.748619",
+          "before_bytes": "151992",
+          "after_bytes": "65336",
+          "runs": "3",
+          "before_cpu_s": "1.670000",
+          "after_cpu_s": "0.960000",
+          "cpu_speedup": "1.739583"
+        }
+      ]
+    },
+    "compile-mod3.csv": {
+      "cases": [
+        {
+          "case": "conv",
+          "before_s": "1.580494",
+          "after_s": "0.821576",
+          "speedup": "1.923735",
+          "before_bytes": "143528",
+          "after_bytes": "46328",
+          "runs": "3",
+          "before_cpu_s": "1.570000",
+          "after_cpu_s": "0.800000",
+          "cpu_speedup": "1.962500"
+        },
+        {
+          "case": "series",
+          "before_s": "1.866559",
+          "after_s": "1.077282",
+          "speedup": "1.732656",
+          "before_bytes": "173288",
+          "after_bytes": "74480",
+          "runs": "3",
+          "before_cpu_s": "1.860000",
+          "after_cpu_s": "1.050000",
+          "cpu_speedup": "1.771429"
+        }
+      ]
+    },
+    "compile-neon.csv": {
+      "cases": [
+        {
+          "case": "include",
+          "before_s": "0.493749",
+          "after_s": "0.464960",
+          "speedup": "1.061916",
+          "before_bytes": "336",
+          "after_bytes": "336",
+          "runs": "3",
+          "before_cpu_s": "0.490000",
+          "after_cpu_s": "0.460000",
+          "cpu_speedup": "1.065217"
+        },
+        {
+          "case": "ntt",
+          "before_s": "0.741321",
+          "after_s": "0.705323",
+          "speedup": "1.051037",
+          "before_bytes": "33840",
+          "after_bytes": "30000",
+          "runs": "3",
+          "before_cpu_s": "0.730000",
+          "after_cpu_s": "0.690000",
+          "cpu_speedup": "1.057971"
+        },
+        {
+          "case": "conv",
+          "before_s": "1.659132",
+          "after_s": "1.570951",
+          "speedup": "1.056132",
+          "before_bytes": "166568",
+          "after_bytes": "152088",
+          "runs": "3",
+          "before_cpu_s": "1.640000",
+          "after_cpu_s": "1.560000",
+          "cpu_speedup": "1.051282"
+        },
+        {
+          "case": "series",
+          "before_s": "2.011666",
+          "after_s": "1.897008",
+          "speedup": "1.060442",
+          "before_bytes": "208096",
+          "after_bytes": "193224",
+          "runs": "3",
+          "before_cpu_s": "1.980000",
+          "after_cpu_s": "1.880000",
+          "cpu_speedup": "1.053191"
+        },
+        {
+          "case": "test_ntt",
+          "before_s": "4.728275",
+          "after_s": "4.123307",
+          "speedup": "1.146719",
+          "before_bytes": "573576",
+          "after_bytes": "510536",
+          "runs": "3",
+          "before_cpu_s": "4.690000",
+          "after_cpu_s": "4.090000",
+          "cpu_speedup": "1.146699"
+        },
+        {
+          "case": "test_poly",
+          "before_s": "8.348582",
+          "after_s": "7.957293",
+          "speedup": "1.049174",
+          "before_bytes": "940512",
+          "after_bytes": "871816",
+          "runs": "3",
+          "before_cpu_s": "8.290000",
+          "after_cpu_s": "7.790000",
+          "cpu_speedup": "1.064185"
+        },
+        {
+          "case": "test_prime_poly",
+          "before_s": "10.425606",
+          "after_s": "8.802483",
+          "speedup": "1.184394",
+          "before_bytes": "1074720",
+          "after_bytes": "914128",
+          "runs": "3",
+          "before_cpu_s": "10.230000",
+          "after_cpu_s": "8.620000",
+          "cpu_speedup": "1.186775"
+        },
+        {
+          "case": "bench",
+          "before_s": "3.057101",
+          "after_s": "2.891936",
+          "speedup": "1.057112",
+          "before_bytes": "290496",
+          "after_bytes": "274640",
+          "runs": "3",
+          "before_cpu_s": "3.010000",
+          "after_cpu_s": "2.870000",
+          "cpu_speedup": "1.048780"
+        }
+      ],
+      "test_and_bench_total": {
+        "cases": [
+          "test_ntt",
+          "test_poly",
+          "test_prime_poly",
+          "bench"
+        ],
+        "before_s": 26.559564,
+        "after_s": 23.775019,
+        "time_reduction_percent": 10.484151772973382,
+        "before_cpu_s": 26.22,
+        "after_cpu_s": 23.369999999999997,
+        "cpu_reduction_percent": 10.869565217391308
+      }
+    },
+    "compile-single-avx2.csv": {
+      "cases": [
+        {
+          "case": "include",
+          "before_s": "0.517288",
+          "after_s": "0.517594",
+          "speedup": "0.999409",
+          "before_bytes": "208",
+          "after_bytes": "208",
+          "runs": "3",
+          "before_cpu_s": "0.520000",
+          "after_cpu_s": "0.510000",
+          "cpu_speedup": "1.019608"
+        },
+        {
+          "case": "conv",
+          "before_s": "2.514098",
+          "after_s": "2.290221",
+          "speedup": "1.097754",
+          "before_bytes": "269400",
+          "after_bytes": "250504",
+          "runs": "3",
+          "before_cpu_s": "2.470000",
+          "after_cpu_s": "2.270000",
+          "cpu_speedup": "1.088106"
+        },
+        {
+          "case": "series",
+          "before_s": "2.761215",
+          "after_s": "2.567063",
+          "speedup": "1.075632",
+          "before_bytes": "313992",
+          "after_bytes": "295592",
+          "runs": "3",
+          "before_cpu_s": "2.750000",
+          "after_cpu_s": "2.560000",
+          "cpu_speedup": "1.074219"
+        }
+      ]
+    },
+    "compile-single.csv": {
+      "cases": [
+        {
+          "case": "include",
+          "before_s": "0.473361",
+          "after_s": "0.478303",
+          "speedup": "0.989668",
+          "before_bytes": "336",
+          "after_bytes": "336",
+          "runs": "3",
+          "before_cpu_s": "0.460000",
+          "after_cpu_s": "0.470000",
+          "cpu_speedup": "0.978723"
+        },
+        {
+          "case": "conv",
+          "before_s": "1.688615",
+          "after_s": "1.563948",
+          "speedup": "1.079713",
+          "before_bytes": "163144",
+          "after_bytes": "148192",
+          "runs": "3",
+          "before_cpu_s": "1.690000",
+          "after_cpu_s": "1.540000",
+          "cpu_speedup": "1.097403"
+        },
+        {
+          "case": "series",
+          "before_s": "2.031904",
+          "after_s": "1.894467",
+          "speedup": "1.072547",
+          "before_bytes": "204496",
+          "after_bytes": "189144",
+          "runs": "3",
+          "before_cpu_s": "2.010000",
+          "after_cpu_s": "1.880000",
+          "cpu_speedup": "1.069149"
+        }
+      ]
+    }
+  },
+  "runtime": {
+    "runtime-avx2.csv": {
+      "paired_rows": 275,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 1.0026996290442942,
+      "min_speedup": 0.836,
+      "max_speedup": 1.245509,
+      "recheck": false
+    },
+    "runtime-binary.csv": {
+      "paired_rows": 42,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 1.0134258198858983,
+      "min_speedup": 0.909487,
+      "max_speedup": 1.336,
+      "recheck": false
+    },
+    "runtime-crt-one.csv": {
+      "paired_rows": 54,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 0.9876835768753907,
+      "min_speedup": 0.425474,
+      "max_speedup": 1.185826,
+      "recheck": false
+    },
+    "runtime-crt-two.csv": {
+      "paired_rows": 54,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 1.0011815070779198,
+      "min_speedup": 0.965523,
+      "max_speedup": 1.029177,
+      "recheck": false
+    },
+    "runtime-crt.csv": {
+      "paired_rows": 81,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 0.9991451312930109,
+      "min_speedup": 0.95415,
+      "max_speedup": 1.042078,
+      "recheck": false
+    },
+    "runtime-full-avx2.csv": {
+      "paired_rows": 99,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 1.0012870140490728,
+      "min_speedup": 0.958089,
+      "max_speedup": 1.045361,
+      "recheck": false
+    },
+    "runtime-full.csv": {
+      "paired_rows": 121,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 1.0052756246431218,
+      "min_speedup": 0.802885,
+      "max_speedup": 1.089861,
+      "recheck": false
+    },
+    "runtime-gcc.csv": {
+      "paired_rows": 88,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 1.0183494300439988,
+      "min_speedup": 0.969697,
+      "max_speedup": 1.333333,
+      "recheck": false
+    },
+    "runtime-neon-large.csv": {
+      "paired_rows": 24,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 0.9951475379962333,
+      "min_speedup": 0.922066,
+      "max_speedup": 1.027622,
+      "recheck": false
+    },
+    "runtime-neon.csv": {
+      "paired_rows": 325,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 0.9969524000952633,
+      "min_speedup": 0.506024,
+      "max_speedup": 1.196172,
+      "recheck": false
+    },
+    "runtime-recheck-crt-one-conv-32768.csv": {
+      "paired_rows": 1,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 0.991849,
+      "min_speedup": 0.991849,
+      "max_speedup": 0.991849,
+      "recheck": true
+    },
+    "runtime-recheck-crt-one-conv-4096.csv": {
+      "paired_rows": 1,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 1.004812,
+      "min_speedup": 1.004812,
+      "max_speedup": 1.004812,
+      "recheck": true
+    },
+    "runtime-recheck-crt-one-conv-8192.csv": {
+      "paired_rows": 1,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 1.00055,
+      "min_speedup": 1.00055,
+      "max_speedup": 1.00055,
+      "recheck": true
+    },
+    "runtime-recheck-neon-skinny-1048576.csv": {
+      "paired_rows": 1,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 0.997457,
+      "min_speedup": 0.997457,
+      "max_speedup": 0.997457,
+      "recheck": true
+    },
+    "runtime-recheck-neon-skinny-16384.csv": {
+      "paired_rows": 1,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 1.005633,
+      "min_speedup": 1.005633,
+      "max_speedup": 1.005633,
+      "recheck": true
+    }
+  },
+  "batch": {
+    "batch-avx2.csv": {
+      "paired_rows": 20,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 1.0068223320197145,
+      "min_speedup": 0.977565,
+      "max_speedup": 1.03866,
+      "recheck": false
+    },
+    "batch-neon.csv": {
+      "paired_rows": 20,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 1.0042152695009634,
+      "min_speedup": 0.981282,
+      "max_speedup": 1.019124,
+      "recheck": false
+    }
+  },
+  "window": {
+    "window-avx2.csv": {
+      "paired_rows": 27,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 1.0760450480891053,
+      "min_speedup": 0.991519,
+      "max_speedup": 1.531869,
+      "recheck": false
+    },
+    "window-neon.csv": {
+      "paired_rows": 27,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 1.0739916120755124,
+      "min_speedup": 0.968975,
+      "max_speedup": 1.349302,
+      "recheck": false
+    },
+    "window-recheck-neon-prefix-half-256-long-batch.csv": {
+      "paired_rows": 1,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 1.006305,
+      "min_speedup": 1.006305,
+      "max_speedup": 1.006305,
+      "recheck": true
+    },
+    "window-recheck-neon-prefix-half-256-same-batch.csv": {
+      "paired_rows": 1,
+      "all_output_checksums_match": true,
+      "geomean_speedup": 1.010156,
+      "min_speedup": 1.010156,
+      "max_speedup": 1.010156,
+      "recheck": true
+    }
+  },
+  "runtime_primary_paired_rows": 1163,
+  "runtime_primary_geomean_speedup": 1.0016237348880443,
+  "total_runtime_paired_rows": 1264,
+  "outlier_policy": {
+    "main": "Retest every primary speedup <0.95 with baseline >=5 us at 9 rounds, 101 reps, 20 warmups.",
+    "window": "Retest the primary window speedup <0.97 at both original and longer batch lengths, 9 rounds, 101 reps, 30 warmups."
+  },
+  "validation": {
+    "tests-headers.log": {
+      "sha256": "b0226737dc84f650a1648c3fbd7743c97628d27a7714eeef3e96b74edc0fc1bb",
+      "test_counts": [
+        14,
+        18,
+        22,
+        9,
+        18,
+        14,
+        18,
+        22,
+        9,
+        18,
+        14,
+        18,
+        22,
+        9,
+        18,
+        14,
+        18,
+        22,
+        9,
+        18,
+        14,
+        18,
+        22,
+        9,
+        18
+      ]
+    },
+    "tests-single.log": {
+      "sha256": "b0226737dc84f650a1648c3fbd7743c97628d27a7714eeef3e96b74edc0fc1bb",
+      "test_counts": [
+        14,
+        18,
+        22,
+        9,
+        18,
+        14,
+        18,
+        22,
+        9,
+        18,
+        14,
+        18,
+        22,
+        9,
+        18,
+        14,
+        18,
+        22,
+        9,
+        18,
+        14,
+        18,
+        22,
+        9,
+        18
+      ]
+    },
+    "tests-simde.log": {
+      "sha256": "11c89cabbabd3a78ead656e582d91637dc58061cdba900f28b331e1da3bd5c9c",
+      "test_counts": [
+        14,
+        18,
+        22,
+        9,
+        18
+      ]
+    },
+    "tests-simde-single.log": {
+      "sha256": "11c89cabbabd3a78ead656e582d91637dc58061cdba900f28b331e1da3bd5c9c",
+      "test_counts": [
+        14,
+        18,
+        22,
+        9,
+        18
+      ]
+    },
+    "tests-gcc.log": {
+      "sha256": "9693c904f803eef3304486cb00baeb61011e0188e82b5cd97c7b60fc6bd6f53a",
+      "test_counts": [
+        14,
+        18,
+        22,
+        9,
+        18
+      ]
+    },
+    "cmake.log": {
+      "sha256": "ff84e83ae321dc79071cea44e637f5d799cb49edc9fd05d8ce089a4d078f9d03",
+      "test_counts": []
+    },
+    "amalgamate-tests.log": {
+      "sha256": "4cbf079e3ad81990b79a668fcfbcb4acf9ed780c5b2a4a85cf6cb3971927fe5e",
+      "test_counts": []
+    },
+    "avx512.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test_counts": []
+    },
+    "checks.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test_counts": []
+    },
+    "avx512_compile": {
+      "passed": true,
+      "flags": [
+        "-std=c++20",
+        "-O2",
+        "-pthread",
+        "-arch",
+        "x86_64",
+        "-mavx512f",
+        "-mavx512vl"
+      ],
+      "source": "tests/test_ntt.cpp",
+      "hardware_timing": false
+    },
+    "simde_commit": "71fd833d9666141edcd1d3c109a80e228303d8d7",
+    "architecture": "arm64",
+    "os": "macOS-26.7.1-arm64-arm-64bit",
+    "tests_per_configuration": 81,
+    "maintenance_configurations": [
+      "NEON -O2",
+      "NEON -O2 -march=native",
+      "NEON -O1 ASan+UBSan",
+      "x86_64 -O2 AVX2 under Rosetta",
+      "x86_64 -O2 scalar under Rosetta",
+      "AVX-512 -O2 SIMDe 0.8.2 model"
+    ],
+    "single_header_configurations": [
+      "NEON -O2",
+      "NEON -O2 -march=native",
+      "NEON -O1 ASan+UBSan",
+      "x86_64 -O2 AVX2 under Rosetta",
+      "x86_64 -O2 scalar under Rosetta",
+      "AVX-512 -O2 SIMDe 0.8.2 model"
+    ],
+    "matrix_test_passes": 972,
+    "gcc": {
+      "compiler": "/opt/homebrew/bin/g++-16",
+      "flags": [
+        "-std=c++20",
+        "-O2",
+        "-pthread"
+      ],
+      "passed_tests": 81
+    },
+    "cmake": {
+      "build_type": "Release",
+      "release_flags": "-O2 -DNDEBUG",
+      "ctest_executables_passed": 5
+    },
+    "amalgamation": {
+      "generator_tests_passed": 17,
+      "fastpoly.hpp_check": true,
+      "fastpoly-x86.hpp_check": true
+    },
+    "gcc_compile_diagnostics": {
+      "before": [
+        "warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+        "warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+        "warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+        "warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+        "warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+        "warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+        "warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+        "warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+        "warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+        "warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+        "warning: 'void* memmove(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]",
+        "warning: 'void* memcpy(void*, const void*, size_t)' specified bound 18446744073709551612 exceeds maximum object size 9223372036854775807 [-Wstringop-overflow=]"
+      ],
+      "after": []
+    }
+  },
+  "source_sha256": {
+    "include/fastpoly/detail/poly/base.hpp": "da32e728124cc2d7d9cfe612a83d5eaac63fd99be7efe9799082d57ff8e9dba2",
+    "include/fastpoly/detail/poly/basic.hpp": "3c80d80212b363daa586b4edbdb38059564fa6f54fb787fe972ecd312515a952",
+    "include/fastpoly/detail/poly/calculus.hpp": "214b09322620f0db7d491d820c57d2e35cb8996f916d19f444c946860a661cf4",
+    "include/fastpoly/detail/poly/convolution.hpp": "138f62fc2a7761e23483eddf6c9b71d141c1d8f030d070c29e78179fc8a1b7cf",
+    "include/fastpoly/detail/poly/crt_convolution.hpp": "aa49e4634c874a9c5f1530b657b33701c14bd9eeb40ac0d658092229f9d90566",
+    "include/fastpoly/detail/poly/division.hpp": "78c728d14ca51fd741b549ec63efa367cb70b6dfb4f4ea81116ef14dc4117963",
+    "include/fastpoly/detail/poly/exponential.hpp": "9914aa5f235da559de81cc9b824ed3dfaa1be2f9655ebdd5f7244af9854561a3",
+    "include/fastpoly/detail/poly/inverse.hpp": "4fff97084e09f2a49acfd0be6a2350a35bda899e9f8b892982eb5bd8f3cd8d6d",
+    "include/fastpoly/detail/poly/power.hpp": "b5c1e84040e9f3e0cbc96cb985730808b2261f2c6c74d431cb3465671f40958d",
+    "include/fastpoly/detail/poly/square_root.hpp": "6d9c80fd1b7f1c50480abb567c22736a21831f9992d3a5ca3db95c3173de86a0",
+    "include/fastpoly/detail/simd/avx2.hpp": "ccf6b9211ae0cbdf832eb852dbae7d2a7e829f8a0a29b2b231d6041c8258a398",
+    "include/fastpoly/detail/simd/avx512.hpp": "97608b3f20091abd53ed9e72689834767a848757785fa6656d36480161a2cb78",
+    "include/fastpoly/detail/simd/neon.hpp": "7d0aad49f55d241cdae703bb7d33296be868a78ba3d7607d1175a0a818cffb2c",
+    "include/fastpoly/detail/simd/scalar.hpp": "ad3ab3d2f592d6ae7eb1c51010b0d9ec69fd8541b168b1969431b0d0a8d09de0",
+    "include/fastpoly/fastpoly.hpp": "1e098c47932bd9f5a1ba988159816826ea5c0c3dbd9c3c2bbbed36b706a26f8c",
+    "include/fastpoly/memory.hpp": "80f2422312356966cf6be99b8fdc92988ee6089fca8760dee9f177c54fd4749f",
+    "include/fastpoly/modint.hpp": "aba4fe4de7bde641c595048c0122d7455cea054b72ab1dea8aa5d7b34b34b0a5",
+    "include/fastpoly/ntt.hpp": "74a5e6e76fb7845977117e7036133a17606af96fce701950b887988855fe74e1",
+    "include/fastpoly/poly.hpp": "0bda8d127315c54b672de765b5b95cf1558bea4fbc554fbca7ab0e56d54eccbb",
+    "include/fastpoly/simd.hpp": "7fd828c464dbf5a4196521bd8858f4d8fd25192f63e422f984b51c1219c735bc",
+    "tests/test_memory.cpp": "8417acc4142c4ea73e3789ed2a76ab5b00873cddbc94a7a31fa6c8ff7885d749",
+    "tests/test_modint.cpp": "9a53630983f3dd12595bd7e78a3ac921864a050df34d934a3af0f15537e83efc",
+    "tests/test_ntt.cpp": "09aaab4970aa17b5a217072cfef9600bcd472fc81fa4046dd2923512fa20c5ee",
+    "tests/test_poly.cpp": "35fe90d21572fe0282d414f5a826e1a0d3df6d46d9a3850dea2ac9932d2dc51a",
+    "tests/test_prime_poly.cpp": "813fe36f66a5b97e90b9e21dbc409a6041d2e70e30f7cd98973466c9df252d6d",
+    "tests/fp_test.hpp": "066e684def79e71923c5527e9d075a8bdf42513b82eb3d50dd495aaa1df75c64",
+    "bench/bench.cpp": "678480cd64025f9be09d5bfc5d8094a21e7db5dab0f807c9749e1435e2b4360a",
+    "bench/codegen.cpp": "cfb06472805f7b8ec5219cc07c65346580292941c7b1603de6f8ef8da6452223",
+    "scripts/compare-compile.py": "412415a8d82b2345cef0549a29bc7dec3cb55ebc5448e75a993a30a8926274b9",
+    "scripts/compare-bench.py": "5fecfe0ad030fcde268d1ddfebb7eb4abc57e7c82a618241f010bbe1a374b74c",
+    "scripts/amalgamate.py": "3256c47f67cbb453b6e675d35f1260689a9c2a25b9801fa39f441c24640f8060",
+    "scripts/compare-codegen.py": "34f88f71f27b505ddc0592d92c544446a1542210d80d55e374f1d0a02f672093",
+    "fastpoly.hpp": "d3b7db2fde1f7a5b926ec3b40f60725952ccda1f2e5437277bf1fe33573cd213",
+    "fastpoly-x86.hpp": "7504d5e2fa1bf96418ea4d8c9839179e8e26a24dde73ae90e4df992ac240f597",
+    "bench/compile-20261011-followup/ntt-batch.cpp": "29b610750b889b0955b6f20f86640de987ed2f67321f374bab42a9a164e58164",
+    "bench/compile-20261011-followup/ntt-window-batch.cpp": "1bb203e216ebb175761f4425a52326e85789d8bb694f8b59735f0a474a1b1aa0",
+    "bench/compile-20261011-followup/measure-batch.py": "17c015bb6a5e01d7209be29fee4dc986bb01788bc29f84cb7b2431c41008eb0d",
+    "bench/compile-20261011-followup/benchmark-qos.hpp": "983d055f08c835cad7a0d96d02105860cb4df86854bbb19ac81b1ccdf784f490"
+  },
+  "artifact_sha256": {
+    "baseline.patch": "5138b0a6bc3dcce243edc10f74573e96ba9ab1c99d2825276fa1790f69fbe0b1",
+    "batch-avx2.csv": "10404c72a99445e7f0a9e0ccac4e5cd0455f31f16dc847eac50b0e0564707254",
+    "batch-avx2.json": "5b5ca5ddb17044661ae0c185db56a8de6002749009102c65b67f2090ff9249a3",
+    "batch-builds.json": "e69385273f4310ecaf93c8fc169faa484959c3929ab65c59a524580ad21dfb12",
+    "batch-neon.csv": "060b6c04ffd0af84a3d207f598e8a6eae9bc00a99920bad867ac86794992511d",
+    "batch-neon.json": "c9752fd5b9164a3f29452ab088f1838cf109741e94b0d01b82b2dda5b2f73a4f",
+    "benchmark-builds.json": "3dfc6d3dca0697bbb3a2d5a1e5d25a69ddb45f30da1a211496008da5aa28b7f6",
+    "benchmark-qos.hpp": "983d055f08c835cad7a0d96d02105860cb4df86854bbb19ac81b1ccdf784f490",
+    "codegen-avx2.csv": "13448319c8cc0b8a0bbfd6afe4ca4d7f38ee6dfa1c0b4f6830b74e201e3d103b",
+    "codegen-avx512.csv": "a5fb1a84b9a6241cb1ebef3aa5acdcc1edea1204af43c7351e0c665769d570af",
+    "codegen-neon.csv": "1073e49f840e58961b38834c9e2576795731bde183ffd945625334530b99e6a4",
+    "compile-avx2.csv": "48310528936d0b07bdceca726580396b8d21403e1021ed522e068b979b3ce722",
+    "compile-avx2.json": "8c6baae1ff58580748150bda0b143121970e6c464c7298abedb65e1ee876c984",
+    "compile-commands.json": "1cd8e29db462679b1f369ec25786639c23e1ffbfeee113a0e0b51c0d8e551613",
+    "compile-gcc.csv": "95a7ceaf12c94ea580810d82490b827e0aad6d99711d7605391a7a018895cac7",
+    "compile-gcc.json": "573353a7ce62085cb7846f9d89729ed45fd92667260c6bc87c82a0a2d23bb390",
+    "compile-mod1000000007.csv": "2a545bb33cae65d6a8f57c379e395b6be060733c13689012ebf689b8bfc3d7c2",
+    "compile-mod1000000007.json": "902b1d821d25e7d21fcc040345aeb936676b80b9c5b9f608af16ddea9193c2ee",
+    "compile-mod100003.csv": "97ee045f2742bb76f229029a9ba070df5d3743df6d408eaba9c4c3d421b43d2f",
+    "compile-mod100003.json": "5962e28ee2688bda5dfb3633a94a21c771bf579d21db51991d5da82d8e924155",
+    "compile-mod2.csv": "580d2ae1863eb959ab0b72f3b3d469f215c9e82ba0fa9622f97b931475e185ff",
+    "compile-mod2.json": "034ed42eeed113c57eb74551f9b6a25004a0b3d29457f7392bd18a35f1c4dfef",
+    "compile-mod3.csv": "aaac4702bc4b78f125cdfd0882bb33583c4c98b5bf4e957d392ae6be227354f8",
+    "compile-mod3.json": "04c0375584e48519a3eb6f3c5c94303c6ee2752d8ae3fb60ccc85433c2c76420",
+    "compile-neon.csv": "be4d98e364c4ee4ee107eecdfa5f5a41a0c2ade56aa8d047f18edfbf3f1fddf7",
+    "compile-neon.json": "050311ae68caad5a8f18fb00a3f67e033817e1a4c1dae51394834d8b6a34fbfc",
+    "compile-single-avx2.csv": "6cdc1ab3f743530b3b0264ea9c5624873b6ec2b4da37f25e6013d5abb0b70ff3",
+    "compile-single-avx2.json": "95dbe2f0225a2a25f5ee73b922405ef849509252b6a4326c9acbf0b3c93ca202",
+    "compile-single.csv": "7f56ad2f96b8ea6fb6cb95e7a0ccb38d38e709e23120cfab952de99fbe33bf0f",
+    "compile-single.json": "2ac4102f1831042b6e800d24e88d96c9c7a0379f2a82d79f73261609a6b4b3bf",
+    "measure-batch.py": "17c015bb6a5e01d7209be29fee4dc986bb01788bc29f84cb7b2431c41008eb0d",
+    "ntt-batch.cpp": "29b610750b889b0955b6f20f86640de987ed2f67321f374bab42a9a164e58164",
+    "ntt-window-batch.cpp": "1bb203e216ebb175761f4425a52326e85789d8bb694f8b59735f0a474a1b1aa0",
+    "runtime-avx2.csv": "96196e92b2364e7d0f4159624dc0a55fa82175d786a65f407844f8b365b6a368",
+    "runtime-avx2.json": "282f360b386b14ae124232b8e41fc23dc101bd9e4056d5a8830206ff16ee8d2f",
+    "runtime-binary.csv": "31c2adbdd9b155f161b0a861c4c5f3eed85269333246db08ecb050d64423b8e0",
+    "runtime-binary.json": "485debcea7cae9b990c0c2e49372c34800a77b0472131b7f2e2486b6b780ee01",
+    "runtime-commands.json": "d07c4a48a9831a50dd664974b2bafe770f1dcd5f63bb99677276f91a1661b116",
+    "runtime-crt-one.csv": "37b751a57774064761c59d9986a06702dd01131ab0b40bc7c1667e586484a40d",
+    "runtime-crt-one.json": "5680c9b37841715ec266017361c3d33ee97593648a3927d2009f4b534862ec2b",
+    "runtime-crt-two.csv": "686d11d784afa8b38913056b7b99cef452e5f09cafbc8106aa46f3b00d37496d",
+    "runtime-crt-two.json": "e8c49f3a818e0fa384720041424caf0ef21c0972b200175d1e49d3c67af7c08d",
+    "runtime-crt.csv": "47443df35e44c28e35dd64ec1c851ca4387b2a91d2194a9a4f0ae62990dbc933",
+    "runtime-crt.json": "1b58f2e4c074d91397d5f0d95342515d04f7ce005255fce82bc2b08b4854b9d5",
+    "runtime-full-avx2.csv": "c82623830e34526ac744cc7d97f3535b5c34e429ed0e2cc6af628a7f8fa94a84",
+    "runtime-full-avx2.json": "3a8a3d554d37fbc0be3c7df776d87f037b97add37bb4f9b2585682326a356e29",
+    "runtime-full.csv": "1f204146c4acb5ad86e39b44176834290db4489a363db4668ced7d4ea88813c5",
+    "runtime-full.json": "47ec4492e75c01f8eacd3f3fbf80fd2f32c3f452a1a9ee4be1c4682ff8004275",
+    "runtime-gcc.csv": "ae273bdf9f8883b6eab5092180e0e7d0439b2623020d9e09f0cbac87b450bede",
+    "runtime-gcc.json": "69e3eba56e316aef4c15871715c0b289ae990b9510b6a52fc4b7306edd5da453",
+    "runtime-neon-large.csv": "3f0115eacebc5c7740e9fd9e5ebd472bcbd81d67ae6496f4523b6e27a64e4237",
+    "runtime-neon-large.json": "649986f3e0f4cee4538f3f8e2c3619ff3b6ab77c45100c02def817f0d37b08ec",
+    "runtime-neon.csv": "5ec1efb9c21dcd241b11bba9da4d1c87c4ad66e27ad2cfa2b936c77364c97171",
+    "runtime-neon.json": "3bd2fc7a8ec47498facceb624ce4b04b48b5bd2fa093ef125c812d8247a06312",
+    "runtime-primary-outliers.json": "99064956c85ec250f405adec96b3c1c4b6891a3004307cfe69f4f07fd0ce7000",
+    "runtime-recheck-crt-one-conv-32768.csv": "91e99cf0b87aea39a2a3ddb3ed4bfa1ad7fa1e216371d7ba21765064d4d0ca2f",
+    "runtime-recheck-crt-one-conv-32768.json": "85fbd981abfca1ad198081bb4aadb60e42216500f9c1c74a18d502f0e8f1d86e",
+    "runtime-recheck-crt-one-conv-4096.csv": "c8733d4610abd368965f054973e0c8901f8e4cb572352acb80563bd1ff759810",
+    "runtime-recheck-crt-one-conv-4096.json": "253521db5b1ec42639182e1d2469cb43c73d8238fce225061b055f7e0efbe841",
+    "runtime-recheck-crt-one-conv-8192.csv": "58f82f350e0ea5f058234c6eeaf62d560ed334d8eb9d281eb3cfab14927e88f4",
+    "runtime-recheck-crt-one-conv-8192.json": "372d672849bee69027319de7b8c12c8fb69c482fa75fb1194fe26ef4b7377662",
+    "runtime-recheck-neon-skinny-1048576.csv": "2d952fa4e4fb3febc66f6894f3039104dbb12010a5827bb0cca70fadbca73d64",
+    "runtime-recheck-neon-skinny-1048576.json": "da44124b3ff482752a1cbdee0eb78ed05984df48225ce6468f2ae7613d3ce4d4",
+    "runtime-recheck-neon-skinny-16384.csv": "267e53bd9421314d453a3ea52186fb4e41d85142aafa8601d913414b90efc5b7",
+    "runtime-recheck-neon-skinny-16384.json": "eadc6973eb3b3c72cade73621d01e83aefdf8026e6162e851825602953798c18",
+    "validation/amalgamate-tests.log": "4cbf079e3ad81990b79a668fcfbcb4acf9ed780c5b2a4a85cf6cb3971927fe5e",
+    "validation/avx512.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "validation/checks.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "validation/cmake.log": "ff84e83ae321dc79071cea44e637f5d799cb49edc9fd05d8ce089a4d078f9d03",
+    "validation/compile-gcc.log": "0da780932944bc0c6f73b27f3f77980472654921d27173dd1e3efa7a8e2aeb20",
+    "validation/tests-gcc.log": "9693c904f803eef3304486cb00baeb61011e0188e82b5cd97c7b60fc6bd6f53a",
+    "validation/tests-headers.log": "b0226737dc84f650a1648c3fbd7743c97628d27a7714eeef3e96b74edc0fc1bb",
+    "validation/tests-simde-single.log": "11c89cabbabd3a78ead656e582d91637dc58061cdba900f28b331e1da3bd5c9c",
+    "validation/tests-simde.log": "11c89cabbabd3a78ead656e582d91637dc58061cdba900f28b331e1da3bd5c9c",
+    "validation/tests-single.log": "b0226737dc84f650a1648c3fbd7743c97628d27a7714eeef3e96b74edc0fc1bb",
+    "validation.json": "3e5b2b207f48b7d1816a2e110890acbb92576563054db12bf1e145b434670e62",
+    "window-avx2.csv": "d3bc71cda45ef26456a9232b6c984ef6bad5c0a52a24dd2dc0dd526b3ed19abd",
+    "window-avx2.json": "ab9f98ed8c4c07da980b817450bef87b2b679186b35843612ff8e7d71c11976b",
+    "window-builds.json": "7cf3a0420e04b4f5bdf4f6e3f9d755219adcdaafe150d96c6f9a6744228c3310",
+    "window-neon.csv": "4bbffa5362f437d936507888a512feab288070b1ae43d10cd391aca01a1d5225",
+    "window-neon.json": "f65c4203071a8c91055b0a1571f1ecec2d298fda1f1b480e518357fc289e60c1",
+    "window-recheck-commands.json": "34e74666c68fd695e7232d1cef012fe2ad48999f4de91388f720f31480b8a655",
+    "window-recheck-neon-prefix-half-256-long-batch.csv": "5ed84a9ed0fbc982bd970c49e95cf43c1569b098b968fa670f4f7dced2094ade",
+    "window-recheck-neon-prefix-half-256-long-batch.json": "4ad6cdc38765fcc62d19b5afa25585a0107bdad4dbf0e6d5a3d138251192df66",
+    "window-recheck-neon-prefix-half-256-same-batch.csv": "319e8bdf0a6f3741504519c53d3f087a689ca7da1b701dbe900147d3f3698135",
+    "window-recheck-neon-prefix-half-256-same-batch.json": "8201f87eaa65614839ca5fe144db9760066d0480f435a8ebb4a2ccf10fc2ce8b"
+  }
+}

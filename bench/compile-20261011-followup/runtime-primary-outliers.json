@@ -1,0 +1,27 @@
+[
+  [
+    "neon",
+    "skinny",
+    16384
+  ],
+  [
+    "crt-one",
+    "conv",
+    4096
+  ],
+  [
+    "crt-one",
+    "conv",
+    8192
+  ],
+  [
+    "crt-one",
+    "conv",
+    32768
+  ],
+  [
+    "neon",
+    "skinny",
+    1048576
+  ]
+]

@@ -289,6 +289,7 @@ template <class M>
 void prefix_transforms() {
   constexpr uint32_t sentinel = 0xfefefefe;
   for (uint32_t n : {2u, 4u, 8u, 16u, 32u, 64u, 128u, 256u, 2048u, 4096u, 8192u}) {
+    if (n > ntt_max_size<M>()) continue;
     const auto& plan = NttPlan<M>::get_ref(n);
     for (size_t count : {size_t(0), size_t(1), size_t(n/4), size_t(n/4+1),
                          size_t(n/2), size_t(n/2+1), size_t(n-1), size_t(n)}) {
@@ -321,6 +322,12 @@ void prefix_transforms() {
 }
 
 FP_TEST(ntt_prefix_and_middle_outputs) {
+  // Tiny root bounds discard generic kernels at compile time; retain every
+  // valid full, prefix and high-half transform at the 2/16/32/64 boundaries.
+  prefix_transforms<ModInt<3>>();
+  prefix_transforms<ModInt<17>>();
+  prefix_transforms<ModInt<97>>();
+  prefix_transforms<ModInt<193>>();
   prefix_transforms<mod998244353>();
   prefix_transforms<mod167772161>();
   prefix_transforms<mod754974721>();

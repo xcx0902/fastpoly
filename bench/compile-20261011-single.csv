@@ -1,0 +1,4 @@
+case,before_s,after_s,speedup,before_bytes,after_bytes,runs
+include,0.548765,0.580391,0.945508,336,336,3
+conv,2.167653,1.896965,1.142695,219152,163624,3
+series,2.565910,2.101629,1.220915,263936,206080,3

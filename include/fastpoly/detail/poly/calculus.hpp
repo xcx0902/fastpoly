@@ -21,20 +21,21 @@ vec<M> derivative_prefix(const vec<M>& a, size_t cnt) {
   if constexpr (M::mod == 2) {
     for (size_t i = 1; i < cnt; ++i) r[i-1] = a[i]*M::from_int(i);
     return r;
+  } else {
+    alignas(64) uint32_t factors[simd::lane];
+    for (int k = 0; k < simd::lane; ++k) factors[k] = M::from_int(uint32_t(k + 1)).raw_val();
+    auto factor = simd::load(factors);
+    const auto stride = simd::set1(M::from_int(simd::lane).raw_val());
+    const auto* src = reinterpret_cast<const uint32_t*>(a.data());
+    auto* dst = reinterpret_cast<uint32_t*>(r.data());
+    size_t i = 1;
+    for (; i + simd::lane <= cnt; i += simd::lane) {
+      simd::store(dst + i - 1, simd::mulmod<M::mod, M::ninv>(simd::load(src + i), factor));
+      factor = simd::add(factor, stride, M::mod);
+    }
+    for (; i < cnt; ++i) r[i - 1] = a[i] * M::from_int(i);
+    return r;
   }
-  alignas(64) uint32_t factors[simd::lane];
-  for (int k = 0; k < simd::lane; ++k) factors[k] = M::from_int(uint32_t(k + 1)).raw_val();
-  auto factor = simd::load(factors);
-  const auto stride = simd::set1(M::from_int(simd::lane).raw_val());
-  const auto* src = reinterpret_cast<const uint32_t*>(a.data());
-  auto* dst = reinterpret_cast<uint32_t*>(r.data());
-  size_t i = 1;
-  for (; i + simd::lane <= cnt; i += simd::lane) {
-    simd::store(dst + i - 1, simd::mulmod<M::mod, M::ninv>(simd::load(src + i), factor));
-    factor = simd::add(factor, stride, M::mod);
-  }
-  for (; i < cnt; ++i) r[i - 1] = a[i] * M::from_int(i);
-  return r;
 }
 
 }  // namespace detail
@@ -100,17 +101,18 @@ vec<M> integral(const vec<M>& a) {
   if constexpr (M::mod == 2) {
     for (size_t i = 0; i < a.size(); ++i) r[i+1] = a[i]*inv[i+1];
     return r;
+  } else {
+    const auto* src = reinterpret_cast<const uint32_t*>(a.data());
+    const auto* divisors = reinterpret_cast<const uint32_t*>(inv.data());
+    auto* dst = reinterpret_cast<uint32_t*>(r.data());
+    size_t i = 0;
+    for (; i + simd::lane <= a.size(); i += simd::lane) {
+      simd::store(dst + i + 1, simd::mulmod<M::mod, M::ninv>(
+                                 simd::load(src + i), simd::load(divisors + i + 1)));
+    }
+    for (; i < a.size(); ++i) r[i + 1] = a[i] * inv[i + 1];
+    return r;
   }
-  const auto* src = reinterpret_cast<const uint32_t*>(a.data());
-  const auto* divisors = reinterpret_cast<const uint32_t*>(inv.data());
-  auto* dst = reinterpret_cast<uint32_t*>(r.data());
-  size_t i = 0;
-  for (; i + simd::lane <= a.size(); i += simd::lane) {
-    simd::store(dst + i + 1, simd::mulmod<M::mod, M::ninv>(
-                               simd::load(src + i), simd::load(divisors + i + 1)));
-  }
-  for (; i < a.size(); ++i) r[i + 1] = a[i] * inv[i + 1];
-  return r;
 }
 
 }  // namespace fpx::poly

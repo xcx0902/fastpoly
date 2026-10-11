@@ -58,6 +58,7 @@ constexpr uint32_t ntt_max_size() { return uint32_t(1) << ntt_max_log<M>(); }
 /// Thrown when a transform size is not representable for the modulus.
 class ntt_size_error : public std::runtime_error {
  public:
+  explicit ntt_size_error(const char* s) : std::runtime_error(s) {}
   explicit ntt_size_error(const std::string& s) : std::runtime_error(s) {}
 };
 
@@ -98,6 +99,10 @@ class NttPlan {
   // Keep the terminal radix-2 in the width-2 kernel, avoiding another pass.
   static constexpr bool FUSE_RADIX2 = COMPACT || X86_SHOUP;
   using Twiddle = simd::Twiddle;
+  // Stage routing covers every power-of-two width below one SIMD vector.
+  // Generic kernels therefore receive only whole vectors, with no scalar tail.
+  static_assert((simd::lane & (simd::lane-1)) == 0 && simd::lane <= 16 &&
+                simd::small_m_max == simd::lane/2);
 
   // Preserve the plan's value semantics while keeping its large tables in
   // aligned storage. Cached plans are const and never take this copy path.
@@ -133,7 +138,8 @@ class NttPlan {
   int log_size() const { return logn_; }
 
   /// Forward DIF transform, in place, on Montgomery limbs. Output in [0, Mod).
-  void forward(uint32_t* a) const { forward_impl<true>(a); }
+  /// Fully reduced fields already canonicalize in every butterfly.
+  void forward(uint32_t* a) const { forward_impl<LAZY>(a); }
 
   /// Internal convolution entry point: retain lazy [0, 2*Mod) residues when
   /// supported. Matching inverse accepts these directly; the permutation and
@@ -144,26 +150,28 @@ class NttPlan {
   /// Output uses the same lazy convention as forward_lazy().
   void forward_prefix(uint32_t* a, size_t count) const {
     if (count > n_) throw ntt_size_error("NTT input prefix exceeds plan size");
-    if (n_ < 64 || count > n_/2) {
+    if (ntt_max_size<M>() < 64 || n_ < 64 || count > n_/2) {
       std::memset(a+count, 0, (n_-count)*sizeof(uint32_t));
       forward_lazy(a);
       return;
     }
-    const uint32_t padding = count <= n_/4 ? n_/4 : n_/2;
-    std::memset(a+count, 0, (padding-count)*sizeof(uint32_t));
-    if constexpr (X86_SHOUP) {
-      if (n_ <= SHOUP_BLOCK) {
-        if (padding == n_/4) radix4_prefix<1, true>(a);
-        else radix4_prefix<2, true>(a);
+    if constexpr (ntt_max_size<M>() >= 64) {
+      const uint32_t padding = count <= n_/4 ? n_/4 : n_/2;
+      std::memset(a+count, 0, (padding-count)*sizeof(uint32_t));
+      if constexpr (X86_SHOUP) {
+        if (n_ <= SHOUP_BLOCK) {
+          if (padding == n_/4) radix4_prefix<1, true>(a);
+          else radix4_prefix<2, true>(a);
+        } else {
+          if (padding == n_/4) radix4_prefix<1, false>(a);
+          else radix4_prefix<2, false>(a);
+        }
       } else {
         if (padding == n_/4) radix4_prefix<1, false>(a);
         else radix4_prefix<2, false>(a);
       }
-    } else {
-      if (padding == n_/4) radix4_prefix<1, false>(a);
-      else radix4_prefix<2, false>(a);
+      forward_impl<false>(a, 1);
     }
-    forward_impl<false>(a, 1);
   }
 
   /// Inverse DIT transform, normalized by 1/n, in place. Output in [0, Mod).
@@ -186,26 +194,56 @@ class NttPlan {
  private:
   template <unsigned Output>
   void inverse_impl(uint32_t* a) const {
-    if (n_ == 2) {
+    if (ntt_max_size<M>() <= 2 || n_ == 2) {
       const uint32_t x = a[0], y = a[1];
       a[0] = M::reduce(uint64_t(detail::s_add(x, y, R)) * inv_n_);
       a[1] = M::reduce(uint64_t(detail::s_sub(x, y, R)) * inv_n_);
       return;
     }
+    if constexpr (ntt_max_size<M>() >= 4) {
+      if constexpr (Output == 15) {
+        // Keep the full transform's traversal in its entry point: small
+        // transforms should not pay an extra call to share partial outputs.
+        size_t split = 0;
+        while (split < stage_count_ && lens_[split] > CACHE_BLOCK) ++split;
+        const uint32_t block = split < stage_count_ ? lens_[split] : n_;
+        for (uint32_t base = 0; base < n_; base += block) {
+          uint32_t* p = a + base;
+          if ((logn_ & 1) && !FUSE_RADIX2) radix2_fwd<false>(p, block);
+          for (size_t s = stage_count_; s-- > split;) {
+            if (s == 0) radix4_stage_inv<true>(p, lens_[s], s, block);
+            else radix4_stage_inv<false>(p, lens_[s], s, block);
+          }
+        }
+        for (size_t s = split; s-- > 0;) {
+          if (s == 0) radix4_stage_inv<true>(a, lens_[s], s, n_);
+          else radix4_stage_inv<false>(a, lens_[s], s, n_);
+        }
+      } else {
+        // A single radix-4 stage needs no shared traversal; a fused radix-2
+        // also makes the eight-point transform a single terminal stage.
+        if (n_ > (FUSE_RADIX2 ? 8u : 4u)) inverse_stages(a);
+        radix4_stage_inv<true, Output>(a, n_, 0, n_);
+      }
+    }
+  }
+
+  // Partial output windows have the same unnormalized stages. Share their
+  // traversal instead of optimizing one copy for each final output mask.
+  void inverse_stages(uint32_t* a) const {
     size_t split = 0;
     while (split < stage_count_ && lens_[split] > CACHE_BLOCK) ++split;
     const uint32_t block = split < stage_count_ ? lens_[split] : n_;
+    const size_t end = std::max<size_t>(split, 1);
     for (uint32_t base = 0; base < n_; base += block) {
       uint32_t* p = a + base;
       if ((logn_ & 1) && !FUSE_RADIX2) radix2_fwd<false>(p, block);
-      for (size_t s = stage_count_; s-- > split;) {
-        if (s == 0) radix4_stage_inv<true, Output>(p, lens_[s], s, block);
-        else radix4_stage_inv<false>(p, lens_[s], s, block);
-      }
+      for (size_t s = stage_count_; s-- > end;)
+        radix4_stage_inv<false>(p, lens_[s], s, block);
     }
-    for (size_t s = split; s-- > 0;) {
-      if (s == 0) radix4_stage_inv<true, Output>(a, lens_[s], s, n_);
-      else radix4_stage_inv<false>(a, lens_[s], s, n_);
+    for (size_t s = split; s > 1;) {
+      --s;
+      radix4_stage_inv<false>(a, lens_[s], s, n_);
     }
   }
 
@@ -244,24 +282,28 @@ class NttPlan {
 
   template <bool CANON>
   void forward_impl(uint32_t* a, size_t first_stage = 0) const {
-    // Upper stages span the whole input. Once subtransforms fit in L1, finish
-    // every remaining stage while each consecutive block is still resident.
-    size_t split = first_stage;
-    while (split < stage_count_ && lens_[split] > CACHE_BLOCK) {
-      radix4_stage<false>(a, lens_[split], split, n_);
-      ++split;
-    }
-    const uint32_t block = split < stage_count_ ? lens_[split] : n_;
-    const bool radix4_last = (logn_ & 1) == 0 || FUSE_RADIX2;
-    for (uint32_t base = 0; base < n_; base += block) {
-      uint32_t* p = a + base;
-      for (size_t s = split; s < stage_count_; ++s) {
-        if (CANON && radix4_last && s + 1 == stage_count_)
-          radix4_stage<true>(p, lens_[s], s, block);
-        else
-          radix4_stage<false>(p, lens_[s], s, block);
+    if constexpr (ntt_max_size<M>() <= 2) {
+      radix2_fwd<CANON>(a, n_);
+    } else {
+      // Upper stages span the whole input. Once subtransforms fit in L1, finish
+      // every remaining stage while each consecutive block is still resident.
+      size_t split = first_stage;
+      while (split < stage_count_ && lens_[split] > CACHE_BLOCK) {
+        radix4_stage<false>(a, lens_[split], split, n_);
+        ++split;
       }
-      if ((logn_ & 1) && (!FUSE_RADIX2 || n_ == 2)) radix2_fwd<CANON>(p, block);
+      const uint32_t block = split < stage_count_ ? lens_[split] : n_;
+      const bool radix4_last = (logn_ & 1) == 0 || FUSE_RADIX2;
+      for (uint32_t base = 0; base < n_; base += block) {
+        uint32_t* p = a + base;
+        for (size_t s = split; s < stage_count_; ++s) {
+          if (CANON && radix4_last && s + 1 == stage_count_)
+            radix4_stage<true>(p, lens_[s], s, block);
+          else
+            radix4_stage<false>(p, lens_[s], s, block);
+        }
+        if ((logn_ & 1) && (!FUSE_RADIX2 || n_ == 2)) radix2_fwd<CANON>(p, block);
+      }
     }
   }
 
@@ -342,124 +384,124 @@ class NttPlan {
 
   void build() {
     inv_n_ = M::from_int(M::inv2).pow(static_cast<uint32_t>(logn_)).raw_val();
-    const M w_n_m = M::from_int(M::primitive_root).pow((MOD - 1) / n_);
-    w4_ = w_n_m.pow(n_ / 4).raw_val();            // primitive 4th root of unity
-    w4_inv_ = n_ >= 4 ? MOD - w4_ : w4_;        // == -w4_ for n >= 4
+    if constexpr (ntt_max_size<M>() <= 2) {
+      w4_ = w4_inv_ = M::one;
+    } else {
+      const M w_n_m = M::from_int(M::primitive_root).pow((MOD - 1) / n_);
+      w4_ = w_n_m.pow(n_ / 4).raw_val();            // primitive 4th root of unity
+      w4_inv_ = n_ >= 4 ? MOD - w4_ : w4_;        // == -w4_ for n >= 4
 
-    // Radix-4 stages: len = n, n/4, n/16, ... (while len >= 4)
-    for (uint32_t len = n_; len >= 4; len >>= 2) lens_[stage_count_++] = len;
-    // Each stage stores w^k, w^2k, w^3k (and inverses) for k < len/4.
-    // NEON encodes Q31 quotients in one word. Cached x86 stages store separate
-    // ordinary multiplier and Q32 planes; larger stages keep one Montgomery
-    // word. Generate canonical cursors first, then encode only the bounded
-    // cached planes. Separating conversion keeps the six-chain loop compact.
-    size_t total = 0;
-    for (size_t s = 0; s < stage_count_; ++s)
-      total += 3*(lens_[s] >> 2)*(X86_SHOUP && lens_[s] <= SHOUP_BLOCK ? 2 : 1);
-    fwd_.resize_uninitialized(total);
-    inv_.resize_uninitialized(total);
-    size_t pos = 0;
-    M w = w_n_m, wi = w_n_m.inv();
-    for (size_t s = 0; s < stage_count_; ++s) {
-      off_[s] = pos;
-      const uint32_t m = lens_[s] >> 2;
-      const uint32_t qoff = X86_SHOUP && lens_[s] <= SHOUP_BLOCK ? 3*m : 0;
-      // w = root of order len = w_n^(n/len) = w_n^(4^s)
-      const M w2 = w * w, w3 = w2 * w;
-      const M wi2 = wi * wi, wi3 = wi2 * wi;
-      uint32_t cur = M::from_int(1).raw_val();
-      uint32_t cur2 = cur, cur3 = cur;
-      // The final DIT stage absorbs normalization into its three twiddles.
-      uint32_t icur = s == 0 ? inv_n_ : cur, icur2 = icur, icur3 = icur;
-      const uint32_t wv = w.raw_val(), w2v = w2.raw_val(), w3v = w3.raw_val();
-      const uint32_t wiv = wi.raw_val(), wi2v = wi2.raw_val(), wi3v = wi3.raw_val();
-      uint32_t* A = fwd_.data() + pos;
-      uint32_t* B = A + m;
-      uint32_t* C = B + m;
-      uint32_t* IA = inv_.data() + pos;
-      uint32_t* IB = IA + m;
-      uint32_t* IC = IB + m;
-      uint32_t j = 0;
-      if constexpr (simd::lane > 1) {
-        // Amortize vector initialization over at least four full blocks.
-        if (m >= 4u * simd::lane) {
-          alignas(64) uint32_t seed[6][simd::lane];
-          for (int k = 0; k < simd::lane; ++k) {
-            seed[0][k] = cur; seed[1][k] = cur2; seed[2][k] = cur3;
-            seed[3][k] = icur; seed[4][k] = icur2; seed[5][k] = icur3;
-            cur = M::reduce(uint64_t(cur) * wv);
-            cur2 = M::reduce(uint64_t(cur2) * w2v);
-            cur3 = M::reduce(uint64_t(cur3) * w3v);
-            icur = M::reduce(uint64_t(icur) * wiv);
-            icur2 = M::reduce(uint64_t(icur2) * wi2v);
-            icur3 = M::reduce(uint64_t(icur3) * wi3v);
-          }
-          simd_t va = simd::load(seed[0]), vb = simd::load(seed[1]), vc = simd::load(seed[2]);
-          simd_t via = simd::load(seed[3]), vib = simd::load(seed[4]), vic = simd::load(seed[5]);
-          // Forward cursors already advanced from Montgomery one to w^lane.
-          const auto da = cursor_step(cur);
-          const auto db = cursor_step(cur2);
-          const auto dc = cursor_step(cur3);
-          const M istep = wi.pow(simd::lane), istep2 = istep * istep, istep3 = istep2 * istep;
-          const auto dia = cursor_step(istep.raw_val());
-          const auto dib = cursor_step(istep2.raw_val());
-          const auto dic = cursor_step(istep3.raw_val());
-          for (; j + simd::lane <= m; j += simd::lane) {
-            simd::store(A + j, simd::encode_twiddle<MOD, NINV, true>(va));
-            simd::store(B + j, simd::encode_twiddle<MOD, NINV, true>(vb));
-            simd::store(C + j, simd::encode_twiddle<MOD, NINV, true>(vc));
-            simd::store(IA + j, simd::encode_twiddle<MOD, NINV, false>(via));
-            simd::store(IB + j, simd::encode_twiddle<MOD, NINV, false>(vib));
-            simd::store(IC + j, simd::encode_twiddle<MOD, NINV, false>(vic));
-            va = simd::mul_twiddle_full<MOD, NINV>(va, da);
-            vb = simd::mul_twiddle_full<MOD, NINV>(vb, db);
-            vc = simd::mul_twiddle_full<MOD, NINV>(vc, dc);
-            via = simd::mul_twiddle_full<MOD, NINV>(via, dia);
-            vib = simd::mul_twiddle_full<MOD, NINV>(vib, dib);
-            vic = simd::mul_twiddle_full<MOD, NINV>(vic, dic);
-          }
-          if (j < m) {
-            simd::store(seed[0], va); simd::store(seed[1], vb); simd::store(seed[2], vc);
-            simd::store(seed[3], via); simd::store(seed[4], vib); simd::store(seed[5], vic);
-            cur = seed[0][0]; cur2 = seed[1][0]; cur3 = seed[2][0];
-            icur = seed[3][0]; icur2 = seed[4][0]; icur3 = seed[5][0];
+      // Radix-4 stages: len = n, n/4, n/16, ... (while len >= 4)
+      for (uint32_t len = n_; len >= 4; len >>= 2) lens_[stage_count_++] = len;
+      // Each stage stores w^k, w^2k, w^3k (and inverses) for k < len/4.
+      // NEON encodes Q31 quotients in one word. Cached x86 stages store separate
+      // ordinary multiplier and Q32 planes; larger stages keep one Montgomery
+      // word. Generate canonical cursors first, then encode only the bounded
+      // cached planes. Separating conversion keeps the six-chain loop compact.
+      size_t total = 0;
+      for (size_t s = 0; s < stage_count_; ++s)
+        total += 3*(lens_[s] >> 2)*(X86_SHOUP && lens_[s] <= SHOUP_BLOCK ? 2 : 1);
+      fwd_.resize_uninitialized(total);
+      inv_.resize_uninitialized(total);
+      size_t pos = 0;
+      M w = w_n_m, wi = w_n_m.inv();
+      for (size_t s = 0; s < stage_count_; ++s) {
+        off_[s] = pos;
+        const uint32_t m = lens_[s] >> 2;
+        const uint32_t qoff = X86_SHOUP && lens_[s] <= SHOUP_BLOCK ? 3*m : 0;
+        // w = root of order len = w_n^(n/len) = w_n^(4^s)
+        const M w2 = w * w, w3 = w2 * w;
+        const M wi2 = wi * wi, wi3 = wi2 * wi;
+        uint32_t cur = M::from_int(1).raw_val();
+        uint32_t cur2 = cur, cur3 = cur;
+        // The final DIT stage absorbs normalization into its three twiddles.
+        uint32_t icur = s == 0 ? inv_n_ : cur, icur2 = icur, icur3 = icur;
+        const uint32_t wv = w.raw_val(), w2v = w2.raw_val(), w3v = w3.raw_val();
+        const uint32_t wiv = wi.raw_val(), wi2v = wi2.raw_val(), wi3v = wi3.raw_val();
+        uint32_t* A = fwd_.data() + pos;
+        uint32_t* B = A + m;
+        uint32_t* C = B + m;
+        uint32_t* IA = inv_.data() + pos;
+        uint32_t* IB = IA + m;
+        uint32_t* IC = IB + m;
+        uint32_t j = 0;
+        if constexpr (simd::lane > 1) {
+          // Amortize vector initialization over at least four full blocks.
+          if (m >= 4u * simd::lane) {
+            alignas(64) uint32_t seed[6][simd::lane];
+            for (int k = 0; k < simd::lane; ++k) {
+              seed[0][k] = cur; seed[1][k] = cur2; seed[2][k] = cur3;
+              seed[3][k] = icur; seed[4][k] = icur2; seed[5][k] = icur3;
+              cur = M::reduce(uint64_t(cur) * wv);
+              cur2 = M::reduce(uint64_t(cur2) * w2v);
+              cur3 = M::reduce(uint64_t(cur3) * w3v);
+              icur = M::reduce(uint64_t(icur) * wiv);
+              icur2 = M::reduce(uint64_t(icur2) * wi2v);
+              icur3 = M::reduce(uint64_t(icur3) * wi3v);
+            }
+            simd_t va = simd::load(seed[0]), vb = simd::load(seed[1]), vc = simd::load(seed[2]);
+            simd_t via = simd::load(seed[3]), vib = simd::load(seed[4]), vic = simd::load(seed[5]);
+            // Forward cursors already advanced from Montgomery one to w^lane.
+            const auto da = cursor_step(cur);
+            const auto db = cursor_step(cur2);
+            const auto dc = cursor_step(cur3);
+            const M istep = wi.pow(simd::lane), istep2 = istep * istep, istep3 = istep2 * istep;
+            const auto dia = cursor_step(istep.raw_val());
+            const auto dib = cursor_step(istep2.raw_val());
+            const auto dic = cursor_step(istep3.raw_val());
+            for (; j + simd::lane <= m; j += simd::lane) {
+              simd::store(A + j, simd::encode_twiddle<MOD, NINV, true>(va));
+              simd::store(B + j, simd::encode_twiddle<MOD, NINV, true>(vb));
+              simd::store(C + j, simd::encode_twiddle<MOD, NINV, true>(vc));
+              simd::store(IA + j, simd::encode_twiddle<MOD, NINV, false>(via));
+              simd::store(IB + j, simd::encode_twiddle<MOD, NINV, false>(vib));
+              simd::store(IC + j, simd::encode_twiddle<MOD, NINV, false>(vic));
+              va = simd::mul_twiddle_full<MOD, NINV>(va, da);
+              vb = simd::mul_twiddle_full<MOD, NINV>(vb, db);
+              vc = simd::mul_twiddle_full<MOD, NINV>(vc, dc);
+              via = simd::mul_twiddle_full<MOD, NINV>(via, dia);
+              vib = simd::mul_twiddle_full<MOD, NINV>(vib, dib);
+              vic = simd::mul_twiddle_full<MOD, NINV>(vic, dic);
+            }
+            // m and lane are powers of two; a vectorized stage has no tail.
+            j = m;
           }
         }
-      }
-      for (; j < m; ++j) {
-        A[j] = simd::encode_twiddle_scalar<MOD, NINV, true>(cur);
-        B[j] = simd::encode_twiddle_scalar<MOD, NINV, true>(cur2);
-        C[j] = simd::encode_twiddle_scalar<MOD, NINV, true>(cur3);
-        IA[j] = simd::encode_twiddle_scalar<MOD, NINV, false>(icur);
-        IB[j] = simd::encode_twiddle_scalar<MOD, NINV, false>(icur2);
-        IC[j] = simd::encode_twiddle_scalar<MOD, NINV, false>(icur3);
-        cur = M::reduce(uint64_t(cur) * wv);
-        cur2 = M::reduce(uint64_t(cur2) * w2v);
-        cur3 = M::reduce(uint64_t(cur3) * w3v);
-        icur = M::reduce(uint64_t(icur) * wiv);
-        icur2 = M::reduce(uint64_t(icur2) * wi2v);
-        icur3 = M::reduce(uint64_t(icur3) * wi3v);
-      }
-      if constexpr (X86_SHOUP) {
-        if (qoff != 0) {
-          for (uint32_t* p : {A, IA}) {
-            uint32_t k = 0;
-            for (; k + simd::lane <= qoff; k += simd::lane) {
-              const auto t = simd::fixed_twiddle_vector<MOD, NINV>(simd::load(p + k));
-              simd::store(p + k, t.value);
-              simd::store(p + k + qoff, t.quotient);
-            }
-            for (; k < qoff; ++k) {
-              const uint32_t mont = p[k], q = mont*NINV;
-              p[k] = static_cast<uint32_t>((uint64_t(q)*MOD + mont) >> 32);
-              p[k + qoff] = q;
+        for (; j < m; ++j) {
+          A[j] = simd::encode_twiddle_scalar<MOD, NINV, true>(cur);
+          B[j] = simd::encode_twiddle_scalar<MOD, NINV, true>(cur2);
+          C[j] = simd::encode_twiddle_scalar<MOD, NINV, true>(cur3);
+          IA[j] = simd::encode_twiddle_scalar<MOD, NINV, false>(icur);
+          IB[j] = simd::encode_twiddle_scalar<MOD, NINV, false>(icur2);
+          IC[j] = simd::encode_twiddle_scalar<MOD, NINV, false>(icur3);
+          cur = M::reduce(uint64_t(cur) * wv);
+          cur2 = M::reduce(uint64_t(cur2) * w2v);
+          cur3 = M::reduce(uint64_t(cur3) * w3v);
+          icur = M::reduce(uint64_t(icur) * wiv);
+          icur2 = M::reduce(uint64_t(icur2) * wi2v);
+          icur3 = M::reduce(uint64_t(icur3) * wi3v);
+        }
+        if constexpr (X86_SHOUP) {
+          if (qoff != 0) {
+            for (uint32_t* p : {A, IA}) {
+              uint32_t k = 0;
+              for (; k + simd::lane <= qoff; k += simd::lane) {
+                const auto t = simd::fixed_twiddle_vector<MOD, NINV>(simd::load(p + k));
+                simd::store(p + k, t.value);
+                simd::store(p + k + qoff, t.quotient);
+              }
+              for (; k < qoff; ++k) {
+                const uint32_t mont = p[k], q = mont*NINV;
+                p[k] = static_cast<uint32_t>((uint64_t(q)*MOD + mont) >> 32);
+                p[k + qoff] = q;
+              }
             }
           }
         }
+        pos += 3*m + qoff;
+        w = w2 * w2;
+        wi = wi2 * wi2;
       }
-      pos += 3*m + qoff;
-      w = w2 * w2;
-      wi = wi2 * wi2;
     }
   }
 
@@ -468,33 +510,42 @@ class NttPlan {
   /// scalar tail.  Those go to the specialised chunked kernels instead.
   template <bool LAST>
   void radix4_stage(uint32_t* a, uint32_t len, size_t s, uint32_t count) const {
-    const uint32_t m = len >> 2;
-    if (m == 1) {
-      radix4_small<1, LAST>(a, len, s, count);
-      return;
-    }
-    if constexpr (simd::small_m_max >= 2) {
-      if (m == 2) {
-        radix4_small<2, LAST>(a, len, s, count);
+    if constexpr (LAST) {
+      // Only len=4, or len=8 with the fused radix-2, can be terminal.
+      // Do not instantiate canonicalized copies of every larger kernel.
+      if constexpr (FUSE_RADIX2) {
+        if (len == 8) { radix4_small<2, true>(a, 8, s, count); return; }
+      }
+      radix4_small<1, true>(a, 4, s, count);
+    } else {
+      const uint32_t m = len >> 2;
+      if (m == 1) {
+        radix4_small<1, LAST>(a, len, s, count);
         return;
       }
-    }
-    if constexpr (simd::small_m_max >= 4) {
-      if (m == 4) {
-        radix4_small<4, LAST>(a, len, s, count);
-        return;
+      if constexpr (simd::small_m_max >= 2) {
+        if (m == 2) {
+          radix4_small<2, LAST>(a, len, s, count);
+          return;
+        }
       }
-    }
-    if constexpr (simd::small_m_max >= 8) {
-      if (m == 8) {
-        radix4_small<8, LAST>(a, len, s, count);
-        return;
+      if constexpr (simd::small_m_max >= 4) {
+        if (m == 4) {
+          radix4_small<4, LAST>(a, len, s, count);
+          return;
+        }
       }
+      if constexpr (simd::small_m_max >= 8) {
+        if (m == 8) {
+          radix4_small<8, LAST>(a, len, s, count);
+          return;
+        }
+      }
+      if constexpr (X86_SHOUP) {
+        if (len <= SHOUP_BLOCK) { radix4_fwd<LAST, true>(a, len, s, count); return; }
+      }
+      radix4_fwd<LAST, false>(a, len, s, count);
     }
-    if constexpr (X86_SHOUP) {
-      if (len <= SHOUP_BLOCK) { radix4_fwd<LAST, true>(a, len, s, count); return; }
-    }
-    radix4_fwd<LAST, false>(a, len, s, count);
   }
 
   /// Same routing for the inverse direction.
@@ -726,49 +777,53 @@ class NttPlan {
     const uint32_t* IA = inv_.data() + off_[s];
     const uint32_t* IB = IA + W;
     const uint32_t* IC = IB + W;
-    alignas(64) uint32_t tw[X86_SHOUP ? 6 : 3][simd::lane];
-    for (int i = 0; i < simd::lane; ++i) {
-      tw[0][i] = IA[i % W];
-      tw[1][i] = IB[i % W];
-      tw[2][i] = IC[i % W];
-      if constexpr (X86_SHOUP) {
-        tw[3][i] = IA[3*W + i%W]; tw[4][i] = IB[3*W + i%W]; tw[5][i] = IC[3*W + i%W];
-      }
-    }
-    const auto iw1 = tw_load(tw[0], 3*simd::lane);
-    const auto iw2 = tw_load(tw[1], 3*simd::lane), iw3 = tw_load(tw[2], 3*simd::lane);
-    const auto vm = tw_fourth<true>();
-    const uint32_t step = 4u * static_cast<uint32_t>(simd::lane);
     uint32_t base = 0;
-    for (; base + step <= count; base += step) {
-      uint32_t* p = a + base;
-      simd_t b0, b1, b2, b3;
-      simd::load4m<W>(p, b0, b1, b2, b3);
-      if constexpr (W == 2 && FUSE_RADIX2) {
-        b0 = radix2_vec(b0); b1 = radix2_vec(b1);
-        b2 = radix2_vec(b2); b3 = radix2_vec(b3);
+    // A normalized small stage is the entire n=4*W transform. It cannot
+    // fill a SIMD block, so discard its unreachable vector body up front.
+    if constexpr (!LAST || W >= simd::lane) {
+      alignas(64) uint32_t tw[X86_SHOUP ? 6 : 3][simd::lane];
+      for (int i = 0; i < simd::lane; ++i) {
+        tw[0][i] = IA[i % W];
+        tw[1][i] = IB[i % W];
+        tw[2][i] = IC[i % W];
+        if constexpr (X86_SHOUP) {
+          tw[3][i] = IA[3*W + i%W]; tw[4][i] = IB[3*W + i%W]; tw[5][i] = IC[3*W + i%W];
+        }
       }
-      if constexpr (LAST) b0 = bmul(b0, tw_const<false>(inv_n_));
-      simd_t c1, c2, c3;
-      if constexpr (W == 1 && !LAST) {
-        c1 = b1; c2 = b2; c3 = b3;
-      } else if constexpr (W == 2 && !LAST && X86_SHOUP) {
-        c1 = simd::mul_unity_even<MOD, NINV>(b1, tw_eighth_mont<2, true>());
-        c2 = simd::mul_unity_even<MOD, NINV>(b2, tw_eighth_mont<1, true>());
-        c3 = simd::mul_unity_even<MOD, NINV>(b3, tw_eighth_mont<3, true>());
-      } else {
-        c1 = bmul(b1, iw2); c2 = bmul(b2, iw1); c3 = bmul(b3, iw3);
+      const auto iw1 = tw_load(tw[0], 3*simd::lane);
+      const auto iw2 = tw_load(tw[1], 3*simd::lane), iw3 = tw_load(tw[2], 3*simd::lane);
+      const auto vm = tw_fourth<true>();
+      const uint32_t step = 4u * static_cast<uint32_t>(simd::lane);
+      for (; base + step <= count; base += step) {
+        uint32_t* p = a + base;
+        simd_t b0, b1, b2, b3;
+        simd::load4m<W>(p, b0, b1, b2, b3);
+        if constexpr (W == 2 && FUSE_RADIX2) {
+          b0 = radix2_vec(b0); b1 = radix2_vec(b1);
+          b2 = radix2_vec(b2); b3 = radix2_vec(b3);
+        }
+        if constexpr (LAST) b0 = bmul(b0, tw_const<false>(inv_n_));
+        simd_t c1, c2, c3;
+        if constexpr (W == 1 && !LAST) {
+          c1 = b1; c2 = b2; c3 = b3;
+        } else if constexpr (W == 2 && !LAST && X86_SHOUP) {
+          c1 = simd::mul_unity_even<MOD, NINV>(b1, tw_eighth_mont<2, true>());
+          c2 = simd::mul_unity_even<MOD, NINV>(b2, tw_eighth_mont<1, true>());
+          c3 = simd::mul_unity_even<MOD, NINV>(b3, tw_eighth_mont<3, true>());
+        } else {
+          c1 = bmul(b1, iw2); c2 = bmul(b2, iw1); c3 = bmul(b3, iw3);
+        }
+        simd_t d0 = simd::add(b0, c1, R), d1 = simd::sub(b0, c1, R);
+        simd_t d2 = simd::add(c2, c3, R);
+        simd_t e = submul(c2, c3, vm);
+        simd_t y0 = simd::add(d0, d2, R), y1 = simd::add(d1, e, R);
+        simd_t y2 = simd::sub(d0, d2, R), y3 = simd::sub(d1, e, R);
+        if constexpr (LAST && LAZY) {
+          y0 = simd::reduce_full(y0, MOD); y1 = simd::reduce_full(y1, MOD);
+          y2 = simd::reduce_full(y2, MOD); y3 = simd::reduce_full(y3, MOD);
+        }
+        simd::store4m<W>(p, y0, y1, y2, y3);
       }
-      simd_t d0 = simd::add(b0, c1, R), d1 = simd::sub(b0, c1, R);
-      simd_t d2 = simd::add(c2, c3, R);
-      simd_t e = submul(c2, c3, vm);
-      simd_t y0 = simd::add(d0, d2, R), y1 = simd::add(d1, e, R);
-      simd_t y2 = simd::sub(d0, d2, R), y3 = simd::sub(d1, e, R);
-      if constexpr (LAST && LAZY) {
-        y0 = simd::reduce_full(y0, MOD); y1 = simd::reduce_full(y1, MOD);
-        y2 = simd::reduce_full(y2, MOD); y3 = simd::reduce_full(y3, MOD);
-      }
-      simd::store4m<W>(p, y0, y1, y2, y3);
     }
     for (; base < count; base += len) {
       uint32_t* p = a + base;
@@ -842,20 +897,7 @@ class NttPlan {
           step(k + simd::lane);
         }
       }
-      for (; k + simd::lane <= m; k += simd::lane) step(k);
-      for (; k < m; ++k) {
-        uint32_t x0 = p[k], x1 = p[k + m], x2 = p[k + 2 * m], x3 = p[k + 3 * m];
-        uint32_t t0 = detail::s_add(x0, x2, R);
-        uint32_t t1 = detail::s_sub(x0, x2, R);
-        uint32_t t2 = detail::s_add(x1, x3, R);
-        uint32_t t3 = M::reduce(uint64_t(detail::s_sub(x1, x3, R)) * w4_);
-        uint32_t y0 = detail::s_add(t0, t2, R);
-        if constexpr (LAST) y0 = y0 >= MOD ? y0 - MOD : y0;
-        p[k] = y0;
-        p[k + m] = smul<false, SHOUP>(detail::s_sub(t0, t2, R), B[k]);
-        p[k + 2 * m] = smul<false, SHOUP>(detail::s_add(t1, t3, R), A[k]);
-        p[k + 3 * m] = smul<false, SHOUP>(detail::s_sub(t1, t3, R), C[k]);
-      }
+      for (; k < m; k += simd::lane) step(k);
     }
   }
 
@@ -867,7 +909,8 @@ class NttPlan {
     const uint32_t* IB = IA + m;
     const uint32_t* IC = IB + m;
     const auto vm = tw_fourth<true>();
-    for (uint32_t base = 0; base < count; base += len) {
+    // The normalized stage always spans the whole transform exactly once.
+    for (uint32_t base = 0; base < (LAST ? len : count); base += len) {
       uint32_t* p = a + base;
       auto step = [&](uint32_t k) {
         simd_t b0 = simd::load(p + k), b1 = simd::load(p + k + m);
@@ -898,27 +941,7 @@ class NttPlan {
           step(k + simd::lane);
         }
       }
-      for (; k + simd::lane <= m; k += simd::lane) step(k);
-      for (; k < m; ++k) {
-        uint32_t b0 = p[k], b1 = p[k + m], b2 = p[k + 2 * m], b3 = p[k + 3 * m];
-        if constexpr (LAST) b0 = M::reduce(uint64_t(b0) * inv_n_);
-        uint32_t c1 = smul<true, SHOUP>(b1, IB[k]);
-        uint32_t c2 = smul<true, SHOUP>(b2, IA[k]);
-        uint32_t c3 = smul<true, SHOUP>(b3, IC[k]);
-        uint32_t d0 = detail::s_add(b0, c1, R), d1 = detail::s_sub(b0, c1, R);
-        uint32_t d2 = detail::s_add(c2, c3, R), d3 = detail::s_sub(c2, c3, R);
-        uint32_t e = M::reduce(uint64_t(d3) * w4_inv_);
-        uint32_t y0 = detail::s_add(d0, d2, R), y1 = detail::s_add(d1, e, R);
-        uint32_t y2 = detail::s_sub(d0, d2, R), y3 = detail::s_sub(d1, e, R);
-        if constexpr (LAST && LAZY) {
-          y0 = y0 >= MOD ? y0 - MOD : y0; y1 = y1 >= MOD ? y1 - MOD : y1;
-          y2 = y2 >= MOD ? y2 - MOD : y2; y3 = y3 >= MOD ? y3 - MOD : y3;
-        }
-        if constexpr (Output & 1) p[k] = y0;
-        if constexpr (Output & 2) p[k + m] = y1;
-        if constexpr (Output & 4) p[k + 2 * m] = y2;
-        if constexpr (Output & 8) p[k + 3 * m] = y3;
-      }
+      for (; k < m; k += simd::lane) step(k);
     }
   }
 

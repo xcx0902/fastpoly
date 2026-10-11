@@ -1,0 +1,5415 @@
+{
+  "backend": "avx2",
+  "binaries": [
+    {
+      "path": "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+      "sha256": "bc7eca4c11f1155d91d4dd19b17698d42d0b4629ff2a32a3f559203bf695d61d"
+    },
+    {
+      "path": "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+      "sha256": "17953fa051b439097cb316850c23388c80e40c7845c516219ca0f4d321bdd2b7"
+    }
+  ],
+  "samples": [
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 18.855407715,
+      "best_ns": 18.332168579,
+      "checksum": "66a60cd0959812af"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 12.440994263,
+      "best_ns": 12.062698364,
+      "checksum": "66a60cd0959812af"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 18.305465698,
+      "best_ns": 17.469406128,
+      "checksum": "6650b1c2cb4ecd2e"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 12.333557129,
+      "best_ns": 11.932373047,
+      "checksum": "6650b1c2cb4ecd2e"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 17.560317993,
+      "best_ns": 16.72744751,
+      "checksum": "d094d1f041f9a858"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 11.818572998,
+      "best_ns": 11.455535889,
+      "checksum": "d094d1f041f9a858"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 34.809112549,
+      "best_ns": 34.067810059,
+      "checksum": "1ec901cc335e55ab"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 28.578430176,
+      "best_ns": 27.721405029,
+      "checksum": "1ec901cc335e55ab"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 35.255432129,
+      "best_ns": 33.596038818,
+      "checksum": "31feafac948807b6"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.656738281,
+      "best_ns": 28.6534729,
+      "checksum": "31feafac948807b6"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 34.535736084,
+      "best_ns": 33.037841797,
+      "checksum": "192bedabfcaef209"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 27.801513672,
+      "best_ns": 26.802062988,
+      "checksum": "192bedabfcaef209"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 58.448791504,
+      "best_ns": 56.121826172,
+      "checksum": "07048bbaf02bfc4a"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 61.236022949,
+      "best_ns": 56.989074707,
+      "checksum": "07048bbaf02bfc4a"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 56.991577148,
+      "best_ns": 56.805908203,
+      "checksum": "e853fcef9bb9ebe9"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 58.69543457,
+      "best_ns": 57.108520508,
+      "checksum": "e853fcef9bb9ebe9"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 57.668029785,
+      "best_ns": 55.892944336,
+      "checksum": "94148d8823c65503"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 57.500183105,
+      "best_ns": 55.943786621,
+      "checksum": "94148d8823c65503"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 177.001953125,
+      "best_ns": 173.456787109,
+      "checksum": "b61ec6abfff10c5f"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 176.935791016,
+      "best_ns": 171.885131836,
+      "checksum": "b61ec6abfff10c5f"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 201.034545898,
+      "best_ns": 193.934082031,
+      "checksum": "e1bff6fe4cbc7adb"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 193.196533203,
+      "best_ns": 187.438964844,
+      "checksum": "e1bff6fe4cbc7adb"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 203.053833008,
+      "best_ns": 195.475219727,
+      "checksum": "119b7ee2686b69eb"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 194.808959961,
+      "best_ns": 188.507080078,
+      "checksum": "119b7ee2686b69eb"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 353.668212891,
+      "best_ns": 340.087890625,
+      "checksum": "886a2915c2021993"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 347.798583984,
+      "best_ns": 336.863037109,
+      "checksum": "886a2915c2021993"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 400.064941406,
+      "best_ns": 384.796142578,
+      "checksum": "9d709858eef6a133"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 391.927001953,
+      "best_ns": 378.356933594,
+      "checksum": "9d709858eef6a133"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 395.904541016,
+      "best_ns": 380.065917969,
+      "checksum": "2b0a1f7a2c41349e"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 394.348144531,
+      "best_ns": 381.225585938,
+      "checksum": "2b0a1f7a2c41349e"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 693.542480469,
+      "best_ns": 660.868164062,
+      "checksum": "b48542a33d4a14a8"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 672.973632812,
+      "best_ns": 654.805175781,
+      "checksum": "b48542a33d4a14a8"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 756.34765625,
+      "best_ns": 726.277832031,
+      "checksum": "5934df97d7eb4569"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 754.8828125,
+      "best_ns": 729.919433594,
+      "checksum": "5934df97d7eb4569"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 767.6796875,
+      "best_ns": 733.194824219,
+      "checksum": "6109d70de93bdef4"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 757.527832031,
+      "best_ns": 725.565429688,
+      "checksum": "6109d70de93bdef4"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1628.947265625,
+      "best_ns": 1569.702148438,
+      "checksum": "51cc4e3f472f55e9"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1629.678710938,
+      "best_ns": 1566.569335938,
+      "checksum": "51cc4e3f472f55e9"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1768.880859375,
+      "best_ns": 1719.5234375,
+      "checksum": "568707183db25d69"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1772.379882812,
+      "best_ns": 1699.096679688,
+      "checksum": "568707183db25d69"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1776.530273438,
+      "best_ns": 1706.338867188,
+      "checksum": "9b12b485439d96b3"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1738.118164062,
+      "best_ns": 1698.201171875,
+      "checksum": "9b12b485439d96b3"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3239.2578125,
+      "best_ns": 3124.67578125,
+      "checksum": "3861e2d66e867ff6"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3258.87109375,
+      "best_ns": 3149.658203125,
+      "checksum": "3861e2d66e867ff6"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3655.6796875,
+      "best_ns": 3429.849609375,
+      "checksum": "31e883f16da9eab3"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3618.408203125,
+      "best_ns": 3494.22265625,
+      "checksum": "31e883f16da9eab3"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3637.615234375,
+      "best_ns": 3478.677734375,
+      "checksum": "c1ec4942891dd483"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3536.703125,
+      "best_ns": 3392.333984375,
+      "checksum": "c1ec4942891dd483"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7682.29296875,
+      "best_ns": 7356.4453125,
+      "checksum": "e297bb64de854998"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7856.609375,
+      "best_ns": 7448.078125,
+      "checksum": "e297bb64de854998"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8144.3671875,
+      "best_ns": 7866.2109375,
+      "checksum": "c9d5874e9fbcef3c"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8136.06640625,
+      "best_ns": 7852.5390625,
+      "checksum": "c9d5874e9fbcef3c"
+    },
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8199.05859375,
+      "best_ns": 7909.1796875,
+      "checksum": "3b4268e3d64df824"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8177.08203125,
+      "best_ns": 7871.74609375,
+      "checksum": "3b4268e3d64df824"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 12.308761597,
+      "best_ns": 11.894851685,
+      "checksum": "66a60cd0959812af"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 18.643692017,
+      "best_ns": 17.770141602,
+      "checksum": "66a60cd0959812af"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 12.624099731,
+      "best_ns": 12.049362183,
+      "checksum": "6650b1c2cb4ecd2e"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 18.417999268,
+      "best_ns": 17.769485474,
+      "checksum": "6650b1c2cb4ecd2e"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 11.979415894,
+      "best_ns": 11.445999146,
+      "checksum": "d094d1f041f9a858"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 17.499923706,
+      "best_ns": 17.031356812,
+      "checksum": "d094d1f041f9a858"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.179870605,
+      "best_ns": 27.743011475,
+      "checksum": "1ec901cc335e55ab"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 36.107391357,
+      "best_ns": 34.127532959,
+      "checksum": "1ec901cc335e55ab"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 29.19644165,
+      "best_ns": 28.099060059,
+      "checksum": "31feafac948807b6"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 35.584747314,
+      "best_ns": 34.646331787,
+      "checksum": "31feafac948807b6"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 28.077453613,
+      "best_ns": 26.448577881,
+      "checksum": "192bedabfcaef209"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 34.595489502,
+      "best_ns": 32.883972168,
+      "checksum": "192bedabfcaef209"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 59.092224121,
+      "best_ns": 57.782531738,
+      "checksum": "07048bbaf02bfc4a"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 59.183776855,
+      "best_ns": 58.270751953,
+      "checksum": "07048bbaf02bfc4a"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 60.020446777,
+      "best_ns": 57.345092773,
+      "checksum": "e853fcef9bb9ebe9"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 59.331237793,
+      "best_ns": 56.579589844,
+      "checksum": "e853fcef9bb9ebe9"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 58.728515625,
+      "best_ns": 56.332885742,
+      "checksum": "94148d8823c65503"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 58.514892578,
+      "best_ns": 57.332397461,
+      "checksum": "94148d8823c65503"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 179.850219727,
+      "best_ns": 173.309326172,
+      "checksum": "b61ec6abfff10c5f"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 180.989624023,
+      "best_ns": 173.446655273,
+      "checksum": "b61ec6abfff10c5f"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 195.460083008,
+      "best_ns": 187.683105469,
+      "checksum": "e1bff6fe4cbc7adb"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 202.809570312,
+      "best_ns": 195.098876953,
+      "checksum": "e1bff6fe4cbc7adb"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 197.250366211,
+      "best_ns": 190.053344727,
+      "checksum": "119b7ee2686b69eb"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 202.641723633,
+      "best_ns": 194.300415039,
+      "checksum": "119b7ee2686b69eb"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 348.297119141,
+      "best_ns": 336.293457031,
+      "checksum": "886a2915c2021993"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 356.302978516,
+      "best_ns": 341.562988281,
+      "checksum": "886a2915c2021993"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 395.528320312,
+      "best_ns": 385.518310547,
+      "checksum": "9d709858eef6a133"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 401.133056641,
+      "best_ns": 393.890380859,
+      "checksum": "9d709858eef6a133"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 394.633056641,
+      "best_ns": 382.537841797,
+      "checksum": "2b0a1f7a2c41349e"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 396.596191406,
+      "best_ns": 386.708496094,
+      "checksum": "2b0a1f7a2c41349e"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 677.510742188,
+      "best_ns": 665.832519531,
+      "checksum": "b48542a33d4a14a8"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 684.814453125,
+      "best_ns": 665.445800781,
+      "checksum": "b48542a33d4a14a8"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 753.153320312,
+      "best_ns": 727.457519531,
+      "checksum": "5934df97d7eb4569"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 749.836914062,
+      "best_ns": 725.219726562,
+      "checksum": "5934df97d7eb4569"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 752.217285156,
+      "best_ns": 727.314941406,
+      "checksum": "6109d70de93bdef4"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 751.871582031,
+      "best_ns": 733.866210938,
+      "checksum": "6109d70de93bdef4"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1611.938476562,
+      "best_ns": 1565.104492188,
+      "checksum": "51cc4e3f472f55e9"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1647.990234375,
+      "best_ns": 1593.098632812,
+      "checksum": "51cc4e3f472f55e9"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1769.04296875,
+      "best_ns": 1711.547851562,
+      "checksum": "568707183db25d69"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1755.615234375,
+      "best_ns": 1700.48046875,
+      "checksum": "568707183db25d69"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1750.041015625,
+      "best_ns": 1696.493164062,
+      "checksum": "9b12b485439d96b3"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1828.043945312,
+      "best_ns": 1705.28125,
+      "checksum": "9b12b485439d96b3"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3242.26953125,
+      "best_ns": 3187.662109375,
+      "checksum": "3861e2d66e867ff6"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3268.71875,
+      "best_ns": 3137.2890625,
+      "checksum": "3861e2d66e867ff6"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3493.408203125,
+      "best_ns": 3380.37109375,
+      "checksum": "31e883f16da9eab3"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3504.71875,
+      "best_ns": 3390.70703125,
+      "checksum": "31e883f16da9eab3"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3505.126953125,
+      "best_ns": 3390.298828125,
+      "checksum": "c1ec4942891dd483"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3549.3984375,
+      "best_ns": 3398.4375,
+      "checksum": "c1ec4942891dd483"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7686.6875,
+      "best_ns": 7448.08203125,
+      "checksum": "e297bb64de854998"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7668.29296875,
+      "best_ns": 7470.703125,
+      "checksum": "e297bb64de854998"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8308.59375,
+      "best_ns": 7995.1171875,
+      "checksum": "c9d5874e9fbcef3c"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8219.40234375,
+      "best_ns": 7942.05859375,
+      "checksum": "c9d5874e9fbcef3c"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8231.1171875,
+      "best_ns": 7931.15234375,
+      "checksum": "3b4268e3d64df824"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8236.98046875,
+      "best_ns": 7886.5546875,
+      "checksum": "3b4268e3d64df824"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 19.131347656,
+      "best_ns": 18.203094482,
+      "checksum": "66a60cd0959812af"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 12.264251709,
+      "best_ns": 11.892318726,
+      "checksum": "66a60cd0959812af"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 18.292755127,
+      "best_ns": 17.312362671,
+      "checksum": "6650b1c2cb4ecd2e"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 12.376144409,
+      "best_ns": 11.94190979,
+      "checksum": "6650b1c2cb4ecd2e"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 17.167404175,
+      "best_ns": 16.597747803,
+      "checksum": "d094d1f041f9a858"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 11.847808838,
+      "best_ns": 11.486694336,
+      "checksum": "d094d1f041f9a858"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 35.508453369,
+      "best_ns": 34.066497803,
+      "checksum": "1ec901cc335e55ab"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 27.70614624,
+      "best_ns": 26.624023438,
+      "checksum": "1ec901cc335e55ab"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 34.421295166,
+      "best_ns": 33.531188965,
+      "checksum": "31feafac948807b6"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 28.354644775,
+      "best_ns": 27.71887207,
+      "checksum": "31feafac948807b6"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 34.235626221,
+      "best_ns": 33.000946045,
+      "checksum": "192bedabfcaef209"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 26.940673828,
+      "best_ns": 26.21206665,
+      "checksum": "192bedabfcaef209"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 58.347045898,
+      "best_ns": 56.437194824,
+      "checksum": "07048bbaf02bfc4a"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 58.784484863,
+      "best_ns": 56.381225586,
+      "checksum": "07048bbaf02bfc4a"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 58.926879883,
+      "best_ns": 56.96105957,
+      "checksum": "e853fcef9bb9ebe9"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 59.598327637,
+      "best_ns": 57.172180176,
+      "checksum": "e853fcef9bb9ebe9"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 57.362854004,
+      "best_ns": 55.928527832,
+      "checksum": "94148d8823c65503"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 57.858764648,
+      "best_ns": 56.292236328,
+      "checksum": "94148d8823c65503"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 180.648803711,
+      "best_ns": 173.583984375,
+      "checksum": "b61ec6abfff10c5f"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 178.192138672,
+      "best_ns": 171.732666016,
+      "checksum": "b61ec6abfff10c5f"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 201.416015625,
+      "best_ns": 194.681762695,
+      "checksum": "e1bff6fe4cbc7adb"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 193.445800781,
+      "best_ns": 187.835693359,
+      "checksum": "e1bff6fe4cbc7adb"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 199.732543945,
+      "best_ns": 194.615600586,
+      "checksum": "119b7ee2686b69eb"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 194.142578125,
+      "best_ns": 188.858032227,
+      "checksum": "119b7ee2686b69eb"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 351.5625,
+      "best_ns": 340.494873047,
+      "checksum": "886a2915c2021993"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 348.826171875,
+      "best_ns": 335.622070312,
+      "checksum": "886a2915c2021993"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 404.062988281,
+      "best_ns": 382.995605469,
+      "checksum": "9d709858eef6a133"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 390.777587891,
+      "best_ns": 377.644775391,
+      "checksum": "9d709858eef6a133"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 387.074707031,
+      "best_ns": 379.557373047,
+      "checksum": "2b0a1f7a2c41349e"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 392.171142578,
+      "best_ns": 378.590820312,
+      "checksum": "2b0a1f7a2c41349e"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 678.527832031,
+      "best_ns": 659.790039062,
+      "checksum": "b48542a33d4a14a8"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 674.072265625,
+      "best_ns": 652.2421875,
+      "checksum": "b48542a33d4a14a8"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 752.583984375,
+      "best_ns": 731.872558594,
+      "checksum": "5934df97d7eb4569"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 746.58203125,
+      "best_ns": 724.731445312,
+      "checksum": "5934df97d7eb4569"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 758.158691406,
+      "best_ns": 735.534667969,
+      "checksum": "6109d70de93bdef4"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 753.112792969,
+      "best_ns": 724.731445312,
+      "checksum": "6109d70de93bdef4"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1650.797851562,
+      "best_ns": 1589.071289062,
+      "checksum": "51cc4e3f472f55e9"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1623.6171875,
+      "best_ns": 1575.846679688,
+      "checksum": "51cc4e3f472f55e9"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1755.412109375,
+      "best_ns": 1703.125,
+      "checksum": "568707183db25d69"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1750.813476562,
+      "best_ns": 1695.760742188,
+      "checksum": "568707183db25d69"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1784.504882812,
+      "best_ns": 1700.846679688,
+      "checksum": "9b12b485439d96b3"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1784.831054688,
+      "best_ns": 1720.98828125,
+      "checksum": "9b12b485439d96b3"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3247.39453125,
+      "best_ns": 3218.099609375,
+      "checksum": "3861e2d66e867ff6"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3216.71484375,
+      "best_ns": 3128.091796875,
+      "checksum": "3861e2d66e867ff6"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3477.376953125,
+      "best_ns": 3375.650390625,
+      "checksum": "31e883f16da9eab3"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3543.86328125,
+      "best_ns": 3392.986328125,
+      "checksum": "31e883f16da9eab3"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3498.6171875,
+      "best_ns": 3399.822265625,
+      "checksum": "c1ec4942891dd483"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3557.779296875,
+      "best_ns": 3388.263671875,
+      "checksum": "c1ec4942891dd483"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7801.59765625,
+      "best_ns": 7359.703125,
+      "checksum": "e297bb64de854998"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7816.2421875,
+      "best_ns": 7362.79296875,
+      "checksum": "e297bb64de854998"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8360.19140625,
+      "best_ns": 7857.75,
+      "checksum": "c9d5874e9fbcef3c"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8214.02734375,
+      "best_ns": 8070.3125,
+      "checksum": "c9d5874e9fbcef3c"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8246.90625,
+      "best_ns": 8022.62109375,
+      "checksum": "3b4268e3d64df824"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8320.80078125,
+      "best_ns": 7941.5703125,
+      "checksum": "3b4268e3d64df824"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 12.385681152,
+      "best_ns": 11.920928955,
+      "checksum": "66a60cd0959812af"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 18.677398682,
+      "best_ns": 17.882019043,
+      "checksum": "66a60cd0959812af"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 12.516662598,
+      "best_ns": 12.019470215,
+      "checksum": "6650b1c2cb4ecd2e"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 18.229171753,
+      "best_ns": 17.588943481,
+      "checksum": "6650b1c2cb4ecd2e"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 11.986404419,
+      "best_ns": 11.531204224,
+      "checksum": "d094d1f041f9a858"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 17.539978027,
+      "best_ns": 17.031341553,
+      "checksum": "d094d1f041f9a858"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 28.424560547,
+      "best_ns": 27.547210693,
+      "checksum": "1ec901cc335e55ab"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 35.828887939,
+      "best_ns": 34.404754639,
+      "checksum": "1ec901cc335e55ab"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 28.957366943,
+      "best_ns": 27.6222229,
+      "checksum": "31feafac948807b6"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 34.928649902,
+      "best_ns": 33.528656006,
+      "checksum": "31feafac948807b6"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 27.360290527,
+      "best_ns": 26.287078857,
+      "checksum": "192bedabfcaef209"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 34.469604492,
+      "best_ns": 33.158599854,
+      "checksum": "192bedabfcaef209"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 57.469726562,
+      "best_ns": 56.353271484,
+      "checksum": "07048bbaf02bfc4a"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 58.270812988,
+      "best_ns": 56.640625,
+      "checksum": "07048bbaf02bfc4a"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 59.066772461,
+      "best_ns": 57.141601562,
+      "checksum": "e853fcef9bb9ebe9"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 58.906555176,
+      "best_ns": 56.816101074,
+      "checksum": "e853fcef9bb9ebe9"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 58.123291016,
+      "best_ns": 56.093811035,
+      "checksum": "94148d8823c65503"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 57.858764648,
+      "best_ns": 56.058227539,
+      "checksum": "94148d8823c65503"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 179.255249023,
+      "best_ns": 173.466918945,
+      "checksum": "b61ec6abfff10c5f"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 179.845214844,
+      "best_ns": 173.553466797,
+      "checksum": "b61ec6abfff10c5f"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 194.366455078,
+      "best_ns": 188.507080078,
+      "checksum": "e1bff6fe4cbc7adb"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 203.51159668,
+      "best_ns": 194.142578125,
+      "checksum": "e1bff6fe4cbc7adb"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 199.096679688,
+      "best_ns": 192.199707031,
+      "checksum": "119b7ee2686b69eb"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 202.90625,
+      "best_ns": 193.598388672,
+      "checksum": "119b7ee2686b69eb"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 351.430175781,
+      "best_ns": 335.388183594,
+      "checksum": "886a2915c2021993"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 355.214355469,
+      "best_ns": 348.714355469,
+      "checksum": "886a2915c2021993"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 394.612792969,
+      "best_ns": 380.239013672,
+      "checksum": "9d709858eef6a133"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 398.101806641,
+      "best_ns": 383.178710938,
+      "checksum": "9d709858eef6a133"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 397.318603516,
+      "best_ns": 381.703613281,
+      "checksum": "2b0a1f7a2c41349e"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 397.196289062,
+      "best_ns": 386.952880859,
+      "checksum": "2b0a1f7a2c41349e"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 669.698242188,
+      "best_ns": 649.149414062,
+      "checksum": "b48542a33d4a14a8"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 683.471679688,
+      "best_ns": 665.466308594,
+      "checksum": "b48542a33d4a14a8"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 749.308105469,
+      "best_ns": 725.769042969,
+      "checksum": "5934df97d7eb4569"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 753.133300781,
+      "best_ns": 725.016113281,
+      "checksum": "5934df97d7eb4569"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 760.273925781,
+      "best_ns": 739.420410156,
+      "checksum": "6109d70de93bdef4"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 758.178710938,
+      "best_ns": 734.049316406,
+      "checksum": "6109d70de93bdef4"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1610.026367188,
+      "best_ns": 1562.704101562,
+      "checksum": "51cc4e3f472f55e9"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1619.873046875,
+      "best_ns": 1567.09765625,
+      "checksum": "51cc4e3f472f55e9"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1743.977539062,
+      "best_ns": 1698.608398438,
+      "checksum": "568707183db25d69"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1764.892578125,
+      "best_ns": 1695.149414062,
+      "checksum": "568707183db25d69"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1764.038085938,
+      "best_ns": 1694.458007812,
+      "checksum": "9b12b485439d96b3"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1793.212890625,
+      "best_ns": 1712.1171875,
+      "checksum": "9b12b485439d96b3"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3261.962890625,
+      "best_ns": 3191.0,
+      "checksum": "3861e2d66e867ff6"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3231.28125,
+      "best_ns": 3127.115234375,
+      "checksum": "3861e2d66e867ff6"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3494.873046875,
+      "best_ns": 3379.150390625,
+      "checksum": "31e883f16da9eab3"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3472.494140625,
+      "best_ns": 3400.9609375,
+      "checksum": "31e883f16da9eab3"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3491.86328125,
+      "best_ns": 3390.216796875,
+      "checksum": "c1ec4942891dd483"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3669.43359375,
+      "best_ns": 3524.90234375,
+      "checksum": "c1ec4942891dd483"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7592.4453125,
+      "best_ns": 7371.09375,
+      "checksum": "e297bb64de854998"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7680.5,
+      "best_ns": 7403.3203125,
+      "checksum": "e297bb64de854998"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8310.87109375,
+      "best_ns": 7903.484375,
+      "checksum": "c9d5874e9fbcef3c"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8135.08984375,
+      "best_ns": 7850.26171875,
+      "checksum": "c9d5874e9fbcef3c"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8251.953125,
+      "best_ns": 7879.71875,
+      "checksum": "3b4268e3d64df824"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8193.6875,
+      "best_ns": 7951.8203125,
+      "checksum": "3b4268e3d64df824"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 18.890380859,
+      "best_ns": 18.235519409,
+      "checksum": "66a60cd0959812af"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 12.271240234,
+      "best_ns": 12.231826782,
+      "checksum": "66a60cd0959812af"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 18.367126465,
+      "best_ns": 17.747238159,
+      "checksum": "6650b1c2cb4ecd2e"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 12.610748291,
+      "best_ns": 11.979431152,
+      "checksum": "6650b1c2cb4ecd2e"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 17.403915405,
+      "best_ns": 16.649246216,
+      "checksum": "d094d1f041f9a858"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "4",
+        "65536",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 4,
+      "loops": 65536,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 11.909484863,
+      "best_ns": 11.519119263,
+      "checksum": "d094d1f041f9a858"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 35.669952393,
+      "best_ns": 33.996582031,
+      "checksum": "1ec901cc335e55ab"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 28.756469727,
+      "best_ns": 27.242004395,
+      "checksum": "1ec901cc335e55ab"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 34.951507568,
+      "best_ns": 33.584594727,
+      "checksum": "31feafac948807b6"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 28.687805176,
+      "best_ns": 27.380615234,
+      "checksum": "31feafac948807b6"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 33.740997314,
+      "best_ns": 32.857269287,
+      "checksum": "192bedabfcaef209"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "8",
+        "32768",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 8,
+      "loops": 32768,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 27.057647705,
+      "best_ns": 25.922149658,
+      "checksum": "192bedabfcaef209"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 58.347106934,
+      "best_ns": 56.719482422,
+      "checksum": "07048bbaf02bfc4a"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 57.945251465,
+      "best_ns": 56.434631348,
+      "checksum": "07048bbaf02bfc4a"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 58.222412109,
+      "best_ns": 56.676208496,
+      "checksum": "e853fcef9bb9ebe9"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 59.09979248,
+      "best_ns": 57.139099121,
+      "checksum": "e853fcef9bb9ebe9"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 57.6171875,
+      "best_ns": 55.854797363,
+      "checksum": "94148d8823c65503"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "16",
+        "16384",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 16,
+      "loops": 16384,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 57.558654785,
+      "best_ns": 55.951477051,
+      "checksum": "94148d8823c65503"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 179.616333008,
+      "best_ns": 173.782348633,
+      "checksum": "b61ec6abfff10c5f"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 176.335693359,
+      "best_ns": 171.615600586,
+      "checksum": "b61ec6abfff10c5f"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 201.405761719,
+      "best_ns": 195.922851562,
+      "checksum": "e1bff6fe4cbc7adb"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 192.464233398,
+      "best_ns": 187.713623047,
+      "checksum": "e1bff6fe4cbc7adb"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 200.485229492,
+      "best_ns": 194.025634766,
+      "checksum": "119b7ee2686b69eb"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "32",
+        "8192",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 32,
+      "loops": 8192,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 195.587158203,
+      "best_ns": 189.188720703,
+      "checksum": "119b7ee2686b69eb"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 352.712158203,
+      "best_ns": 341.156005859,
+      "checksum": "886a2915c2021993"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 355.814697266,
+      "best_ns": 335.947509766,
+      "checksum": "886a2915c2021993"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 397.013427734,
+      "best_ns": 383.890869141,
+      "checksum": "9d709858eef6a133"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 391.306640625,
+      "best_ns": 379.903320312,
+      "checksum": "9d709858eef6a133"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 391.794921875,
+      "best_ns": 379.374023438,
+      "checksum": "2b0a1f7a2c41349e"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "64",
+        "4096",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 64,
+      "loops": 4096,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 389.719482422,
+      "best_ns": 378.560302734,
+      "checksum": "2b0a1f7a2c41349e"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 678.99609375,
+      "best_ns": 658.040039062,
+      "checksum": "b48542a33d4a14a8"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 673.116210938,
+      "best_ns": 648.844238281,
+      "checksum": "b48542a33d4a14a8"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 750.406738281,
+      "best_ns": 726.643554688,
+      "checksum": "5934df97d7eb4569"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 752.278808594,
+      "best_ns": 726.17578125,
+      "checksum": "5934df97d7eb4569"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 772.908691406,
+      "best_ns": 732.543945312,
+      "checksum": "6109d70de93bdef4"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "128",
+        "2048",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 128,
+      "loops": 2048,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 769.002441406,
+      "best_ns": 724.426269531,
+      "checksum": "6109d70de93bdef4"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1671.915039062,
+      "best_ns": 1581.135742188,
+      "checksum": "51cc4e3f472f55e9"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1647.541992188,
+      "best_ns": 1574.258789062,
+      "checksum": "51cc4e3f472f55e9"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1766.967773438,
+      "best_ns": 1699.951171875,
+      "checksum": "568707183db25d69"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1758.544921875,
+      "best_ns": 1703.979492188,
+      "checksum": "568707183db25d69"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1759.481445312,
+      "best_ns": 1700.358398438,
+      "checksum": "9b12b485439d96b3"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "256",
+        "1024",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 256,
+      "loops": 1024,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 1756.713867188,
+      "best_ns": 1706.298828125,
+      "checksum": "9b12b485439d96b3"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3256.265625,
+      "best_ns": 3135.662109375,
+      "checksum": "3861e2d66e867ff6"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3274.33203125,
+      "best_ns": 3130.126953125,
+      "checksum": "3861e2d66e867ff6"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3483.3984375,
+      "best_ns": 3402.994140625,
+      "checksum": "31e883f16da9eab3"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3500.244140625,
+      "best_ns": 3375.9765625,
+      "checksum": "31e883f16da9eab3"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3501.220703125,
+      "best_ns": 3394.693359375,
+      "checksum": "c1ec4942891dd483"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "512",
+        "512",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 512,
+      "loops": 512,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 3571.37109375,
+      "best_ns": 3388.5078125,
+      "checksum": "c1ec4942891dd483"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-quarter",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7647.625,
+      "best_ns": 7399.73828125,
+      "checksum": "e297bb64de854998"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-quarter",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-quarter",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 7616.53515625,
+      "best_ns": 7418.1328125,
+      "checksum": "e297bb64de854998"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "prefix-half",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8137.046875,
+      "best_ns": 7871.25390625,
+      "checksum": "c9d5874e9fbcef3c"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "prefix-half",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "prefix-half",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8095.703125,
+      "best_ns": 7854.81640625,
+      "checksum": "c9d5874e9fbcef3c"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-avx2",
+        "highhalf",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8276.3671875,
+      "best_ns": 8071.61328125,
+      "checksum": "3b4268e3d64df824"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-avx2",
+        "highhalf",
+        "1024",
+        "256",
+        "31",
+        "15"
+      ],
+      "operation": "highhalf",
+      "size": 1024,
+      "loops": 256,
+      "reps": 31,
+      "warmup": 15,
+      "median_ns": 8095.37890625,
+      "best_ns": 7869.95703125,
+      "checksum": "3b4268e3d64df824"
+    }
+  ]
+}

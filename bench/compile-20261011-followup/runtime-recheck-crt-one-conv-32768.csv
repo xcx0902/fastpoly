@@ -1,0 +1,2 @@
+backend,operation,size,before_ms,after_ms,speedup,checksum,runs,reps,warmup
+neon,conv,32768,0.344750000,0.347583000,0.991849,e15573864f951d41,9,101,20

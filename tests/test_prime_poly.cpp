@@ -297,6 +297,8 @@ FP_TEST(prime_crt_scratch_warm_reuse) {
 FP_TEST(prime_series) {
   series<ModInt<2>>();
   series<ModInt<3>>();
+  series<ModInt<17>>(); // root bound 16: all Newton products require CRT
+  series<ModInt<97>>(); // root bound 32: inverse extension still uses native NTT
   series<ModInt<193>>();
   series<ModInt<641>>(); // exp/sqrt double from native NTT to CRT
   series<mod1000000007>();

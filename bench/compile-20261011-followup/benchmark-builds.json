@@ -1,0 +1,374 @@
+{
+  "neon": {
+    "baseline": {
+      "command": [
+        "clang++",
+        "-std=c++20",
+        "-O2",
+        "-DNDEBUG",
+        "-pthread",
+        "-include",
+        "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+        "-DFASTPOLY_BENCH_MOD=998244353",
+        "-DFASTPOLY_BENCH_ROOT=3",
+        "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+        "bench/bench.cpp",
+        "-o",
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-baseline-neon"
+      ],
+      "sha256": "0459f03ef3bfc931f8a0dfa14c9aa79b05955fdefdfebd4073e403236020a0dc",
+      "bytes": 300984
+    },
+    "final": {
+      "command": [
+        "clang++",
+        "-std=c++20",
+        "-O2",
+        "-DNDEBUG",
+        "-pthread",
+        "-include",
+        "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+        "-DFASTPOLY_BENCH_MOD=998244353",
+        "-DFASTPOLY_BENCH_ROOT=3",
+        "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/final/include",
+        "bench/bench.cpp",
+        "-o",
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-final-neon"
+      ],
+      "sha256": "907a6da69d9ae623588a184270129deb226c489234f870bb4a1ee2e197fcf49f",
+      "bytes": 271480
+    }
+  },
+  "avx2": {
+    "baseline": {
+      "command": [
+        "clang++",
+        "-std=c++20",
+        "-O2",
+        "-DNDEBUG",
+        "-pthread",
+        "-include",
+        "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+        "-arch",
+        "x86_64",
+        "-mavx2",
+        "-DFASTPOLY_BENCH_MOD=998244353",
+        "-DFASTPOLY_BENCH_ROOT=3",
+        "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+        "bench/bench.cpp",
+        "-o",
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-baseline-avx2"
+      ],
+      "sha256": "3a1fdf9dc3716fa5ddd8b0a36ccda7ec5f1237e614c7eb0a674d40d2b46a3cc3",
+      "bytes": 370568
+    },
+    "final": {
+      "command": [
+        "clang++",
+        "-std=c++20",
+        "-O2",
+        "-DNDEBUG",
+        "-pthread",
+        "-include",
+        "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+        "-arch",
+        "x86_64",
+        "-mavx2",
+        "-DFASTPOLY_BENCH_MOD=998244353",
+        "-DFASTPOLY_BENCH_ROOT=3",
+        "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/final/include",
+        "bench/bench.cpp",
+        "-o",
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-final-avx2"
+      ],
+      "sha256": "c5b7d76f01f13facb22e5c7627ad16486e5c63c8df33beb9a74ec444a8f4d578",
+      "bytes": 345120
+    }
+  },
+  "full": {
+    "baseline": {
+      "command": [
+        "clang++",
+        "-std=c++20",
+        "-O2",
+        "-DNDEBUG",
+        "-pthread",
+        "-include",
+        "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+        "-DFASTPOLY_BENCH_MOD=1224736769",
+        "-DFASTPOLY_BENCH_ROOT=3",
+        "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+        "bench/bench.cpp",
+        "-o",
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-baseline-full"
+      ],
+      "sha256": "05b277216029ca6940beb5286127989cbb8aa19175c679761fa448c3036752c7",
+      "bytes": 284216
+    },
+    "final": {
+      "command": [
+        "clang++",
+        "-std=c++20",
+        "-O2",
+        "-DNDEBUG",
+        "-pthread",
+        "-include",
+        "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+        "-DFASTPOLY_BENCH_MOD=1224736769",
+        "-DFASTPOLY_BENCH_ROOT=3",
+        "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/final/include",
+        "bench/bench.cpp",
+        "-o",
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-final-full"
+      ],
+      "sha256": "f4dc2a19c2857521cc408df0fbefcceb0ae2430214dd7637ef29a32e2d795dd1",
+      "bytes": 270952
+    }
+  },
+  "full-avx2": {
+    "baseline": {
+      "command": [
+        "clang++",
+        "-std=c++20",
+        "-O2",
+        "-DNDEBUG",
+        "-pthread",
+        "-include",
+        "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+        "-arch",
+        "x86_64",
+        "-mavx2",
+        "-DFASTPOLY_BENCH_MOD=1224736769",
+        "-DFASTPOLY_BENCH_ROOT=3",
+        "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+        "bench/bench.cpp",
+        "-o",
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-baseline-full-avx2"
+      ],
+      "sha256": "efe1c0cbcfb89a32475a2a5ab0153363be604662d4913673370cbb4055354646",
+      "bytes": 362256
+    },
+    "final": {
+      "command": [
+        "clang++",
+        "-std=c++20",
+        "-O2",
+        "-DNDEBUG",
+        "-pthread",
+        "-include",
+        "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+        "-arch",
+        "x86_64",
+        "-mavx2",
+        "-DFASTPOLY_BENCH_MOD=1224736769",
+        "-DFASTPOLY_BENCH_ROOT=3",
+        "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/final/include",
+        "bench/bench.cpp",
+        "-o",
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-final-full-avx2"
+      ],
+      "sha256": "5e2d4a17b15fb9c5273b0af02e76d5a07c5b42df71b4d2b283222742b7e0163f",
+      "bytes": 332352
+    }
+  },
+  "crt": {
+    "baseline": {
+      "command": [
+        "clang++",
+        "-std=c++20",
+        "-O2",
+        "-DNDEBUG",
+        "-pthread",
+        "-include",
+        "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+        "-DFASTPOLY_BENCH_MOD=1000000007",
+        "-DFASTPOLY_BENCH_ROOT=0",
+        "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+        "bench/bench.cpp",
+        "-o",
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-baseline-crt"
+      ],
+      "sha256": "cf55984530ea32a20601e87183006e801d10cfa9033ad13e15d87a01b59e6142",
+      "bytes": 265352
+    },
+    "final": {
+      "command": [
+        "clang++",
+        "-std=c++20",
+        "-O2",
+        "-DNDEBUG",
+        "-pthread",
+        "-include",
+        "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+        "-DFASTPOLY_BENCH_MOD=1000000007",
+        "-DFASTPOLY_BENCH_ROOT=0",
+        "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/final/include",
+        "bench/bench.cpp",
+        "-o",
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-final-crt"
+      ],
+      "sha256": "db4afcb1a2bc5ec921d675737e57c91a999a816db49bdefdc6b1199f078a8e81",
+      "bytes": 251448
+    }
+  },
+  "crt-one": {
+    "baseline": {
+      "command": [
+        "clang++",
+        "-std=c++20",
+        "-O2",
+        "-DNDEBUG",
+        "-pthread",
+        "-include",
+        "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+        "-DFASTPOLY_BENCH_MOD=3",
+        "-DFASTPOLY_BENCH_ROOT=0",
+        "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+        "bench/bench.cpp",
+        "-o",
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-baseline-crt-one"
+      ],
+      "sha256": "a946959ab2db2658a875230392fddba37eaf026c78616fc131ecc13fe2ca009b",
+      "bytes": 264704
+    },
+    "final": {
+      "command": [
+        "clang++",
+        "-std=c++20",
+        "-O2",
+        "-DNDEBUG",
+        "-pthread",
+        "-include",
+        "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+        "-DFASTPOLY_BENCH_MOD=3",
+        "-DFASTPOLY_BENCH_ROOT=0",
+        "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/final/include",
+        "bench/bench.cpp",
+        "-o",
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-final-crt-one"
+      ],
+      "sha256": "128ae21986ab6bfb6ae06422742c21d944ab10d93f9b215bb7b597a7977c3e99",
+      "bytes": 172728
+    }
+  },
+  "crt-two": {
+    "baseline": {
+      "command": [
+        "clang++",
+        "-std=c++20",
+        "-O2",
+        "-DNDEBUG",
+        "-pthread",
+        "-include",
+        "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+        "-DFASTPOLY_BENCH_MOD=100003",
+        "-DFASTPOLY_BENCH_ROOT=0",
+        "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+        "bench/bench.cpp",
+        "-o",
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-baseline-crt-two"
+      ],
+      "sha256": "575e3aa6ccb5f69bbbd3cc4f17010cb9a80e9a2a48912e39aac9a3adaf804415",
+      "bytes": 265104
+    },
+    "final": {
+      "command": [
+        "clang++",
+        "-std=c++20",
+        "-O2",
+        "-DNDEBUG",
+        "-pthread",
+        "-include",
+        "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+        "-DFASTPOLY_BENCH_MOD=100003",
+        "-DFASTPOLY_BENCH_ROOT=0",
+        "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/final/include",
+        "bench/bench.cpp",
+        "-o",
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-final-crt-two"
+      ],
+      "sha256": "4a20059599d432f2bda6d1bf5ab123c5b4c13b6b9198a55551668dfcfaa73190",
+      "bytes": 251176
+    }
+  },
+  "binary": {
+    "baseline": {
+      "command": [
+        "clang++",
+        "-std=c++20",
+        "-O2",
+        "-DNDEBUG",
+        "-pthread",
+        "-include",
+        "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+        "-DFASTPOLY_BENCH_MOD=2",
+        "-DFASTPOLY_BENCH_ROOT=0",
+        "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+        "bench/bench.cpp",
+        "-o",
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-baseline-binary"
+      ],
+      "sha256": "bb5f591412e9eccac612e71fed320aefee9240abbcaa637b8dc9fd28447adbd8",
+      "bytes": 245048
+    },
+    "final": {
+      "command": [
+        "clang++",
+        "-std=c++20",
+        "-O2",
+        "-DNDEBUG",
+        "-pthread",
+        "-include",
+        "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+        "-DFASTPOLY_BENCH_MOD=2",
+        "-DFASTPOLY_BENCH_ROOT=0",
+        "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/final/include",
+        "bench/bench.cpp",
+        "-o",
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-final-binary"
+      ],
+      "sha256": "ad1c91306b37cd068cacfdb9674d85c2eb962125c4a4e9802516c2a8142ec7aa",
+      "bytes": 169864
+    }
+  },
+  "gcc": {
+    "baseline": {
+      "command": [
+        "/opt/homebrew/bin/g++-16",
+        "-std=c++20",
+        "-O2",
+        "-DNDEBUG",
+        "-pthread",
+        "-include",
+        "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+        "-DFASTPOLY_BENCH_MOD=998244353",
+        "-DFASTPOLY_BENCH_ROOT=3",
+        "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+        "bench/bench.cpp",
+        "-o",
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-baseline-gcc"
+      ],
+      "sha256": "60af02f9fd5659c6af64bd0895985a203fc39df7fbc10eb1a64d80ed113da072",
+      "bytes": 371720
+    },
+    "final": {
+      "command": [
+        "/opt/homebrew/bin/g++-16",
+        "-std=c++20",
+        "-O2",
+        "-DNDEBUG",
+        "-pthread",
+        "-include",
+        "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+        "-DFASTPOLY_BENCH_MOD=998244353",
+        "-DFASTPOLY_BENCH_ROOT=3",
+        "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/final/include",
+        "bench/bench.cpp",
+        "-o",
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/performance-final-gcc"
+      ],
+      "sha256": "a922b514a0022ca7f79e2b736792f1bfc1090612f67b38c9cf0ef5a08831a419",
+      "bytes": 337528
+    }
+  }
+}

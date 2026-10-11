@@ -1,0 +1,2 @@
+backend,operation,size,before_ms,after_ms,speedup,checksum,runs,reps,warmup
+neon,skinny,1048576,6.832625000,6.850042000,0.997457,dd7148b0dea0c361,9,101,20

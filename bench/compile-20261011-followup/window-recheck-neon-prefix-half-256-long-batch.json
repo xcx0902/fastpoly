@@ -1,0 +1,375 @@
+{
+  "backend": "neon",
+  "binaries": [
+    {
+      "path": "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-neon",
+      "sha256": "d076d332df6b32c6c95d3c4449467b4d1f6165d12f1ecfd60259198667067785"
+    },
+    {
+      "path": "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-neon",
+      "sha256": "a5f0ea1464935bbeb3af4a0312f51d8518d87fdcd2499bdcdc3a0a022676cc2e"
+    }
+  ],
+  "samples": [
+    {
+      "run": 1,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-neon",
+        "prefix-half",
+        "256",
+        "4096",
+        "101",
+        "30"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 4096,
+      "reps": 101,
+      "warmup": 30,
+      "median_ns": 225.809570312,
+      "best_ns": 213.317871094,
+      "checksum": "6a5bbd33b220aa5a"
+    },
+    {
+      "run": 1,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-neon",
+        "prefix-half",
+        "256",
+        "4096",
+        "101",
+        "30"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 4096,
+      "reps": 101,
+      "warmup": 30,
+      "median_ns": 221.354003906,
+      "best_ns": 211.222167969,
+      "checksum": "6a5bbd33b220aa5a"
+    },
+    {
+      "run": 2,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-neon",
+        "prefix-half",
+        "256",
+        "4096",
+        "101",
+        "30"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 4096,
+      "reps": 101,
+      "warmup": 30,
+      "median_ns": 221.272949219,
+      "best_ns": 211.151123047,
+      "checksum": "6a5bbd33b220aa5a"
+    },
+    {
+      "run": 2,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-neon",
+        "prefix-half",
+        "256",
+        "4096",
+        "101",
+        "30"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 4096,
+      "reps": 101,
+      "warmup": 30,
+      "median_ns": 226.216552734,
+      "best_ns": 213.145019531,
+      "checksum": "6a5bbd33b220aa5a"
+    },
+    {
+      "run": 3,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-neon",
+        "prefix-half",
+        "256",
+        "4096",
+        "101",
+        "30"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 4096,
+      "reps": 101,
+      "warmup": 30,
+      "median_ns": 231.374267578,
+      "best_ns": 214.060546875,
+      "checksum": "6a5bbd33b220aa5a"
+    },
+    {
+      "run": 3,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-neon",
+        "prefix-half",
+        "256",
+        "4096",
+        "101",
+        "30"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 4096,
+      "reps": 101,
+      "warmup": 30,
+      "median_ns": 223.703857422,
+      "best_ns": 211.161376953,
+      "checksum": "6a5bbd33b220aa5a"
+    },
+    {
+      "run": 4,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-neon",
+        "prefix-half",
+        "256",
+        "4096",
+        "101",
+        "30"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 4096,
+      "reps": 101,
+      "warmup": 30,
+      "median_ns": 221.028808594,
+      "best_ns": 211.151123047,
+      "checksum": "6a5bbd33b220aa5a"
+    },
+    {
+      "run": 4,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-neon",
+        "prefix-half",
+        "256",
+        "4096",
+        "101",
+        "30"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 4096,
+      "reps": 101,
+      "warmup": 30,
+      "median_ns": 222.351074219,
+      "best_ns": 213.114257812,
+      "checksum": "6a5bbd33b220aa5a"
+    },
+    {
+      "run": 5,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-neon",
+        "prefix-half",
+        "256",
+        "4096",
+        "101",
+        "30"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 4096,
+      "reps": 101,
+      "warmup": 30,
+      "median_ns": 222.422363281,
+      "best_ns": 213.093994141,
+      "checksum": "6a5bbd33b220aa5a"
+    },
+    {
+      "run": 5,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-neon",
+        "prefix-half",
+        "256",
+        "4096",
+        "101",
+        "30"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 4096,
+      "reps": 101,
+      "warmup": 30,
+      "median_ns": 220.347167969,
+      "best_ns": 211.100341797,
+      "checksum": "6a5bbd33b220aa5a"
+    },
+    {
+      "run": 6,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-neon",
+        "prefix-half",
+        "256",
+        "4096",
+        "101",
+        "30"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 4096,
+      "reps": 101,
+      "warmup": 30,
+      "median_ns": 217.122314453,
+      "best_ns": 211.090087891,
+      "checksum": "6a5bbd33b220aa5a"
+    },
+    {
+      "run": 6,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-neon",
+        "prefix-half",
+        "256",
+        "4096",
+        "101",
+        "30"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 4096,
+      "reps": 101,
+      "warmup": 30,
+      "median_ns": 220.682861328,
+      "best_ns": 213.073730469,
+      "checksum": "6a5bbd33b220aa5a"
+    },
+    {
+      "run": 7,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-neon",
+        "prefix-half",
+        "256",
+        "4096",
+        "101",
+        "30"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 4096,
+      "reps": 101,
+      "warmup": 30,
+      "median_ns": 216.501953125,
+      "best_ns": 213.083984375,
+      "checksum": "6a5bbd33b220aa5a"
+    },
+    {
+      "run": 7,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-neon",
+        "prefix-half",
+        "256",
+        "4096",
+        "101",
+        "30"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 4096,
+      "reps": 101,
+      "warmup": 30,
+      "median_ns": 215.138671875,
+      "best_ns": 211.110595703,
+      "checksum": "6a5bbd33b220aa5a"
+    },
+    {
+      "run": 8,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-neon",
+        "prefix-half",
+        "256",
+        "4096",
+        "101",
+        "30"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 4096,
+      "reps": 101,
+      "warmup": 30,
+      "median_ns": 216.511962891,
+      "best_ns": 211.130615234,
+      "checksum": "6a5bbd33b220aa5a"
+    },
+    {
+      "run": 8,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-neon",
+        "prefix-half",
+        "256",
+        "4096",
+        "101",
+        "30"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 4096,
+      "reps": 101,
+      "warmup": 30,
+      "median_ns": 219.085693359,
+      "best_ns": 213.205810547,
+      "checksum": "6a5bbd33b220aa5a"
+    },
+    {
+      "run": 9,
+      "version": 0,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-baseline-neon",
+        "prefix-half",
+        "256",
+        "4096",
+        "101",
+        "30"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 4096,
+      "reps": 101,
+      "warmup": 30,
+      "median_ns": 222.422363281,
+      "best_ns": 213.093994141,
+      "checksum": "6a5bbd33b220aa5a"
+    },
+    {
+      "run": 9,
+      "version": 1,
+      "command": [
+        "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/window-final-neon",
+        "prefix-half",
+        "256",
+        "4096",
+        "101",
+        "30"
+      ],
+      "operation": "prefix-half",
+      "size": 256,
+      "loops": 4096,
+      "reps": 101,
+      "warmup": 30,
+      "median_ns": 223.734375,
+      "best_ns": 211.130615234,
+      "checksum": "6a5bbd33b220aa5a"
+    }
+  ]
+}

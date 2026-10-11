@@ -1,0 +1,130 @@
+--- a/include/fastpoly/ntt.hpp
++++ b/include/fastpoly/ntt.hpp
+@@ -98,6 +98,10 @@
+   // Keep the terminal radix-2 in the width-2 kernel, avoiding another pass.
+   static constexpr bool FUSE_RADIX2 = COMPACT || X86_SHOUP;
+   using Twiddle = simd::Twiddle;
++  // Stage routing covers every power-of-two width below one SIMD vector.
++  // Generic kernels therefore receive only whole vectors, with no scalar tail.
++  static_assert((simd::lane & (simd::lane-1)) == 0 && simd::lane <= 16 &&
++                simd::small_m_max == simd::lane/2);
+ 
+   // Preserve the plan's value semantics while keeping its large tables in
+   // aligned storage. Cached plans are const and never take this copy path.
+@@ -842,20 +846,7 @@
+           step(k + simd::lane);
+         }
+       }
+-      for (; k + simd::lane <= m; k += simd::lane) step(k);
+-      for (; k < m; ++k) {
+-        uint32_t x0 = p[k], x1 = p[k + m], x2 = p[k + 2 * m], x3 = p[k + 3 * m];
+-        uint32_t t0 = detail::s_add(x0, x2, R);
+-        uint32_t t1 = detail::s_sub(x0, x2, R);
+-        uint32_t t2 = detail::s_add(x1, x3, R);
+-        uint32_t t3 = M::reduce(uint64_t(detail::s_sub(x1, x3, R)) * w4_);
+-        uint32_t y0 = detail::s_add(t0, t2, R);
+-        if constexpr (LAST) y0 = y0 >= MOD ? y0 - MOD : y0;
+-        p[k] = y0;
+-        p[k + m] = smul<false, SHOUP>(detail::s_sub(t0, t2, R), B[k]);
+-        p[k + 2 * m] = smul<false, SHOUP>(detail::s_add(t1, t3, R), A[k]);
+-        p[k + 3 * m] = smul<false, SHOUP>(detail::s_sub(t1, t3, R), C[k]);
+-      }
++      for (; k < m; k += simd::lane) step(k);
+     }
+   }
+ 
+@@ -898,27 +889,7 @@
+           step(k + simd::lane);
+         }
+       }
+-      for (; k + simd::lane <= m; k += simd::lane) step(k);
+-      for (; k < m; ++k) {
+-        uint32_t b0 = p[k], b1 = p[k + m], b2 = p[k + 2 * m], b3 = p[k + 3 * m];
+-        if constexpr (LAST) b0 = M::reduce(uint64_t(b0) * inv_n_);
+-        uint32_t c1 = smul<true, SHOUP>(b1, IB[k]);
+-        uint32_t c2 = smul<true, SHOUP>(b2, IA[k]);
+-        uint32_t c3 = smul<true, SHOUP>(b3, IC[k]);
+-        uint32_t d0 = detail::s_add(b0, c1, R), d1 = detail::s_sub(b0, c1, R);
+-        uint32_t d2 = detail::s_add(c2, c3, R), d3 = detail::s_sub(c2, c3, R);
+-        uint32_t e = M::reduce(uint64_t(d3) * w4_inv_);
+-        uint32_t y0 = detail::s_add(d0, d2, R), y1 = detail::s_add(d1, e, R);
+-        uint32_t y2 = detail::s_sub(d0, d2, R), y3 = detail::s_sub(d1, e, R);
+-        if constexpr (LAST && LAZY) {
+-          y0 = y0 >= MOD ? y0 - MOD : y0; y1 = y1 >= MOD ? y1 - MOD : y1;
+-          y2 = y2 >= MOD ? y2 - MOD : y2; y3 = y3 >= MOD ? y3 - MOD : y3;
+-        }
+-        if constexpr (Output & 1) p[k] = y0;
+-        if constexpr (Output & 2) p[k + m] = y1;
+-        if constexpr (Output & 4) p[k + 2 * m] = y2;
+-        if constexpr (Output & 8) p[k + 3 * m] = y3;
+-      }
++      for (; k < m; k += simd::lane) step(k);
+     }
+   }
+ 
+--- a/include/fastpoly/detail/poly/crt_convolution.hpp
++++ b/include/fastpoly/detail/poly/crt_convolution.hpp
+@@ -21,18 +21,21 @@
+ // Lift Montgomery limbs as ordinary integers. The reconstructed integer
+ // product has two target Montgomery factors; one target REDC below removes
+ // the extra factor. This avoids decoding every input in every auxiliary field.
+-template <class P, class M>
+-void lift_limbs(uint32_t* dst, std::span<const M> src) {
++template <class P>
++void lift_limbs(uint32_t* dst, std::span<const uint32_t> src) {
+   const auto factor = simd::set1(P::r2);
+-  const auto* input = reinterpret_cast<const uint32_t*>(src.data());
++  const auto* input = src.data();
+   size_t i = 0;
+   for (; i + simd::lane <= src.size(); i += simd::lane)
+     simd::store(dst + i, simd::mulmod<P::mod, P::ninv>(simd::load(input + i), factor));
+   for (; i < src.size(); ++i) dst[i] = P::reduce(uint64_t(input[i])*P::r2);
+ }
+ 
+-template <class P, class M>
+-fpx::detail::ScratchBuffer auxiliary_product(std::span<const M> a, std::span<const M> b,
++// Auxiliary arithmetic depends only on P, not on the target field. Accept
++// limbs so each kernel is instantiated once even when a TU uses many primes.
++template <class P>
++fpx::detail::ScratchBuffer auxiliary_product(std::span<const uint32_t> a,
++                                             std::span<const uint32_t> b,
+                                              size_t out, size_t offset = 0,
+                                              uint32_t cyclic_size = 0) {
+   if (std::min(a.size(), b.size()) <= naive_threshold) {
+@@ -40,7 +43,7 @@
+     if (out != 0) std::memset(r.data(), 0, out*sizeof(uint32_t));
+     lift_limbs<P>(bb.data(), b);
+     for (size_t i = 0; i < a.size() && i < offset+out; ++i) {
+-      const P x = P::raw(P::reduce(uint64_t(a[i].raw_val())*P::r2));
++      const P x = P::raw(P::reduce(uint64_t(a[i])*P::r2));
+       for (size_t j = offset > i ? offset-i : 0;
+            j < b.size() && j < offset+out-i; ++j)
+         r[i+j-offset] = (P::raw(r[i+j-offset])+x*P::raw(bb[j])).raw_val();
+@@ -131,13 +134,16 @@
+   constexpr auto inv123 = crt_prime3::from_int(p1*p2).inv();
+   constexpr uint64_t p12_target = p1*p2 % M::mod;
+   const size_t primes = crt_prime_count<M>(std::min(a.size(), b.size()));
+-  const auto c1 = auxiliary_product<crt_prime1>(a, b, count, offset, cyclic_size);
++  static_assert(sizeof(M) == sizeof(uint32_t), "Mont must be a single 32-bit limb");
++  const std::span<const uint32_t> aa(reinterpret_cast<const uint32_t*>(a.data()), a.size());
++  const std::span<const uint32_t> bb(reinterpret_cast<const uint32_t*>(b.data()), b.size());
++  const auto c1 = auxiliary_product<crt_prime1>(aa, bb, count, offset, cyclic_size);
+   if (primes == 1) {
+     size_t i = restore_crt<1>(dst, count, c1, {}, {});
+     for (; i < count; ++i) dst[i] += M::raw(M::reduce(crt_prime1::raw(c1[i]).val()));
+     return;
+   }
+-  const auto c2 = auxiliary_product<crt_prime2>(a, b, count, offset, cyclic_size);
++  const auto c2 = auxiliary_product<crt_prime2>(aa, bb, count, offset, cyclic_size);
+   auto digit2 = [&](size_t i, uint32_t x1) {
+     // REDC with a Montgomery constant multiplies an ordinary integer and
+     // returns an ordinary integer, saving a division-based conversion.
+@@ -151,7 +157,7 @@
+     }
+     return;
+   }
+-  const auto c3 = auxiliary_product<crt_prime3>(a, b, count, offset, cyclic_size);
++  const auto c3 = auxiliary_product<crt_prime3>(aa, bb, count, offset, cyclic_size);
+   size_t i = restore_crt<3>(dst, count, c1, c2, c3);
+   for (; i < count; ++i) {
+     const uint32_t x1 = crt_prime1::raw(c1[i]).val(), x2 = digit2(i, x1);

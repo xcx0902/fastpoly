@@ -21,18 +21,21 @@ inline constexpr size_t crt_block_size = size_t(1) << 23;
 // Lift Montgomery limbs as ordinary integers. The reconstructed integer
 // product has two target Montgomery factors; one target REDC below removes
 // the extra factor. This avoids decoding every input in every auxiliary field.
-template <class P, class M>
-void lift_limbs(uint32_t* dst, std::span<const M> src) {
+template <class P>
+void lift_limbs(uint32_t* dst, std::span<const uint32_t> src) {
   const auto factor = simd::set1(P::r2);
-  const auto* input = reinterpret_cast<const uint32_t*>(src.data());
+  const auto* input = src.data();
   size_t i = 0;
   for (; i + simd::lane <= src.size(); i += simd::lane)
     simd::store(dst + i, simd::mulmod<P::mod, P::ninv>(simd::load(input + i), factor));
   for (; i < src.size(); ++i) dst[i] = P::reduce(uint64_t(input[i])*P::r2);
 }
 
-template <class P, class M>
-fpx::detail::ScratchBuffer auxiliary_product(std::span<const M> a, std::span<const M> b,
+// Auxiliary arithmetic depends only on P, not on the target field. Accept
+// limbs so each kernel is instantiated once even when a TU uses many primes.
+template <class P>
+fpx::detail::ScratchBuffer auxiliary_product(std::span<const uint32_t> a,
+                                             std::span<const uint32_t> b,
                                              size_t out, size_t offset = 0,
                                              uint32_t cyclic_size = 0) {
   if (std::min(a.size(), b.size()) <= naive_threshold) {
@@ -40,7 +43,7 @@ fpx::detail::ScratchBuffer auxiliary_product(std::span<const M> a, std::span<con
     if (out != 0) std::memset(r.data(), 0, out*sizeof(uint32_t));
     lift_limbs<P>(bb.data(), b);
     for (size_t i = 0; i < a.size() && i < offset+out; ++i) {
-      const P x = P::raw(P::reduce(uint64_t(a[i].raw_val())*P::r2));
+      const P x = P::raw(P::reduce(uint64_t(a[i])*P::r2));
       for (size_t j = offset > i ? offset-i : 0;
            j < b.size() && j < offset+out-i; ++j)
         r[i+j-offset] = (P::raw(r[i+j-offset])+x*P::raw(bb[j])).raw_val();
@@ -72,7 +75,7 @@ fpx::detail::ScratchBuffer auxiliary_product(std::span<const M> a, std::span<con
 // Strict integer bounds: equality with the CRT modulus would alias to zero.
 // Use division before multiplication so this also works without uint128_t.
 template <class M>
-size_t crt_prime_count(size_t terms) {
+constexpr size_t crt_prime_count(size_t terms) {
   constexpr uint64_t square = uint64_t(M::mod-1)*(M::mod-1);
   if (square <= (crt_prime1::mod-1)/terms) return 1;
   if (square <= (uint64_t(crt_prime1::mod)*crt_prime2::mod-1)/terms) return 2;
@@ -86,39 +89,41 @@ template <unsigned Primes, class M>
 size_t restore_crt(M* dst, size_t count, const fpx::detail::ScratchBuffer& c1,
                    const fpx::detail::ScratchBuffer& c2, const fpx::detail::ScratchBuffer& c3) {
   if constexpr (M::mod == 2 || simd::lane == 1) return 0;
-  constexpr uint64_t p1 = crt_prime1::mod, p2 = crt_prime2::mod;
-  constexpr auto inverse12 = crt_prime2::from_int(p1).inv();
-  constexpr auto inverse123 = crt_prime3::from_int(p1*p2).inv();
-  const auto inv12 = simd::fixed_twiddle<crt_prime2::mod, crt_prime2::ninv>(inverse12.raw_val());
-  const auto inv123 = simd::fixed_twiddle<crt_prime3::mod, crt_prime3::ninv>(inverse123.raw_val());
-  const auto p1_in3 = simd::fixed_twiddle<crt_prime3::mod, crt_prime3::ninv>(crt_prime3::from_int(p1).raw_val());
-  const auto one = simd::set1(1), p1_target = simd::set1(p1%M::mod);
-  const auto p12_target = simd::set1(p1*p2%M::mod);
-  auto* output = reinterpret_cast<uint32_t*>(dst);
-  const auto* a = c1.data();
-  const auto* b = c2.data();
-  const auto* c = c3.data();
-  size_t i = 0;
-  for (; i + simd::lane <= count; i += simd::lane) {
-    const auto x1 = simd::mulmod<crt_prime1::mod, crt_prime1::ninv>(simd::load(a+i), one);
-    auto value = simd::mulmod<M::mod, M::ninv>(x1, one);
-    if constexpr (Primes >= 2) {
-      const auto r2 = simd::mulmod<crt_prime2::mod, crt_prime2::ninv>(simd::load(b+i), one);
-      const auto x2 = simd::mul_twiddle_full<crt_prime2::mod, crt_prime2::ninv>(
-          simd::sub(r2, x1, crt_prime2::mod), inv12);
-      value = simd::add(value, simd::mulmod<M::mod, M::ninv>(x2, p1_target), M::mod);
-      if constexpr (Primes == 3) {
-        const auto r3 = simd::mulmod<crt_prime3::mod, crt_prime3::ninv>(simd::load(c+i), one);
-        const auto x12 = simd::add(x1,
-            simd::mul_twiddle_full<crt_prime3::mod, crt_prime3::ninv>(x2, p1_in3), crt_prime3::mod);
-        const auto x3 = simd::mul_twiddle_full<crt_prime3::mod, crt_prime3::ninv>(
-            simd::sub(r3, x12, crt_prime3::mod), inv123);
-        value = simd::add(value, simd::mulmod<M::mod, M::ninv>(x3, p12_target), M::mod);
+  else {
+    constexpr uint64_t p1 = crt_prime1::mod, p2 = crt_prime2::mod;
+    constexpr auto inverse12 = crt_prime2::from_int(p1).inv();
+    constexpr auto inverse123 = crt_prime3::from_int(p1*p2).inv();
+    const auto inv12 = simd::fixed_twiddle<crt_prime2::mod, crt_prime2::ninv>(inverse12.raw_val());
+    const auto inv123 = simd::fixed_twiddle<crt_prime3::mod, crt_prime3::ninv>(inverse123.raw_val());
+    const auto p1_in3 = simd::fixed_twiddle<crt_prime3::mod, crt_prime3::ninv>(crt_prime3::from_int(p1).raw_val());
+    const auto one = simd::set1(1), p1_target = simd::set1(p1%M::mod);
+    const auto p12_target = simd::set1(p1*p2%M::mod);
+    auto* output = reinterpret_cast<uint32_t*>(dst);
+    const auto* a = c1.data();
+    const auto* b = c2.data();
+    const auto* c = c3.data();
+    size_t i = 0;
+    for (; i + simd::lane <= count; i += simd::lane) {
+      const auto x1 = simd::mulmod<crt_prime1::mod, crt_prime1::ninv>(simd::load(a+i), one);
+      auto value = simd::mulmod<M::mod, M::ninv>(x1, one);
+      if constexpr (Primes >= 2) {
+        const auto r2 = simd::mulmod<crt_prime2::mod, crt_prime2::ninv>(simd::load(b+i), one);
+        const auto x2 = simd::mul_twiddle_full<crt_prime2::mod, crt_prime2::ninv>(
+            simd::sub(r2, x1, crt_prime2::mod), inv12);
+        value = simd::add(value, simd::mulmod<M::mod, M::ninv>(x2, p1_target), M::mod);
+        if constexpr (Primes == 3) {
+          const auto r3 = simd::mulmod<crt_prime3::mod, crt_prime3::ninv>(simd::load(c+i), one);
+          const auto x12 = simd::add(x1,
+              simd::mul_twiddle_full<crt_prime3::mod, crt_prime3::ninv>(x2, p1_in3), crt_prime3::mod);
+          const auto x3 = simd::mul_twiddle_full<crt_prime3::mod, crt_prime3::ninv>(
+              simd::sub(r3, x12, crt_prime3::mod), inv123);
+          value = simd::add(value, simd::mulmod<M::mod, M::ninv>(x3, p12_target), M::mod);
+        }
       }
+      simd::store(output+i, simd::add(simd::load(output+i), value, M::mod));
     }
-    simd::store(output+i, simd::add(simd::load(output+i), value, M::mod));
+    return i;
   }
-  return i;
 }
 
 // Accumulate a window of an exact integer product. A supplied cyclic size is
@@ -126,38 +131,53 @@ size_t restore_crt(M* dst, size_t count, const fpx::detail::ScratchBuffer& c1,
 template <class M>
 void crt_product_window(std::span<const M> a, std::span<const M> b,
                         M* dst, size_t count, size_t offset = 0, uint32_t cyclic_size = 0) {
+  // Every caller bounds the shorter operand by crt_block_size. Discard
+  // reconstructions that cannot occur for this target, before instantiation.
+  constexpr size_t min_primes = crt_prime_count<M>(1);
+  constexpr size_t max_primes = crt_prime_count<M>(crt_block_size);
   constexpr uint64_t p1 = crt_prime1::mod, p2 = crt_prime2::mod, p3 = crt_prime3::mod;
   constexpr auto inv12 = crt_prime2::from_int(p1).inv();
   constexpr auto inv123 = crt_prime3::from_int(p1*p2).inv();
   constexpr uint64_t p12_target = p1*p2 % M::mod;
   const size_t primes = crt_prime_count<M>(std::min(a.size(), b.size()));
-  const auto c1 = auxiliary_product<crt_prime1>(a, b, count, offset, cyclic_size);
-  if (primes == 1) {
-    size_t i = restore_crt<1>(dst, count, c1, {}, {});
-    for (; i < count; ++i) dst[i] += M::raw(M::reduce(crt_prime1::raw(c1[i]).val()));
-    return;
-  }
-  const auto c2 = auxiliary_product<crt_prime2>(a, b, count, offset, cyclic_size);
-  auto digit2 = [&](size_t i, uint32_t x1) {
-    // REDC with a Montgomery constant multiplies an ordinary integer and
-    // returns an ordinary integer, saving a division-based conversion.
-    return crt_prime2::reduce((crt_prime2::raw(c2[i]).val()+p2-x1)*inv12.raw_val());
-  };
-  if (primes == 2) {
-    size_t i = restore_crt<2>(dst, count, c1, c2, {});
-    for (; i < count; ++i) {
-      const uint32_t x1 = crt_prime1::raw(c1[i]).val(), x2 = digit2(i, x1);
-      dst[i] += M::raw(M::reduce((x1+p1*x2) % M::mod));
+  static_assert(sizeof(M) == sizeof(uint32_t), "Mont must be a single 32-bit limb");
+  const std::span<const uint32_t> aa(reinterpret_cast<const uint32_t*>(a.data()), a.size());
+  const std::span<const uint32_t> bb(reinterpret_cast<const uint32_t*>(b.data()), b.size());
+  const auto c1 = auxiliary_product<crt_prime1>(aa, bb, count, offset, cyclic_size);
+  if constexpr (min_primes == 1) {
+    if (primes == 1) {
+      size_t i = restore_crt<1>(dst, count, c1, {}, {});
+      for (; i < count; ++i) dst[i] += M::raw(M::reduce(crt_prime1::raw(c1[i]).val()));
+      return;
     }
-    return;
   }
-  const auto c3 = auxiliary_product<crt_prime3>(a, b, count, offset, cyclic_size);
-  size_t i = restore_crt<3>(dst, count, c1, c2, c3);
-  for (; i < count; ++i) {
-    const uint32_t x1 = crt_prime1::raw(c1[i]).val(), x2 = digit2(i, x1);
-    const uint64_t x12 = x1+p1*x2;
-    const uint32_t x3 = crt_prime3::reduce((crt_prime3::raw(c3[i]).val()+p3-x12%p3)*inv123.raw_val());
-    dst[i] += M::raw(M::reduce((x12 % M::mod + p12_target*x3) % M::mod));
+  if constexpr (max_primes >= 2) {
+    const auto c2 = auxiliary_product<crt_prime2>(aa, bb, count, offset, cyclic_size);
+    auto digit2 = [&](size_t i, uint32_t x1) {
+      // REDC with a Montgomery constant multiplies an ordinary integer and
+      // returns an ordinary integer, saving a division-based conversion.
+      return crt_prime2::reduce((crt_prime2::raw(c2[i]).val()+p2-x1)*inv12.raw_val());
+    };
+    if constexpr (min_primes <= 2) {
+      if (primes == 2) {
+        size_t i = restore_crt<2>(dst, count, c1, c2, {});
+        for (; i < count; ++i) {
+          const uint32_t x1 = crt_prime1::raw(c1[i]).val(), x2 = digit2(i, x1);
+          dst[i] += M::raw(M::reduce((x1+p1*x2) % M::mod));
+        }
+        return;
+      }
+    }
+    if constexpr (max_primes == 3) {
+      const auto c3 = auxiliary_product<crt_prime3>(aa, bb, count, offset, cyclic_size);
+      size_t i = restore_crt<3>(dst, count, c1, c2, c3);
+      for (; i < count; ++i) {
+        const uint32_t x1 = crt_prime1::raw(c1[i]).val(), x2 = digit2(i, x1);
+        const uint64_t x12 = x1+p1*x2;
+        const uint32_t x3 = crt_prime3::reduce((crt_prime3::raw(c3[i]).val()+p3-x12%p3)*inv123.raw_val());
+        dst[i] += M::raw(M::reduce((x12 % M::mod + p12_target*x3) % M::mod));
+      }
+    }
   }
 }
 

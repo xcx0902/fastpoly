@@ -1,0 +1,80 @@
+[
+  {
+    "version": "baseline",
+    "backend": "neon",
+    "command": [
+      "clang++",
+      "-std=c++20",
+      "-O2",
+      "-DNDEBUG",
+      "-pthread",
+      "-include",
+      "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+      "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+      "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/ntt-batch.cpp",
+      "-o",
+      "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-neon"
+    ],
+    "sha256": "d5f002fa4d011f72ab44abf3a9e3a5d4ab193d99b78a7f20ca1fe5437786db90"
+  },
+  {
+    "version": "final",
+    "backend": "neon",
+    "command": [
+      "clang++",
+      "-std=c++20",
+      "-O2",
+      "-DNDEBUG",
+      "-pthread",
+      "-include",
+      "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+      "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/final/include",
+      "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/ntt-batch.cpp",
+      "-o",
+      "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-neon"
+    ],
+    "sha256": "5f416446406e9b8faf3c4fda6448078faaa6eef9111d1429ff0746beb907e8e5"
+  },
+  {
+    "version": "baseline",
+    "backend": "avx2",
+    "command": [
+      "clang++",
+      "-std=c++20",
+      "-O2",
+      "-DNDEBUG",
+      "-pthread",
+      "-include",
+      "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+      "-arch",
+      "x86_64",
+      "-mavx2",
+      "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/baseline/include",
+      "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/ntt-batch.cpp",
+      "-o",
+      "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-baseline-avx2"
+    ],
+    "sha256": "422ab3522f5eb96a245409598a0f3442392dd1dcdb4d846313c00a2e6adf8cf3"
+  },
+  {
+    "version": "final",
+    "backend": "avx2",
+    "command": [
+      "clang++",
+      "-std=c++20",
+      "-O2",
+      "-DNDEBUG",
+      "-pthread",
+      "-include",
+      "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/benchmark-qos.hpp",
+      "-arch",
+      "x86_64",
+      "-mavx2",
+      "-I/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/final/include",
+      "/Users/xcx0902/Documents/Github/fastpoly/bench/compile-20261011-followup/ntt-batch.cpp",
+      "-o",
+      "/Users/xcx0902/Documents/Github/fastpoly/build/o2-followup-20261011/batch-final-avx2"
+    ],
+    "sha256": "8766bddc2591927594fa5580f2dba1f6d87da6ae35f2fddce7539b5fb6c57aee"
+  }
+]

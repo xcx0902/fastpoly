@@ -31,7 +31,8 @@ void extend_inverse(const vec<M>& a, vec<M>& c, size_t wanted,
     }
     return;
   }
-  if (k > ntt_max_size<M>()/2) {
+  // hlen>8 and wanted<=2*k imply a transform of at least 32 points.
+  if (ntt_max_size<M>() < 32 || k > ntt_max_size<M>()/2) {
     vec<M> error = crt_middle_product(a, c, k, hlen);
     for (auto& x : error) x = -x;
     auto correction = conv_limbs(error, c, hlen);
@@ -39,26 +40,28 @@ void extend_inverse(const vec<M>& a, vec<M>& c, size_t wanted,
     c.insert(c.end(), correction.begin(), correction.end());
     return;
   }
-  const uint32_t N = next_pow2(2*k);
-  const auto& plan = NttPlan<M>::get_ref(N);
-  prepare_scratch(a, std::min(a.size(), wanted), scratch, N);
-  prepare_scratch(c, c.size(), spectrum, N);
-  auto* pt = scratch.data();
-  auto* pc = spectrum.data();
-  plan.forward_prefix(pt, std::min(a.size(), wanted));
-  plan.forward_prefix(pc, c.size());
-  pointwise_mul<M>(pt, pc, N);
-  plan.inverse_highhalf(pt);
-  size_t i = 0;
-  const auto zero = simd::set1(0);
-  for (; i + simd::lane <= hlen; i += simd::lane)
-    simd::store(pt + i, simd::sub(zero, simd::load(pt + k + i), M::mod));
-  for (; i < hlen; ++i) pt[i] = pt[k+i] == 0 ? 0 : M::mod - pt[k+i];
-  plan.forward_prefix(pt, hlen);
-  pointwise_mul<M>(pt, pc, N);
-  plan.inverse_prefix(pt, hlen);
-  c.resize(wanted);
-  std::memcpy(c.data() + k, pt, hlen * sizeof(uint32_t));
+  if constexpr (ntt_max_size<M>() >= 32) {
+    const uint32_t N = next_pow2(2*k);
+    const auto& plan = NttPlan<M>::get_ref(N);
+    prepare_scratch(a, std::min(a.size(), wanted), scratch, N);
+    prepare_scratch(c, c.size(), spectrum, N);
+    auto* pt = scratch.data();
+    auto* pc = spectrum.data();
+    plan.forward_prefix(pt, std::min(a.size(), wanted));
+    plan.forward_prefix(pc, c.size());
+    pointwise_mul<M>(pt, pc, N);
+    plan.inverse_highhalf(pt);
+    size_t i = 0;
+    const auto zero = simd::set1(0);
+    for (; i + simd::lane <= hlen; i += simd::lane)
+      simd::store(pt + i, simd::sub(zero, simd::load(pt + k + i), M::mod));
+    for (; i < hlen; ++i) pt[i] = pt[k+i] == 0 ? 0 : M::mod - pt[k+i];
+    plan.forward_prefix(pt, hlen);
+    pointwise_mul<M>(pt, pc, N);
+    plan.inverse_prefix(pt, hlen);
+    c.resize(wanted);
+    std::memcpy(c.data() + k, pt, hlen * sizeof(uint32_t));
+  }
 }
 
 template <class M>
@@ -84,49 +87,50 @@ vec<M> inverse_linear(const vec<M>& a, size_t n) {
     M value = first;
     for (auto& x : b) { x = value; value *= ratio; }
     return b;
-  }
-  vec<M> b(n);
-  constexpr size_t W = simd::lane, block = 4*W;
-  if (n < block) {
+  } else {
+    vec<M> b(n);
+    constexpr size_t W = simd::lane, block = 4*W;
+    if (n < block) {
+      M x = first;
+      for (size_t i = 0; i < n; ++i) { b[i] = x; x *= ratio; }
+      return b;
+    }
+    alignas(64) uint32_t seed[block];
     M x = first;
-    for (size_t i = 0; i < n; ++i) { b[i] = x; x *= ratio; }
+    for (size_t i = 0; i < block; ++i) { seed[i] = x.raw_val(); x *= ratio; }
+    auto x0 = simd::load(seed), x1 = simd::load(seed + W);
+    auto x2 = simd::load(seed + 2*W), x3 = simd::load(seed + 3*W);
+    const M step_value = ratio.pow(block);
+    const auto step = simd::fixed_twiddle<M::mod, M::ninv>(step_value.raw_val());
+    auto* dst = reinterpret_cast<uint32_t*>(b.data());
+    size_t i = 0;
+    if (step_value.raw_val() == M::one) {
+      // A short-period geometric progression repeats the already canonical seed.
+      for (; i + block <= n; i += block) std::memcpy(dst + i, seed, sizeof(seed));
+      if (i != n) std::memcpy(dst + i, seed, (n - i) * sizeof(uint32_t));
+      return b;
+    }
+    auto store_value = [](uint32_t* p, simd::native_t v) {
+      if constexpr (simd::fixed_lazy<M::mod>) v = simd::reduce_full(v, M::mod);
+      simd::store(p, v);
+    };
+    auto advance = [&](simd::native_t v) {
+      if constexpr (simd::fixed_lazy<M::mod>) return simd::mul_twiddle<M::mod, M::ninv>(v, step);
+      else return simd::mul_twiddle_full<M::mod, M::ninv>(v, step);
+    };
+    for (; i + block <= n; i += block) {
+      store_value(dst + i, x0); store_value(dst + i + W, x1);
+      store_value(dst + i + 2*W, x2); store_value(dst + i + 3*W, x3);
+      x0 = advance(x0); x1 = advance(x1);
+      x2 = advance(x2); x3 = advance(x3);
+    }
+    if (i != n) {
+      store_value(seed, x0); store_value(seed + W, x1);
+      store_value(seed + 2*W, x2); store_value(seed + 3*W, x3);
+      std::memcpy(dst + i, seed, (n - i) * sizeof(uint32_t));
+    }
     return b;
   }
-  alignas(64) uint32_t seed[block];
-  M x = first;
-  for (size_t i = 0; i < block; ++i) { seed[i] = x.raw_val(); x *= ratio; }
-  auto x0 = simd::load(seed), x1 = simd::load(seed + W);
-  auto x2 = simd::load(seed + 2*W), x3 = simd::load(seed + 3*W);
-  const M step_value = ratio.pow(block);
-  const auto step = simd::fixed_twiddle<M::mod, M::ninv>(step_value.raw_val());
-  auto* dst = reinterpret_cast<uint32_t*>(b.data());
-  size_t i = 0;
-  if (step_value.raw_val() == M::one) {
-    // A short-period geometric progression repeats the already canonical seed.
-    for (; i + block <= n; i += block) std::memcpy(dst + i, seed, sizeof(seed));
-    if (i != n) std::memcpy(dst + i, seed, (n - i) * sizeof(uint32_t));
-    return b;
-  }
-  auto store_value = [](uint32_t* p, simd::native_t v) {
-    if constexpr (simd::fixed_lazy<M::mod>) v = simd::reduce_full(v, M::mod);
-    simd::store(p, v);
-  };
-  auto advance = [&](simd::native_t v) {
-    if constexpr (simd::fixed_lazy<M::mod>) return simd::mul_twiddle<M::mod, M::ninv>(v, step);
-    else return simd::mul_twiddle_full<M::mod, M::ninv>(v, step);
-  };
-  for (; i + block <= n; i += block) {
-    store_value(dst + i, x0); store_value(dst + i + W, x1);
-    store_value(dst + i + 2*W, x2); store_value(dst + i + 3*W, x3);
-    x0 = advance(x0); x1 = advance(x1);
-    x2 = advance(x2); x3 = advance(x3);
-  }
-  if (i != n) {
-    store_value(seed, x0); store_value(seed + W, x1);
-    store_value(seed + 2*W, x2); store_value(seed + 3*W, x3);
-    std::memcpy(dst + i, seed, (n - i) * sizeof(uint32_t));
-  }
-  return b;
 }
 
 // Normalize the fixed short input once, then each new coefficient is a dot
